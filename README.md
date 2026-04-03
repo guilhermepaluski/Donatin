@@ -1,2 +1,2 @@
-# FixCity
-An app for reporting everyday city problems (potholes, damaged streetlights, accumulated trash in a specific spot, etc.).
+# Donatin
+With a vision to help donating actions in your community, _Donatin_ introduces a new way to organize and enhance charity next to you.
