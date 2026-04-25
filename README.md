@@ -56,15 +56,15 @@ Dados como e-mail e endereço poderão ser usados para agendar uma possível doa
 Com o propósito de levantar evidências e possíveis futuros usuários da aplicação, foi realizada uma pesquisa por meio de um formulário onde participantes expressaram suas opiniões e sugestões sobre o projeto.
 A partir das respostas do formulário, grande parte dos contribuintes relatou já ter enfrentado dificuldades em doar algum objeto por não saber como ou onde doar:
 
-<img src="/images/evidencia1.png">
+<img src="/images/readme/evidencia1.png">
 
 Baseado nas respostas dos candidatos, o sistema tem grande potencial de facilitar doações na região onde o usuário se encontra. Algumas respostas indicam que o aplicativo pode alavancar ainda mais doações no cotidiano:
 
-<img src="/images/evidencia2.png">
+<img src="/images/readme/evidencia2.png">
 
 Além disso, a partir das respostas, o sistema apresenta potencial interesse de uso pelos usuários:
 
-<img src="/images/evidencia3.png">
+<img src="/images/readme/evidencia3.png">
 
 Estas evidências provam que há interesse real na aplicação e que o problema abordado é existente e presente no cotidiano dos usuários. A falta de organização explícita do processo e a dificuldade em encontrar locais adequados para doação demonstra a necessidade de um sistema que facilite e centralize essa boa ação.
 Dessa forma, os dados coletados reforçam a aceitação do projeto, evidenciando não apenas sua relevância social, mas também seu potencial de adesão por parte dos usuários.
@@ -75,7 +75,7 @@ Dessa forma, os dados coletados reforçam a aceitação do projeto, evidenciando
 
 Givee (https://www.givee.pt/)
 
-<img src="/images/givee.png">
+<img src="/images/readme/givee.png">
 
 O público-alvo da plataforma Givee abrange pessoas que desejam doar objetos e ajudar outras pessoas diretamente.
 
@@ -91,9 +91,9 @@ O público-alvo do aplicativo Doação do Bem são pessoas que desejam doar para
 
 Suas funcionalidades principais incluem a conexão entre doadores e instituições, doações realizadas diretamente pelo app e apoio a diversas causas sociais.
 
-<img src="/images/doacaoDoBem1.png">
-<img src="/images/doacaoDoBem2.png">
-<img src="/images/doacaoDoBem3.png">
+<img src="/images/readme/doacaoDoBem1.png">
+<img src="/images/readme/doacaoDoBem2.png">
+<img src="/images/readme/doacaoDoBem3.png">
 
 As principais limitações estão no foco maior em doações diretas, não em objetos físicos com logística; não oferece agendamento detalhado de coleta e possui pouca personalização no processo de doação.
 
@@ -103,7 +103,7 @@ Solidarizando (https://solidarizando.com.br/)
 
 Seu público-alvo constitui pessoas interessadas em ajudar instituições por meio de doações ou voluntariado.
 
-<img src="/images/solidarizando.png">
+<img src="/images/readme/solidarizando.png">
 
 Suas funcionalidades principais são a conexão entre usuários e ONGs, geolocalização de instituições, participação em ações solidárias e doações e voluntariado na mesma plataforma.
 Suas limitações abrangem o não foco específico em doação de objetos, a falta sistema de agendamento de coleta/entrega e abrange muitas áreas, o que pode causar confusão ou perda do usuário.
@@ -113,8 +113,8 @@ Suas limitações abrangem o não foco específico em doação de objetos, a fal
 Geev (https://play.google.com/store/apps/details?id=fr.geev.application)
 O aplicativo é focado em pessoas interessadas em consumo sustentável e reaproveitamento.
 
-<img src="/images/geev1.png">
-<img src="/images/geev2.png">
+<img src="/images/readme/geev1.png">
+<img src="/images/readme/geev2.png">
 
 Suas funcionalidades principais incluem doação e coleta gratuita de itens; comunidade ativa de usuários e incentivo à economia circular.
 Suas limitações incluem foco em troca entre pessoas, não em instituições; não possui sistema de agendamento estruturado e a logística depende dos próprios usuários.
