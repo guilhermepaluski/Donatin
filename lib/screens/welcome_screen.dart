@@ -24,7 +24,7 @@ class WelcomeScreen extends StatelessWidget {
             // como no design original.
             const SizedBox(height: 15),
             Expanded(
-              child: Container(
+              child: SizedBox(
                 width: double.infinity,
                 child: ClipRRect(
                   borderRadius: const BorderRadius.only(

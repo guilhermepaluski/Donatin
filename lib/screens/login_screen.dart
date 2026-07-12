@@ -36,8 +36,8 @@ class _LoginScreenState extends State<LoginScreen> {
             decoration: const InputDecoration(
               labelText: 'E-mail',
               hintText: 'Digite seu e-mail',
-              prefixIcon: const Icon(Icons.email),
-              border: const OutlineInputBorder(),
+              prefixIcon: Icon(Icons.email),
+              border: OutlineInputBorder(),
               filled: true,
               fillColor: Colors.white,
             ),
@@ -50,8 +50,8 @@ class _LoginScreenState extends State<LoginScreen> {
             decoration: const InputDecoration(
               labelText: 'Senha',
               hintText: 'Digite a senha',
-              prefixIcon: const Icon(Icons.password),
-              border: const OutlineInputBorder(),
+              prefixIcon: Icon(Icons.password),
+              border: OutlineInputBorder(),
               filled: true,
               fillColor: Colors.white,
             ),
