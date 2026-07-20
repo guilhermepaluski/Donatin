@@ -191,6 +191,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               label: 'Criar',
               textStyle: AppTextStyles.buttonTextLight,
               backgroundColor: AppColors.primaryGreen,
+              icon: Icons.person_add,
               onPressed: () {
                 print('Nome ${_nameController.text}');
                 print('E-mail ${_emailController.text}');

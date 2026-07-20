@@ -65,6 +65,7 @@ class WelcomeScreen extends StatelessWidget {
                               label: 'Criar conta',
                               textStyle: AppTextStyles.buttonTextLight,
                               backgroundColor: AppColors.primaryGreen,
+                              icon: Icons.person_add,
                               onPressed: () {
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
@@ -121,21 +122,5 @@ class _Logo extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-class _UserIcon extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    child:
-    const Padding(
-      padding: EdgeInsets.all(28.0),
-      child: Icon(
-        Icons.volunteer_activism,
-        color: AppColors.primaryGreen,
-        size: 64,
-      ),
-    );
-    return _UserIcon();
   }
 }
