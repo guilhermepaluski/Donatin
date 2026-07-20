@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
+import '../theme/app_text_styles.dart';
+import '../widgets/pill_button.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -50,11 +52,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
         children: [
           TextField(
             controller: _nameController,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               labelText: 'Nome/Razão social',
               hintText: 'Digite o nome',
               prefixIcon: Icon(Icons.person),
-              border: OutlineInputBorder(),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.0),
+              ),
               filled: true,
               fillColor: Colors.white,
             ),
@@ -63,11 +67,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
           TextField(
             controller: _emailController,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               labelText: 'E-mail',
               hintText: 'Digite seu e-mail',
               prefixIcon: Icon(Icons.email),
-              border: OutlineInputBorder(),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.0),
+              ),
               filled: true,
               fillColor: Colors.white,
             ),
@@ -77,11 +83,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
           TextField(
             controller: _passwordController,
             obscureText: true,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               labelText: 'Senha',
               hintText: 'Digite a senha',
               prefixIcon: Icon(Icons.password),
-              border: OutlineInputBorder(),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.0),
+              ),
               filled: true,
               fillColor: Colors.white,
             ),
@@ -90,11 +98,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
           TextField(
             controller: _birthDateController,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               labelText: 'Data de nascimento/fundação',
               hintText: 'DD/MM/AAAA',
               prefixIcon: Icon(Icons.date_range),
-              border: OutlineInputBorder(),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.0),
+              ),
               filled: true,
               fillColor: Colors.white,
             ),
@@ -103,11 +113,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
           TextField(
             controller: _cpfcnpjController,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               labelText: 'CPF/CNPJ',
               hintText: 'Digite o CPF/CNPJ',
               prefixIcon: Icon(Icons.document_scanner),
-              border: OutlineInputBorder(),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.0),
+              ),
               filled: true,
               fillColor: Colors.white,
             ),
@@ -116,11 +128,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
           TextField(
             controller: _cepController,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               labelText: 'CEP',
               hintText: 'Digite o CEP',
               prefixIcon: Icon(Icons.house),
-              border: OutlineInputBorder(),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.0),
+              ),
               filled: true,
               fillColor: Colors.white,
             ),
@@ -129,11 +143,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
           TextField(
             controller: _streetController,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               labelText: 'Rua',
               hintText: 'Digite a rua',
               prefixIcon: Icon(Icons.streetview),
-              border: OutlineInputBorder(),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.0),
+              ),
               filled: true,
               fillColor: Colors.white,
             ),
@@ -142,37 +158,45 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
           TextField(
             controller: _neighborController,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               labelText: 'Bairro',
               hintText: 'Digite o bairro',
               prefixIcon: Icon(Icons.stream_outlined),
-              border: OutlineInputBorder(),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.0),
+              ),
               filled: true,
               fillColor: Colors.white,
             ),
           ),
           const SizedBox(height: 16),
-
+          
           TextField(
             controller: _numberController,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               labelText: 'Número',
               hintText: 'Digite o número',
               prefixIcon: Icon(Icons.numbers),
-              border: OutlineInputBorder(),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.0),
+              ),
               filled: true,
               fillColor: Colors.white,
             ),
           ),
           const SizedBox(height: 24),
-
-          ElevatedButton(
-            onPressed: () {
-              print('Nome ${_nameController.text}');
-              print('E-mail ${_emailController.text}');
-            },
-            child: const Text('Criar'),
-          ),
+          
+          Padding(padding: const EdgeInsets.symmetric(horizontal: 28),
+            child: PillButton(
+              label: 'Criar',
+              textStyle: AppTextStyles.buttonTextLight,
+              backgroundColor: AppColors.primaryGreen,
+              onPressed: () {
+                print('Nome ${_nameController.text}');
+                print('E-mail ${_emailController.text}');
+              },
+            ),
+          )
         ],
       ),
     );

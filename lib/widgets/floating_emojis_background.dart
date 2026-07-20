@@ -17,7 +17,7 @@ class FloatingEmojisBackground extends StatefulWidget {
 
   const FloatingEmojisBackground({
     super.key,
-    this.emojis = const ['💚','🧸'],
+    this.emojis = const ['💚','🧸','🎁'],
     this.count = 10,
     this.minSize = 18,
     this.maxSize = 34,

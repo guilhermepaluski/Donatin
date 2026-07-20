@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-/// Botão em formato de "pill" (cantos totalmente arredondados),
-/// usado nas telas de onboarding/auth do Donatin.
 class PillButton extends StatelessWidget {
   final String label;
   final TextStyle textStyle;

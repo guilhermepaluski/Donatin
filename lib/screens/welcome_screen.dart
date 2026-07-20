@@ -6,8 +6,6 @@ import '../widgets/floating_emojis_background.dart';
 import 'login_screen.dart';
 import 'signup_screen.dart';
 
-/// Primeira tela exibida ao abrir o app pela primeira vez.
-/// Apresenta a marca Donatin e dá acesso a Criar conta / Entrar.
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
 
@@ -39,7 +37,7 @@ class WelcomeScreen extends StatelessWidget {
                       // só essa área (não a tela toda).
                       const Positioned.fill(
                         child: FloatingEmojisBackground(
-                          emojis: ['💚','🧸'],
+                          emojis: ['💚', '🧸', '🎁'],
                           count: 10,
                         ),
                       ),
@@ -58,7 +56,7 @@ class WelcomeScreen extends StatelessWidget {
                             ),
                             const SizedBox(height: 12),
                             Text(
-                              'Pequenos gestos,\ngrandes afetos.',
+                              'Pequenos gestos,\ngrandes transformações.',
                               style: AppTextStyles.subtitle,
                               textAlign: TextAlign.center,
                             ),
@@ -123,5 +121,21 @@ class _Logo extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class _UserIcon extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    child:
+    const Padding(
+      padding: EdgeInsets.all(28.0),
+      child: Icon(
+        Icons.volunteer_activism,
+        color: AppColors.primaryGreen,
+        size: 64,
+      ),
+    );
+    return _UserIcon();
   }
 }
