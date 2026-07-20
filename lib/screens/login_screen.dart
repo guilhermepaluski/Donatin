@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
+import '../theme/app_text_styles.dart';
+import 'package:donatin/widgets/pill_button.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -58,12 +60,16 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           const SizedBox(height: 24),
 
-          ElevatedButton(
-            onPressed: () {
-              print('E-mail ${_emailController.text}');
-            },
-            child: const Text('Entrar'),
-          ),
+          Padding(padding: const EdgeInsets.symmetric(horizontal: 28),
+            child: PillButton(
+              label: 'Entrar',
+              textStyle: AppTextStyles.buttonTextDark,
+              backgroundColor: Colors.white,
+              onPressed: () {
+                print('E-mail ${_emailController.text}');
+              },
+            ),
+          )
         ],
       ),
     );

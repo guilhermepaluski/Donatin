@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 
-/// Botão em formato de "pill" (cantos totalmente arredondados),
-/// usado nas telas de onboarding/auth do Donatin.
 class PillButton extends StatelessWidget {
   final String label;
   final TextStyle textStyle;
   final Color backgroundColor;
   final VoidCallback onPressed;
+  final IconData? icon;
 
   const PillButton({
     super.key,
@@ -14,6 +13,7 @@ class PillButton extends StatelessWidget {
     required this.textStyle,
     required this.backgroundColor,
     required this.onPressed,
+    this.icon,
   });
 
   @override
@@ -30,7 +30,16 @@ class PillButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(28),
           ),
         ),
-        child: Text(label, style: textStyle),
+        child: icon == null
+            ? Text(label, style: textStyle)
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(icon, color: textStyle.color, size: 20),
+                  const SizedBox(width: 8),
+                  Text(label, style: textStyle),
+                ],
+              ),
       ),
     );
   }
