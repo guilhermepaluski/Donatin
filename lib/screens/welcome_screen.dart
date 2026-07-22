@@ -4,7 +4,6 @@ import '../theme/app_colors.dart';
 import '../theme/app_text_styles.dart';
 import '../widgets/pill_button.dart';
 import '../widgets/floating_emojis_background.dart';
-import 'login_screen.dart';
 import 'signup_screen.dart';
 
 class WelcomeScreen extends StatefulWidget {
