@@ -6,15 +6,15 @@ class AppTextStyles {
   AppTextStyles._();
 
   static const TextStyle appTitle = TextStyle(
-    fontSize: 44,
+    fontSize: 40,
     fontWeight: FontWeight.w800,
     color: AppColors.primaryGreen,
   );
 
   static const TextStyle subtitle = TextStyle(
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: FontWeight.w500,
-    color: AppColors.white,
+    color: AppColors.black,
     height: 1.3,
   );
 
