@@ -1,3 +1,4 @@
+import 'package:donatin/screens/home_screen.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
@@ -111,7 +112,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                                 onPressed: () {
                                   Navigator.of(context).push(
                                     MaterialPageRoute(
-                                      builder: (_) => const SignUpScreen(),
+                                      builder: (_) => const HomeScreen(),
                                     ),
                                   );
                                 },
