@@ -1,5 +1,6 @@
 import 'package:donatin/theme/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:donatin/widgets/category_cart.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -53,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // --- CAMPO DE BUSCA DE CAMPANHAS ---
+            // === CAMPO DE BUSCA DE CAMPANHAS ===
             TextField(
               decoration: InputDecoration(
                 hintText: 'Buscar campanhas',
@@ -71,6 +72,72 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 24),
 
             // === CATEGORIAS ===
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Categorias',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.black,
+                  )
+                ),
+                TextButton(
+                  onPressed: () {
+                    // LÓGICA DO BOTÃO DE VER TODAS AS CATEGORIAS AO SER CLICADO
+                  },
+                  child: const Text(
+                    'Ver todas',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.darkLightGreen,
+                    )
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            // --- LISTA HORIZONTAL DAS CATEGORIAS ---
+            SizedBox(
+              height: 90,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: [
+                  CategoryCard(
+                    categoryTitle: 'Animais',
+                    categoryIcon: Icons.pets_outlined,
+                    categoryIconColor: Colors.orange,
+                    categoryBgColor: const Color(0xFFFFF3E0),
+                  ),
+                  CategoryCard(
+                    categoryTitle: 'Educação',
+                    categoryIcon: Icons.school,
+                    categoryIconColor: Colors.lightBlue,
+                    categoryBgColor: const Color(0xE3E1F5FE),
+                  ),
+                  CategoryCard(
+                    categoryTitle: 'Roupas',
+                    categoryIcon: Icons.checkroom,
+                    categoryIconColor: Colors.purple,
+                    categoryBgColor: const Color(0xE2FEE1FD),
+                  ),
+                  CategoryCard(
+                    categoryTitle: 'Higiene',
+                    categoryIcon: Icons.shower,
+                    categoryIconColor: Colors.lightGreen,
+                    categoryBgColor: const Color(0xFFE8F5E9),
+                  ),
+                  CategoryCard(
+                    categoryTitle: 'Lazer',
+                    categoryIcon: Icons.extension,
+                    categoryIconColor: Colors.redAccent,
+                    categoryBgColor: const Color(0xFFFFEBEE),
+                  ),
+                ]
+              )
+            )
           ]
         )
       )

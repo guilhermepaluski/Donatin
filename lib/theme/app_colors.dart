@@ -11,6 +11,9 @@ class AppColors {
   // Verde escuro - fundo principal das telas com tema escuro
   static const Color darkGreen = Color(0xFF13301F);
 
+  // Verde escuro claro - usado em semi-títulos ou outros textos
+  static const Color darkLightGreen = Color(0xFF00875A);
+
   // Branco - botão secundário e textos sobre fundo escuro
   static const Color white = Colors.white;
 
