@@ -49,59 +49,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ),
       ),
       body: ListView(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         children: [
           TextField(
             controller: _nameController,
             decoration: InputDecoration(
-              labelText: 'Nome/Razão social',
+              labelText: 'Nome/Razão social',
               hintText: 'Digite o nome',
               prefixIcon: Icon(Icons.person),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12.0),
-              ),
-              filled: true,
-              fillColor: Colors.white,
-            ),
-          ),
-          const SizedBox(height: 16),
-
-          TextField(
-            controller: _emailController,
-            decoration: InputDecoration(
-              labelText: 'E-mail',
-              hintText: 'Digite seu e-mail',
-              prefixIcon: Icon(Icons.email),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12.0),
-              ),
-              filled: true,
-              fillColor: Colors.white,
-            ),
-          ),
-          const SizedBox(height: 16),
-
-          TextField(
-            controller: _passwordController,
-            obscureText: true,
-            decoration: InputDecoration(
-              labelText: 'Senha',
-              hintText: 'Digite a senha',
-              prefixIcon: Icon(Icons.password),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12.0),
-              ),
-              filled: true,
-              fillColor: Colors.white,
-            ),
-          ),
-          const SizedBox(height: 16),
-
-          TextField(
-            controller: _birthDateController,
-            decoration: InputDecoration(
-              labelText: 'Data de nascimento/fundação',
-              hintText: 'DD/MM/AAAA',
-              prefixIcon: Icon(Icons.date_range),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12.0),
               ),
@@ -125,6 +80,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
             ),
           ),
           const SizedBox(height: 16),
+
+          TextField(
+            controller: _birthDateController,
+            decoration: InputDecoration(
+              labelText: 'Data de nascimento/fundação',
+              hintText: 'DD/MM/AAAA',
+              prefixIcon: Icon(Icons.date_range),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+              filled: true,
+              fillColor: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 24),
 
           TextField(
             controller: _cepController,
@@ -174,8 +144,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
           TextField(
             controller: _numberController,
             decoration: InputDecoration(
-              labelText: 'Número',
-              hintText: 'Digite o número',
+              labelText: 'Número',
+              hintText: 'Digite o número',
               prefixIcon: Icon(Icons.numbers),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12.0),
@@ -184,7 +154,53 @@ class _SignUpScreenState extends State<SignUpScreen> {
               fillColor: Colors.white,
             ),
           ),
+          const SizedBox(height: 16),
+
+          TextField(
+            controller: _numberController,
+            decoration: InputDecoration(
+              labelText: 'Complemento',
+              hintText: 'Digite o complemento',
+              prefixIcon: Icon(Icons.format_list_numbered_outlined),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+              filled: true,
+              fillColor: Colors.white,
+            ),
+          ),
           const SizedBox(height: 24),
+
+          TextField(
+            controller: _emailController,
+            decoration: InputDecoration(
+              labelText: 'E-mail',
+              hintText: 'Digite seu e-mail',
+              prefixIcon: Icon(Icons.email),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+              filled: true,
+              fillColor: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          TextField(
+            controller: _passwordController,
+            obscureText: true,
+            decoration: InputDecoration(
+              labelText: 'Senha',
+              hintText: 'Digite a senha',
+              prefixIcon: Icon(Icons.password),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+              filled: true,
+              fillColor: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 16),
           
           Padding(padding: const EdgeInsets.symmetric(horizontal: 28),
             child: PillButton(
