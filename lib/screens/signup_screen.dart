@@ -20,6 +20,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _streetController = TextEditingController();
   final _neighborController = TextEditingController();
   final _numberController = TextEditingController();
+  final _suiteController = TextEditingController();
 
   @override
   void dispose() {
@@ -32,6 +33,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     _streetController.dispose();
     _neighborController.dispose();
     _numberController.dispose();
+    _suiteController.dispose();
     super.dispose();
   }
 
@@ -140,7 +142,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             ),
           ),
           const SizedBox(height: 16),
-          
+
           TextField(
             controller: _numberController,
             decoration: InputDecoration(
@@ -157,7 +159,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           const SizedBox(height: 16),
 
           TextField(
-            controller: _numberController,
+            controller: _suiteController,
             decoration: InputDecoration(
               labelText: 'Complemento',
               hintText: 'Digite o complemento',
@@ -201,8 +203,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
             ),
           ),
           const SizedBox(height: 16),
-          
-          Padding(padding: const EdgeInsets.symmetric(horizontal: 28),
+
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 28),
             child: PillButton(
               label: 'Criar',
               textStyle: AppTextStyles.buttonTextLight,
@@ -213,7 +216,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 print('E-mail ${_emailController.text}');
               },
             ),
-          )
+          ),
         ],
       ),
     );
