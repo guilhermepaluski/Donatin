@@ -1,4 +1,4 @@
-using Donatin.Domain.Interfaces;
+using Donatin.Domain.Interfaces.Services;
 namespace Donatin.Infrastructure.Services;
 
 public class PasswordHasher : IPasswordHasher

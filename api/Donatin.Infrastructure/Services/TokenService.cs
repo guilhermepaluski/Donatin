@@ -2,7 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Donatin.Domain.Entities;
-using Donatin.Domain.Interfaces;
+using Donatin.Domain.Interfaces.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
@@ -20,7 +20,8 @@ public class TokenService : ITokenService
   public string GenerateToken(User user)
   {
     var tokenHandler = new JwtSecurityTokenHandler();
-    var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Secret"] ?? "MINHACHAVEESCREVERAQUI"); // ESCREVER A CHAVE AQUI
+    var jwtSecret = _configuration["Jwt:Secret"] ?? throw new InvalidOperationException("Configure 'Jwt:Secret' antes de rodar a API.");
+    var key = Encoding.UTF8.GetBytes(jwtSecret);
 
     var tokenDescriptor = new SecurityTokenDescriptor
     {

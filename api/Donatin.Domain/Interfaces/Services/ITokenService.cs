@@ -1,4 +1,6 @@
-namespace Donatin.Domain.Interfaces;
+using Donatin.Domain.Entities;
+
+namespace Donatin.Domain.Interfaces.Services;
 
 public interface ITokenService
 {

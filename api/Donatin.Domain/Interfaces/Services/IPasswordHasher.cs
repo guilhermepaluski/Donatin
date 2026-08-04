@@ -1,4 +1,4 @@
-namespace Donatin.Domain.Interfaces;
+namespace Donatin.Domain.Interfaces.Services;
 
 public interface IPasswordHasher
 {

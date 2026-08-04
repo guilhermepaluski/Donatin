@@ -1,5 +1,6 @@
 ## --- Compilação e Build do C# / .NET ---
 [Bb]in/
+[Oo]bj/
 [Ob]j/
 out/
 .vscode/
@@ -13,3 +14,6 @@ api/Donatin.Api/appsettings.Local.json
 .env
 *.user
 *.suo
+
+## --- Sistema Operacional ---
+.DS_Store
