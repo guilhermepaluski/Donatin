@@ -1,0 +1,19 @@
+## --- Compilação e Build do C# / .NET ---
+[Bb]in/
+[Oo]bj/
+[Ob]j/
+out/
+.vscode/
+.idea/
+
+## --- Arquivos de Configuração com Segredos Locais ---
+api/Donatin.Api/appsettings.Development.json
+api/Donatin.Api/appsettings.Local.json
+
+## --- Ambientes e Variáveis de Sistema ---
+.env
+*.user
+*.suo
+
+## --- Sistema Operacional ---
+.DS_Store
