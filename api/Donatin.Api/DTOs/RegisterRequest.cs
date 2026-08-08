@@ -1,11 +1,33 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Donatin.API.DTOs;
+namespace Donatin.Api.DTOs;
 
 public record RegisterRequest (
   [Required(ErrorMessage = "O nome é obrigatório.")]
   [StringLength(100, ErrorMessage = "O nome não deve ter mais de 100 caracteres.")]
   string Name,
+
+  [Required(ErrorMessage = "O CPF ou CNPJ é obrigatório.")]
+  [MaxLength(14, ErrorMessage = "O CNPJ deve ter no máximo 14 dígitos.")]
+  string CpfCnpj,
+
+  [Required(ErrorMessage = "A data de nascimento/fundação é obrigatória.")]
+  DateOnly BirthDate,
+
+  [Required(ErrorMessage = "O CEP é obrigatório.")]
+  [StringLength(8, MinimumLength = 8, ErrorMessage = "O CEP deve conter exatamente 8 dígitos.")]
+  string Cep,
+
+  [Required(ErrorMessage = "A rua é obrigatória.")]
+  string Street,
+  
+  [Required(ErrorMessage = "O bairro é obrigatório.")]
+  string Neighborhood,
+  
+  [Required(ErrorMessage = "O número é obrigatório.")]
+  string Number,
+
+  string? Complement,
 
   [Required(ErrorMessage = "O e-mail é obrigatório.")]
   [EmailAddress(ErrorMessage = "Formato de e-mail inválido.")]
