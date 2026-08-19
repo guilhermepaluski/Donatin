@@ -7,11 +7,11 @@ namespace Donatin.Infrastructure.Repositories;
 
 public class UserRepository : IUserRepository
 {
-  private readonly AppDbContext _context; // Armazena a referência do DbContext
+  private readonly AppDbContext _context; 
 
   public UserRepository(AppDbContext context)
   {
-    _context = context;
+    _context = context; // Armazena a referência do DbContext
   }
 
   // Método que busca um usuário no PostgreSQL usando o e-mail digitado no Login/Cadastro
