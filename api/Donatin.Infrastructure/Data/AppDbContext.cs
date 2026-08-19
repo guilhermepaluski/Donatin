@@ -8,7 +8,7 @@ public class AppDbContext : DbContext
     // Construtor que repassa as opções de conexão (PostgreSQL) para a classe pai DbContext
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-    // Representa a tabela "Users" dentro do seu banco de dados PostgreSQL
+    // Representa a tabela "Users" dentro do banco de dados PostgreSQL
     public DbSet<User> Users => Set<User>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -23,6 +23,8 @@ public class AppDbContext : DbContext
             entity.Property(u => u.Name).IsRequired().HasMaxLength(100);
             entity.Property(u => u.Email).IsRequired().HasMaxLength(150);
             entity.Property(u => u.PasswordHash).IsRequired();
+            entity.Property(u => u.City).IsRequired().HasMaxLength(100);
+            entity.Property(u => u.Uf).IsRequired().HasMaxLength(2);
         });
     }
 }

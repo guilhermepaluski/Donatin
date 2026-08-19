@@ -29,6 +29,13 @@ public record RegisterRequest (
 
   string? Complement,
 
+  [Required(ErrorMessage = "A cidade é obrigatória.")]
+  string City,
+
+  [Required(ErrorMessage = "A UF (estado) é obrigatória.")]
+  [StringLength(2, MinimumLength = 2, ErrorMessage = "A UF deve conter exatamente 2 letras (ex.: SC).")]
+  string Uf,
+
   [Required(ErrorMessage = "O e-mail é obrigatório.")]
   [EmailAddress(ErrorMessage = "Formato de e-mail inválido.")]
   string Email,

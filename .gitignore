@@ -1,7 +1,6 @@
 ## --- Compilação e Build do C# / .NET ---
 [Bb]in/
 [Oo]bj/
-[Ob]j/
 out/
 .vscode/
 .idea/
