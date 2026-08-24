@@ -16,6 +16,19 @@ out/
 *.user
 *.suo
 
+## --- Flutter / Dart ---
+**/.dart_tool/
+**/build/
+**/.flutter-plugin-dependencies
+**/ios/Pods/
+**/ios/.symlinks/
+**/ios/Flutter/Flutter.podspec
+**/android/.gradle/
+**/android/local.properties
+**/android/key.properties
+**/*.g.dart
+**/*.freezed.dart
+
 ## --- Sistema Operacional (macOS / Windows) ---
 .DS_Store
 Thumbs.db
