@@ -3,16 +3,19 @@
 [Oo]bj/
 out/
 .vscode/
+.vs/
 .idea/
 
 ## --- Arquivos de Configuração com Segredos Locais ---
-api/Donatin.Api/appsettings.Development.json
-api/Donatin.Api/appsettings.Local.json
+**/appsettings.Development.json
+**/appsettings.Local.json
+**/appsettings.json.user
 
 ## --- Ambientes e Variáveis de Sistema ---
 .env
 *.user
 *.suo
 
-## --- Sistema Operacional ---
+## --- Sistema Operacional (macOS / Windows) ---
 .DS_Store
+Thumbs.db
