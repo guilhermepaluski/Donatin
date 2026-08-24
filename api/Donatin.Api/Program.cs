@@ -13,8 +13,10 @@ DotNetEnv.Env.TraversePath().Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
-                       // configurando a conexão com o PostgreSQL com a ConnectionString do appsettings.Development.json
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+                       // configurando a conexão com o PostgreSQL com a ConnectionString do .env
+var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__DonatinDb")
+    ?? builder.Configuration.GetConnectionString("DefaultConnection");
+
 builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
 
 // injetando as dependencias (do Services e do Repositories)
@@ -22,8 +24,9 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 
-// middlewares
-var jwtSecret = builder.Configuration["Jwt:Secret"] ?? "ChaveSecretaSuperSeguraParaDesenvolvimentoLocalComPeloMenos32Caracteres";
+// middlewares (jwt vindo do .env também)
+var jwtSecret = Environment.GetEnvironmentVariable("Jwt__Secret")
+    ?? builder.Configuration["Jwt:Secret"] ?? "ChaveSecretaSuperSeguraParaDesenvolvimentoLocalComPeloMenos32Caracteres";
 var key = Encoding.ASCII.GetBytes(jwtSecret);
 
 builder.Services.AddAuthentication(options =>
