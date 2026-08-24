@@ -3,16 +3,32 @@
 [Oo]bj/
 out/
 .vscode/
+.vs/
 .idea/
 
 ## --- Arquivos de Configuração com Segredos Locais ---
-api/Donatin.Api/appsettings.Development.json
-api/Donatin.Api/appsettings.Local.json
+**/appsettings.Development.json
+**/appsettings.Local.json
+**/appsettings.json.user
 
 ## --- Ambientes e Variáveis de Sistema ---
 .env
 *.user
 *.suo
 
-## --- Sistema Operacional ---
+## --- Flutter / Dart ---
+**/.dart_tool/
+**/build/
+**/.flutter-plugin-dependencies
+**/ios/Pods/
+**/ios/.symlinks/
+**/ios/Flutter/Flutter.podspec
+**/android/.gradle/
+**/android/local.properties
+**/android/key.properties
+**/*.g.dart
+**/*.freezed.dart
+
+## --- Sistema Operacional (macOS / Windows) ---
 .DS_Store
+Thumbs.db
