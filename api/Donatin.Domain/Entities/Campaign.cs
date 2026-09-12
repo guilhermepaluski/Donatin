@@ -66,6 +66,14 @@ public class Campaign
     }
   }
 
+  private static void GoalBiggerThanCurrentAmount(decimal goalAmount, decimal CurrentAmount)
+  {
+    if (goalAmount < CurrentAmount)
+    {
+      throw new ArgumentException("A nova meta não pode ser menor que o valor já arrecadado.", nameof(goalAmount));
+    }
+  }
+
   private static void ConclusionDateInTheFuture(DateTime conclusionDate)
   {
     if (conclusionDate < DateTime.UtcNow)
@@ -89,7 +97,7 @@ public class Campaign
     CurrentAmount += amount;
   }
 
-  public void UpdateCampaign(string title, string description, string? imageUrl)
+  public void UpdateCampaign(string title, string description, string? imageUrl, CampaignCategory category, string product, decimal goalAmount, ReceiveOption receiveOption, DateTime conclusionDate)
   {
     if (!IsActive) // se a campanha não estiver mais ativa
     {
@@ -97,10 +105,18 @@ public class Campaign
     }
 
     ValidateTitle(title);
+    GoalBiggerThanZero(goalAmount);
+    GoalBiggerThanCurrentAmount(goalAmount, CurrentAmount);
+    ConclusionDateInTheFuture(conclusionDate);
 
     Title = title;
     Description = description;
     ImageUrl = imageUrl;
+    Category = category;
+    Product = product;
+    GoalAmount = goalAmount;
+    ReceiveOption = receiveOption;
+    ConclusionDate = conclusionDate;
   }
 
   public void CloseCampaign()

@@ -89,7 +89,6 @@ public class CampaignsController : ControllerBase
   public async Task<ActionResult<CampaignResponseDTO>> Update(Guid id, [FromBody] CampaignUpdateDTO dto)
   {
     var campaign = await _campaignRepository.GetCampaignByIdAsync(id);
-
     if (campaign == null)
     {
       return NotFound(new { message = "Campanha não encontrada." });
@@ -98,22 +97,26 @@ public class CampaignsController : ControllerBase
     // 2. Extrai o ID do usuário logado do token JWT
     var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
     if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
-        return Unauthorized(new { message = "Usuário não autenticado." });
+    {
+      return Unauthorized(new { message = "Usuário não autenticado." });
+    }
 
     // 3. Garante que apenas o criador da campanha possa editá-la
     if (campaign.UserId != userId)
-        return StatusCode(403, new { message = "Você não tem permissão para editar esta campanha." });
+    {
+      return StatusCode(403, new { message = "Você não tem permissão para editar esta campanha." });
+    }
 
     try
     {
-        // 4. Executa o método de domínio criado na Entidade
-        campaign.UpdateCampaign(dto.Title, dto.Description, dto.ImageUrl);
+      // 4. Executa o método de domínio criado na Entidade
+      campaign.UpdateCampaign(dto.Title, dto.Description, dto.ImageUrl, dto.Category, dto.Product, dto.GoalAmount, dto.ReceiveOption, dto.ConclusionDate);
 
-        // 5. Persiste as alterações no PostgreSQL
-        await _campaignRepository.UpdateAsync(campaign);
+      // 5. Persiste as alterações no PostgreSQL
+      await _campaignRepository.UpdateAsync(campaign);
 
-        // 6. Retorna o DTO atualizado
-        return Ok(CampaignResponseDTO.FromEntity(campaign));
+      // 6. Retorna o DTO atualizado
+      return Ok(CampaignResponseDTO.FromEntity(campaign));
     }
     catch (InvalidOperationException ex)
     {
