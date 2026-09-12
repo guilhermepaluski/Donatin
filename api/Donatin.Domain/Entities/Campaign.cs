@@ -29,7 +29,7 @@ public class Campaign
   { }
 
   // construtor real
-  public Campaign(string title, string description, CampaignCategory category, string product, decimal goalAmount, ReceiveOption receiveOption, Guid userId, string imageUrl, DateTime conclusionDate)
+  public Campaign(string title, string description, CampaignCategory category, string product, decimal goalAmount, ReceiveOption receiveOption, Guid userId, string? imageUrl, DateTime conclusionDate)
   {
     ValidateTitle(title);
     GoalBiggerThanZero(goalAmount);
