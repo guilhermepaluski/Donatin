@@ -14,6 +14,10 @@ public record RegisterRequest (
   [Required(ErrorMessage = "A data de nascimento/fundação é obrigatória.")]
   DateOnly BirthDate,
 
+  [Required(ErrorMessage = "O telefone é obrigatório.")]
+  [RegularExpression(@"^\(\d{2}\) \d{5}-\d{4}$", ErrorMessage = "O telefone deve estar no formato (XX) XXXXX-XXXX")]
+  string Phone,
+
   [Required(ErrorMessage = "O CEP é obrigatório.")]
   [StringLength(8, MinimumLength = 8, ErrorMessage = "O CEP deve conter exatamente 8 dígitos.")]
   string Cep,

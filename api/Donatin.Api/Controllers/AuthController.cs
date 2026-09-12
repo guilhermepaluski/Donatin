@@ -40,6 +40,7 @@ public class AuthController : ControllerBase // ControllerBase vem do 'Microsoft
         request.Name,
         request.CpfCnpj,
         request.BirthDate,
+        request.Phone,
         request.Cep,
         request.Street,
         request.Neighborhood,
