@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.Json.Serialization;
 using Donatin.Domain.Interfaces;
 using Donatin.Domain.Interfaces.Repositories;
 using Donatin.Domain.Interfaces.Services;
@@ -13,18 +14,19 @@ DotNetEnv.Env.TraversePath().Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
+// injetando as dependencias (do Services e do Repositories)
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
+builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<ICampaignRepository, CampaignRepository>();
+
                        // configurando a conexão com o PostgreSQL com a ConnectionString do .env
 var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__DonatinDb")
     ?? builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
 
-// injetando as dependencias (do Services e do Repositories)
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
-builder.Services.AddScoped<ITokenService, TokenService>();
-
-// middlewares (jwt vindo do .env também)
+// middlewares (configurando a conexão com o PostgreSQL com a JwtSecret vindo do .env também)
 var jwtSecret = Environment.GetEnvironmentVariable("Jwt__Secret")
     ?? builder.Configuration["Jwt:Secret"] ?? "ChaveSecretaSuperSeguraParaDesenvolvimentoLocalComPeloMenos32Caracteres";
 var key = Encoding.ASCII.GetBytes(jwtSecret);
@@ -58,7 +60,12 @@ builder.Services.AddCors(options =>
   });
 });
 
-builder.Services.AddControllers();
+// config para mapear os Enums como texto bruto no banco (ao invés de id's - 0, 1, 2 etc.)
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+      options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();

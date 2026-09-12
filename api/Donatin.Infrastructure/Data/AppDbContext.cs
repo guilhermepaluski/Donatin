@@ -8,14 +8,15 @@ public class AppDbContext : DbContext
     // Construtor que repassa as opções de conexão (PostgreSQL) para a classe pai DbContext
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-    // Representa a tabela "Users" dentro do banco de dados PostgreSQL
+    // Representa as tabelas dentro do banco de dados PostgreSQL
     public DbSet<User> Users => Set<User>();
+    public DbSet<Campaign> Campaigns => Set<Campaign>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-        // Mapeamento explícito da entidade para o banco de dados
+        // Mapeamento explícito da entidade User para o banco de dados
         modelBuilder.Entity<User>(entity =>
         {
             entity.HasKey(u => u.Id); // Define Id como chave primária
@@ -25,6 +26,18 @@ public class AppDbContext : DbContext
             entity.Property(u => u.PasswordHash).IsRequired();
             entity.Property(u => u.City).IsRequired().HasMaxLength(100);
             entity.Property(u => u.Uf).IsRequired().HasMaxLength(2);
+        });
+
+        modelBuilder.Entity<Campaign>(entity =>
+        {
+            entity.HasKey(c => c.Id);
+            entity.Property(c => c.Title).IsRequired().HasMaxLength(100);
+            entity.Property(c => c.Description).IsRequired().HasMaxLength(400);
+            entity.Property(c => c.Category).IsRequired().HasConversion<string>();
+            entity.Property(c => c.Product).IsRequired().HasMaxLength(50);
+            entity.Property(c => c.GoalAmount).IsRequired();
+            entity.Property(c => c.ReceiveOption).IsRequired().HasConversion<string>();
+            entity.Property(c => c.ConclusionDate).IsRequired();
         });
     }
 }

@@ -6,6 +6,7 @@ public class User
   public string Name { get; private set; } = string.Empty;
   public string CpfCnpj { get; private set; } = string.Empty;
   public DateOnly BirthDate { get; private set; }
+  public string Phone { get; private set; } = string.Empty;
   public string Cep { get; private set; } = string.Empty;
   public string Street { get; private set; } = string.Empty;
   public string Neighborhood { get; private set; } = string.Empty;
@@ -21,12 +22,13 @@ public class User
   private User()
   { }
 
-  public User(string name, string cpfCnpj, DateOnly birthDate, string cep, string street, string neighborhood, string number, string? complement, string city, string uf, string email, string passwordHash)
+  public User(string name, string cpfCnpj, DateOnly birthDate, string phone, string cep, string street, string neighborhood, string number, string? complement, string city, string uf, string email, string passwordHash)
   {
     Id = Guid.NewGuid();
     Name = name;
     CpfCnpj = cpfCnpj;
     BirthDate = birthDate;
+    Phone = phone;
     Cep = cep;
     Street = street;
     Neighborhood = neighborhood;

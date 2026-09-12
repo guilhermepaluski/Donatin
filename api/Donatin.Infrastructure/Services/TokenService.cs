@@ -26,7 +26,7 @@ public class TokenService : ITokenService
     var tokenDescriptor = new SecurityTokenDescriptor
     {
 
-      Subject = new ClaimsIdentity([ // Dados do usuário embutidos dentro do Token
+      Subject = new ClaimsIdentity([                             // Dados do usuário embutidos dentro do Token
         new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()), // id do usuário
         new Claim(ClaimTypes.Email, user.Email),                 // e-mail do usuário
         new Claim(ClaimTypes.Name, user.Name)                    // nome do usuário
