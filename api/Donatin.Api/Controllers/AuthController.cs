@@ -26,39 +26,46 @@ public class AuthController : ControllerBase // ControllerBase vem do 'Microsoft
   [HttpPost("register")]
   public async Task<IActionResult> Register([FromBody] RegisterRequest request, CancellationToken cancellationToken)
   {
-    var existingUser = await _userRepository.GetByEmailAsync(request.Email, cancellationToken);
-    if(existingUser != null)
+    // normaliza o e-mail: sem espaços nas pontas e tudo minúsculo
+    var email = request.Email.Trim().ToLowerInvariant();
+
+    if (await _userRepository.GetByEmailAsync(email, cancellationToken) != null)
     {
-      return BadRequest(new { message = "Este e-mail já está cadastrado."});
+      return Conflict(new { message = "Este e-mail já está cadastrado." });
     }
 
-      // criptografa a senha
-      var passwordHash = _passwordHasher.HashPassword(request.Password);
+    if (await _userRepository.GetByCpfCnpjAsync(request.CpfCnpj, cancellationToken) != null)
+    {
+      return Conflict(new { message = "Este CPF/CNPJ já está cadastrado." });
+    }
 
-      // instancia o Usuario
-      var user = new User(
-        request.Name,
-        request.CpfCnpj,
-        request.BirthDate,
-        request.Phone,
-        request.Cep,
-        request.Street,
-        request.Neighborhood,
-        request.Number,
-        request.Complement,
-        request.City,
-        request.Uf,
-        request.Email,
-        passwordHash
-      );
+    // criptografa a senha
+    var passwordHash = _passwordHasher.HashPassword(request.Password);
 
-      // salva no banco de dados
-      await _userRepository.AddAsync(user, cancellationToken);
+    // instancia o Usuario
+    var user = new User(
+      request.Name,
+      request.CpfCnpj,
+      request.BirthDate,
+      request.Phone,
+      request.Cep,
+      request.Street,
+      request.Neighborhood,
+      request.Number,
+      request.Complement,
+      request.City,
+      request.Uf,
+      email,           // <-- era request.Email; agora vai o e-mail normalizado
+      passwordHash
+    );
 
-                  // gera o token JWT
-      var token = _tokenService.GenerateToken(user);
+    // salva no banco de dados
+    await _userRepository.AddAsync(user, cancellationToken);
 
-      return Ok(new AuthResponse(token, user.Id, user.Name, user.Email));
+                // gera o token JWT
+    var token = _tokenService.GenerateToken(user);
+
+    return Ok(new AuthResponse(token, user.Id, user.Name, user.Email));
   }
 
   // POST /api/auth/login
@@ -66,7 +73,8 @@ public class AuthController : ControllerBase // ControllerBase vem do 'Microsoft
   public async Task<IActionResult> Login([FromBody] LoginRequest request, CancellationToken cancellationToken)
   {
                // busca um usuario criado no banco
-    var user = await _userRepository.GetByEmailAsync(request.Email, cancellationToken);
+    var email = request.Email.Trim().ToLowerInvariant();
+    var user = await _userRepository.GetByEmailAsync(email, cancellationToken);
     if (user == null)
     {
       return Unauthorized(new { message = "Credenciais inválidas." } );
