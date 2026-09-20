@@ -27,6 +27,8 @@ public class AppDbContext : DbContext
             entity.Property(u => u.PasswordHash).IsRequired();
             entity.Property(u => u.City).IsRequired().HasMaxLength(100);
             entity.Property(u => u.Uf).IsRequired().HasMaxLength(2);
+            entity.Property(u => u.CpfCnpj).IsRequired().HasMaxLength(14);
+            entity.HasIndex(u => u.CpfCnpj).IsUnique();
         });
 
         // modelBuilder de Campaign

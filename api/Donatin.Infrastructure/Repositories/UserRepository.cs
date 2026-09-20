@@ -21,6 +21,12 @@ public class UserRepository : IUserRepository
       .FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
   }
 
+  public async Task<User?> GetByCpfCnpjAsync(string cpfCnpj, CancellationToken cancellationToken = default)
+  {
+    return await _context.Users
+      .FirstOrDefaultAsync(u => u.CpfCnpj == cpfCnpj, cancellationToken);
+  }
+
   // Método que adiciona o novo usuário na tabela e salva no banco de dados de forma assíncrona
   public async Task AddAsync(User user, CancellationToken cancellationToken = default)
   {

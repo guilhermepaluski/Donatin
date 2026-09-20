@@ -8,7 +8,7 @@ public record RegisterRequest (
   string Name,
 
   [Required(ErrorMessage = "O CPF ou CNPJ é obrigatório.")]
-  [MaxLength(14, ErrorMessage = "O CNPJ deve ter no máximo 14 dígitos.")]
+  [RegularExpression(@"^(\d{11}|\d{14})$", ErrorMessage = "Informe apenas os dígitos do CPF (11) ou CNPJ (14).")]
   string CpfCnpj,
 
   [Required(ErrorMessage = "A data de nascimento/fundação é obrigatória.")]
