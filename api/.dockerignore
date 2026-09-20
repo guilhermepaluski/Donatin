@@ -1,0 +1,24 @@
+## --- Compilação e Build do C# / .NET ---
+[Bb]in/
+[Oo]bj/
+out/
+.vscode/
+.vs/
+.idea/
+
+## --- Segredos e configs locais ---
+.env
+*.user
+*.suo
+**/appsettings.Development.json
+**/appsettings.Local.json
+**/appsettings.json.user
+
+## --- Git e outros metadados irrelevantes pro build ---
+.git/
+.gitignore
+README.md
+
+## --- Sistema Operacional ---
+.DS_Store
+Thumbs.db

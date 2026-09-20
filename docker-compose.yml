@@ -1,0 +1,36 @@
+services:
+  db:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: donatin
+      POSTGRES_PASSWORD: ${DOCKER_POSTGRES_PASSWORD:?defina DOCKER_POSTGRES_PASSWORD no .env da raiz}
+      POSTGRES_DB: donatin
+    ports:
+      - "5433:5432" # esquerda: porta da maquina / direita: porta do container
+    volumes:
+      - donatin_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U donatin -d donatin"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file:
+      - ./api/.env
+    environment:
+      # Sobrescreve só o host, o resto (Jwt__Secret etc.) vem do .env normalmente
+      ConnectionStrings__DonatinDb: "Host=db;Port=5432;Database=donatin;Username=donatin;Password=${DOCKER_POSTGRES_PASSWORD:?defina DOCKER_POSTGRES_PASSWORD no .env da raiz}"
+    ports:
+      - "5080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  donatin_pgdata:
