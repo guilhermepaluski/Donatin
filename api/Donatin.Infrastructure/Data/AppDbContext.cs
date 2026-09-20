@@ -11,12 +11,13 @@ public class AppDbContext : DbContext
     // Representa as tabelas dentro do banco de dados PostgreSQL
     public DbSet<User> Users => Set<User>();
     public DbSet<Campaign> Campaigns => Set<Campaign>();
+    public DbSet<Donation> Donations => Set<Donation>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-        // Mapeamento explícito da entidade User para o banco de dados
+        // modelBuilder de User
         modelBuilder.Entity<User>(entity =>
         {
             entity.HasKey(u => u.Id); // Define Id como chave primária
@@ -28,6 +29,7 @@ public class AppDbContext : DbContext
             entity.Property(u => u.Uf).IsRequired().HasMaxLength(2);
         });
 
+        // modelBuilder de Campaign
         modelBuilder.Entity<Campaign>(entity =>
         {
             entity.HasKey(c => c.Id);
@@ -38,6 +40,30 @@ public class AppDbContext : DbContext
             entity.Property(c => c.GoalAmount).IsRequired();
             entity.Property(c => c.ReceiveOption).IsRequired().HasConversion<string>();
             entity.Property(c => c.ConclusionDate).IsRequired();
+
+            /*entity.HasOne(d => d.User)
+                  .WithMany()
+                  .HasForeignKey(d => d.UserId) // FK
+                  .OnDelete(DeleteBehavior.Restrict);  // restrict é para anonimizar, ao invés de excluir do banco*/
+        });
+
+        // modelBuilder de Donation
+        modelBuilder.Entity<Donation>(entity =>
+        {
+            entity.HasKey(d => d.Id);
+            entity.Property(d => d.Quantity).IsRequired();
+            entity.Property(d => d.Notes).HasMaxLength(400);
+            entity.Property(d => d.Status).HasConversion<string>().HasMaxLength(20);
+
+            entity.HasOne(d => d.User)
+                  .WithMany()
+                  .HasForeignKey(d => d.UserId) // FK
+                  .OnDelete(DeleteBehavior.Restrict); // restrict é para anonimizar, ao invés de excluir do banco
+
+            entity.HasOne(d => d.Campaign)
+                  .WithMany()
+                  .HasForeignKey(d => d.CampaignId) // FK
+                  .OnDelete(DeleteBehavior.Restrict); // restrict é para anonimizar, ao invés de excluir do banco
         });
     }
 }

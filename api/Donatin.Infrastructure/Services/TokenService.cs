@@ -25,7 +25,6 @@ public class TokenService : ITokenService
 
     var tokenDescriptor = new SecurityTokenDescriptor
     {
-
       Subject = new ClaimsIdentity([                             // Dados do usuário embutidos dentro do Token
         new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()), // id do usuário
         new Claim(ClaimTypes.Email, user.Email),                 // e-mail do usuário
@@ -37,7 +36,10 @@ public class TokenService : ITokenService
       SigningCredentials = new SigningCredentials( // assinatura digital que garante que o Token não foi alterado
         new SymmetricSecurityKey(key),
         SecurityAlgorithms.HmacSha256Signature
-      )
+      ),
+
+      Issuer = _configuration["Jwt:Issuer"],
+      Audience = _configuration["Jwt:Audience"]
     };
 
     var token = tokenHandler.CreateToken(tokenDescriptor); // cria o objeto do Token

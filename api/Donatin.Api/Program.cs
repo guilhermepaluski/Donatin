@@ -1,6 +1,5 @@
 using System.Text;
 using System.Text.Json.Serialization;
-using Donatin.Domain.Interfaces;
 using Donatin.Domain.Interfaces.Repositories;
 using Donatin.Domain.Interfaces.Services;
 using Donatin.Infrastructure.Data;
@@ -14,22 +13,27 @@ DotNetEnv.Env.TraversePath().Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
-// injetando as dependencias (do Services e do Repositories)
+// injeção de dependencia
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<ICampaignRepository, CampaignRepository>();
+builder.Services.AddScoped<IDonationRepository, DonationRepository>();
 
-                       // configurando a conexão com o PostgreSQL com a ConnectionString do .env
+// ConnectionString vem do .env / variável de ambiente
 var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__DonatinDb")
     ?? builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
 
-// middlewares (configurando a conexão com o PostgreSQL com a JwtSecret vindo do .env também)
-var jwtSecret = Environment.GetEnvironmentVariable("Jwt__Secret")
-    ?? builder.Configuration["Jwt:Secret"] ?? "ChaveSecretaSuperSeguraParaDesenvolvimentoLocalComPeloMenos32Caracteres";
-var key = Encoding.ASCII.GetBytes(jwtSecret);
+var jwtSecret = builder.Configuration["Jwt:Secret"];
+if (string.IsNullOrWhiteSpace(jwtSecret) || jwtSecret.Length < 32)
+{
+  throw new InvalidOperationException("Configure 'Jwt__Secret' (mínimo 32 caracteres) no .env antes de rodar a API.");
+}
+var jwtIssuer = builder.Configuration["Jwt:Issuer"];
+var jwtAudience = builder.Configuration["Jwt:Audience"];
+var key = Encoding.UTF8.GetBytes(jwtSecret); // mesmo encoding do TokenService
 
 builder.Services.AddAuthentication(options =>
 {
@@ -38,29 +42,32 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer(options =>
 {
-  options.RequireHttpsMetadata = false;
-  options.SaveToken = true;
   options.TokenValidationParameters = new TokenValidationParameters
   {
     ValidateIssuerSigningKey = true,
     IssuerSigningKey = new SymmetricSecurityKey(key),
-    ValidateIssuer = false,
-    ValidateAudience = false
+    ValidateIssuer = true,
+    ValidIssuer = jwtIssuer,
+    ValidateAudience = true,
+    ValidAudience = jwtAudience,
+    ValidateLifetime = true,
+    ClockSkew = TimeSpan.FromMinutes(1)
   };
 });
 
-// configuração do CORS
+// CORS: só as origens listadas na configuração (Cors:AllowedOrigins)
+var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
 builder.Services.AddCors(options =>
 {
-  options.AddPolicy("AllowAll", policy =>
+  options.AddPolicy("Frontend", policy =>
   {
-    policy.AllowAnyOrigin()
+    policy.WithOrigins(allowedOrigins)
           .AllowAnyHeader()
           .AllowAnyMethod();
   });
 });
 
-// config para mapear os Enums como texto bruto no banco (ao invés de id's - 0, 1, 2 etc.)
+// enums como texto na API
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
@@ -70,10 +77,17 @@ builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
 
-app.UseCors("AllowAll");
+// aplica as migrations pendentes ao subir (dev/demo)
+using (var scope = app.Services.CreateScope())
+{
+  var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+  db.Database.Migrate(); // aqui é onde está o método de migração (Migrate)
+}
 
-app.UseAuthentication(); // aplica a verificação de quem é o usuário (JWT)
-app.UseAuthorization(); // aplica as permissões de acesso
+app.UseCors("Frontend");
+
+app.UseAuthentication(); // quem é o usuário (JWT)
+app.UseAuthorization();  // o que ele pode acessar
 
 app.MapControllers();
 
