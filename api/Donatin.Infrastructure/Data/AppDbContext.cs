@@ -36,7 +36,7 @@ public class AppDbContext : DbContext
         {
             entity.HasKey(c => c.Id);
             entity.Property(c => c.Title).IsRequired().HasMaxLength(100);
-            entity.Property(c => c.Description).IsRequired().HasMaxLength(400);
+            entity.Property(c => c.Description).IsRequired().HasMaxLength(2000);
             entity.Property(c => c.Category).IsRequired().HasConversion<string>();
             entity.Property(c => c.Product).IsRequired().HasMaxLength(50);
             entity.Property(c => c.GoalAmount).IsRequired();
