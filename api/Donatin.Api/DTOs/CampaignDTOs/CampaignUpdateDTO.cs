@@ -9,7 +9,7 @@ public record CampaignUpdateDTO
   [StringLength(100, MinimumLength = 3, ErrorMessage = "O título deve ter entre 3 e 100 caracteres.")]
   public string Title { get; set; } = string.Empty;
 
-  [Required(ErrorMessage = "A descrição é obrigatória.")]
+  [Required(ErrorMessage = "A descrição da campanha é obrigatória.")]
   [StringLength(2000, ErrorMessage = "A descrição não deve exceder 2000 caracteres.")]
   public string Description { get; set; } = string.Empty;
 
