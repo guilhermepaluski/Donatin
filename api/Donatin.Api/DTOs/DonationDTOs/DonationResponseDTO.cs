@@ -17,6 +17,7 @@ public class DonationResponseDTO
 
   public static DonationResponseDTO FromEntity(Donation donation)
   {
+    // é o que volta (retorno) no POSTMAN ao dar GET
     return new DonationResponseDTO
     {
       Id = donation.Id,

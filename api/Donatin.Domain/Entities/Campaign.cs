@@ -44,10 +44,52 @@ public class Campaign
     CurrentAmount = 0;
     ReceiveOption = receiveOption;
     UserId = userId;
-    ImageUrl = imageUrl;
+    ImageUrl = string.IsNullOrWhiteSpace(imageUrl) ? null : imageUrl.Trim();
     IsActive = true;
     CreatedAt = DateTime.UtcNow;
     ConclusionDate = conclusionDate;
+  }
+
+  public void AddDonation(decimal amount)
+  {
+    if (!IsActive || HasExpired) // se a campanha não estiver mais ativa OU se já expirou
+    {
+      throw new InvalidOperationException("Não é possível doar para uma campanha inativa.");
+    }
+
+    if (amount <= 0) // se a doação for negativa
+    {
+      throw new ArgumentException("A quantidade doada deve ser positiva.", nameof(amount));
+    }
+
+    CurrentAmount += amount;
+  }
+
+  public void UpdateCampaign(string title, string description, string? imageUrl, CampaignCategory category, string product, decimal goalAmount, ReceiveOption receiveOption, DateTime conclusionDate)
+  {
+    if (!IsActive) // se a campanha não estiver mais ativa
+    {
+      throw new InvalidOperationException("Não é possível editar uma campanha inativa.");
+    }
+
+    ValidateTitle(title);
+    GoalBiggerThanZero(goalAmount);
+    GoalBiggerThanCurrentAmount(goalAmount, CurrentAmount);
+    ConclusionDateInTheFuture(conclusionDate);
+
+    Title = title;
+    Description = description;
+    ImageUrl = string.IsNullOrWhiteSpace(imageUrl) ? null : imageUrl.Trim();
+    Category = category;
+    Product = product;
+    GoalAmount = goalAmount;
+    ReceiveOption = receiveOption;
+    ConclusionDate = conclusionDate;
+  }
+
+  public void CloseCampaign()
+  {
+    IsActive = false;
   }
 
   private static void ValidateTitle(string title)
@@ -80,47 +122,5 @@ public class Campaign
     {
       throw new ArgumentException("A data de conclusão da campanha deve ser futura.", nameof(conclusionDate));
     }
-  }
-
-  public void AddDonation(decimal amount)
-  {
-    if (!IsActive || HasExpired) // se a campanha não estiver mais ativa OU se já expirou
-    {
-      throw new InvalidOperationException("Não é possível doar para uma campanha inativa.");
-    }
-
-    if (amount <= 0) // se a doação for negativa
-    {
-      throw new ArgumentException("A quantidade doada deve ser positiva.", nameof(amount));
-    }
-
-    CurrentAmount += amount;
-  }
-
-  public void UpdateCampaign(string title, string description, string? imageUrl, CampaignCategory category, string product, decimal goalAmount, ReceiveOption receiveOption, DateTime conclusionDate)
-  {
-    if (!IsActive) // se a campanha não estiver mais ativa
-    {
-      throw new InvalidOperationException("Não é possível editar uma campanha inativa.");
-    }
-
-    ValidateTitle(title);
-    GoalBiggerThanZero(goalAmount);
-    GoalBiggerThanCurrentAmount(goalAmount, CurrentAmount);
-    ConclusionDateInTheFuture(conclusionDate);
-
-    Title = title;
-    Description = description;
-    ImageUrl = imageUrl;
-    Category = category;
-    Product = product;
-    GoalAmount = goalAmount;
-    ReceiveOption = receiveOption;
-    ConclusionDate = conclusionDate;
-  }
-
-  public void CloseCampaign()
-  {
-    IsActive = false;
   }
 }

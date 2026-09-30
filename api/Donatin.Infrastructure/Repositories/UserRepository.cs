@@ -7,11 +7,16 @@ namespace Donatin.Infrastructure.Repositories;
 
 public class UserRepository : IUserRepository
 {
-  private readonly AppDbContext _context; 
-
+  private readonly AppDbContext _context;
   public UserRepository(AppDbContext context)
   {
     _context = context; // Armazena a referência do DbContext
+  }
+
+  public async Task<User?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+  {
+    return await _context.Users
+      .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
   }
 
   // Método que busca um usuário no PostgreSQL usando o e-mail digitado no Login/Cadastro
@@ -32,5 +37,11 @@ public class UserRepository : IUserRepository
   {
     await _context.Users.AddAsync(user, cancellationToken); // Marca o objeto para ser inserido
     await _context.SaveChangesAsync(cancellationToken);     // Executa o SQL "INSERT INTO Users..."
+  }
+
+  public async Task UpdateAsync(User user, CancellationToken cancellationToken = default)
+  {
+    _context.Users.Update(user);                        // Marca o objeto para ser atualizado
+    await _context.SaveChangesAsync(cancellationToken); // Executa o SQL "INSERT INTO Users..."
   }
 }

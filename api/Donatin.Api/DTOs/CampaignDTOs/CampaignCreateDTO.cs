@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Donatin.Domain.Enums;
+using Donatin.Api.Validation;
 
 namespace Donatin.Api.DTOs.CampaignDTOs;
 
@@ -29,5 +30,6 @@ public record CampaignCreateDTO
   [Required(ErrorMessage = "A data de encerramento da campanha é obrigatória.")]
   public DateTime ConclusionDate { get; set; }
 
+  [OptionalUrl]
   public string? ImageUrl { get; set; }
 }

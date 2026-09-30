@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Donatin.Api.Validation;
 
 namespace Donatin.Api.DTOs;
 
@@ -20,6 +21,7 @@ public record RegisterRequest (
 
   [Required(ErrorMessage = "O CEP é obrigatório.")]
   [StringLength(8, MinimumLength = 8, ErrorMessage = "O CEP deve conter exatamente 8 dígitos.")]
+  [RegularExpression(@"^\d{8}$", ErrorMessage = "O CEP deve conter apenas números.")]
   string Cep,
 
   [Required(ErrorMessage = "A rua é obrigatória.")]
@@ -39,6 +41,12 @@ public record RegisterRequest (
   [Required(ErrorMessage = "A UF (estado) é obrigatória.")]
   [StringLength(2, MinimumLength = 2, ErrorMessage = "A UF deve conter exatamente 2 letras (ex.: SC).")]
   string Uf,
+
+  [StringLength(2000, ErrorMessage = "A descrição não deve exceder 2000 caracteres.")]
+  string? AboutMe,
+
+  [OptionalUrl]
+  string? ProfilePhotoUrl,
 
   [Required(ErrorMessage = "O e-mail é obrigatório.")]
   [EmailAddress(ErrorMessage = "Formato de e-mail inválido.")]

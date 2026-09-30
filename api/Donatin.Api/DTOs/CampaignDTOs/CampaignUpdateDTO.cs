@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Donatin.Domain.Enums;
+using Donatin.Api.Validation;
 
 namespace Donatin.Api.DTOs.CampaignDTOs;
 
@@ -13,6 +14,7 @@ public record CampaignUpdateDTO
   [StringLength(2000, ErrorMessage = "A descrição não deve exceder 2000 caracteres.")]
   public string Description { get; set; } = string.Empty;
 
+  [OptionalUrl]
   public string? ImageUrl { get; set; }
 
   [Required(ErrorMessage = "A categoria da campanha é obrigatória")]
