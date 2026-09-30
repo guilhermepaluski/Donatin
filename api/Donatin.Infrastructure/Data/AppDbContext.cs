@@ -22,13 +22,15 @@ public class AppDbContext : DbContext
         {
             entity.HasKey(u => u.Id); // Define Id como chave primária
             entity.HasIndex(u => u.Email).IsUnique(); // Garante que e-mails não se repitam
+            entity.HasIndex(u => u.CpfCnpj).IsUnique();
             entity.Property(u => u.Name).IsRequired().HasMaxLength(100);
             entity.Property(u => u.Email).IsRequired().HasMaxLength(150);
             entity.Property(u => u.PasswordHash).IsRequired();
             entity.Property(u => u.City).IsRequired().HasMaxLength(100);
             entity.Property(u => u.Uf).IsRequired().HasMaxLength(2);
             entity.Property(u => u.CpfCnpj).IsRequired().HasMaxLength(14);
-            entity.HasIndex(u => u.CpfCnpj).IsUnique();
+            entity.Property(u => u.AboutMe).HasMaxLength(2000);
+            entity.Property(u => u.ProfilePhotoUrl).HasMaxLength(500);
         });
 
         // modelBuilder de Campaign
@@ -43,10 +45,10 @@ public class AppDbContext : DbContext
             entity.Property(c => c.ReceiveOption).IsRequired().HasConversion<string>();
             entity.Property(c => c.ConclusionDate).IsRequired();
 
-            /*entity.HasOne(d => d.User)
+            entity.HasOne(c => c.User)
                   .WithMany()
-                  .HasForeignKey(d => d.UserId) // FK
-                  .OnDelete(DeleteBehavior.Restrict);  // restrict é para anonimizar, ao invés de excluir do banco*/
+                  .HasForeignKey(c => c.UserId) // FK
+                  .OnDelete(DeleteBehavior.Restrict);  // restrict é para anonimizar, ao invés de excluir do banco
         });
 
         // modelBuilder de Donation

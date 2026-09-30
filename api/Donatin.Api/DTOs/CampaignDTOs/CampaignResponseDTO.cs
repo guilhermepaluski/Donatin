@@ -23,6 +23,7 @@ public class CampaignResponseDTO
 
   public static CampaignResponseDTO FromEntity(Campaign campaign)
   {
+    // é o que volta (retorno) no POSTMAN ao dar GET
     return new CampaignResponseDTO
     {
       Id = campaign.Id,

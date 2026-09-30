@@ -55,6 +55,9 @@ public class AuthController : ControllerBase // ControllerBase vem do 'Microsoft
       request.Complement,
       request.City,
       request.Uf,
+      request.AboutMe,
+      request.ProfilePhotoUrl,
+
       email,           // <-- era request.Email; agora vai o e-mail normalizado
       passwordHash
     );
