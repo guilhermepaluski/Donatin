@@ -9,14 +9,25 @@ public class DonationResponseDTO
   public decimal Quantity { get; set; }
   public string? Notes { get; set; }
   public DateTime DonatedAt { get; set; }
-  public DonationStatus Status { get; set; }
+  public DonationStatus Status { get; set; }    // enum 
   public Guid UserId { get; set; }
   public string? DonorName { get; set; }       // só vem preenchido se o User foi carregado (Include)
   public Guid CampaignId { get; set; }
   public string? CampaignTitle { get; set; }   // só vem preenchido se a Campaign foi carregada (Include)
+  
+  public string? OwnerName { get; set; }
+  public string? OwnerPhone { get; set; }
+  public string? OwnerAddress { get; set; }
 
   public static DonationResponseDTO FromEntity(Donation donation)
   {
+    // validação de retorno enquanto a doação está pendente (só aparece se o status for Pendente)
+    var owner = donation.Status == DonationStatus.Pendente
+      ?
+      donation.Campaign?.User
+      :
+      null;
+
     // é o que volta (retorno) no POSTMAN ao dar GET
     return new DonationResponseDTO
     {
@@ -28,7 +39,17 @@ public class DonationResponseDTO
       UserId = donation.UserId,
       DonorName = donation.User?.Name,
       CampaignId = donation.CampaignId,
-      CampaignTitle = donation.Campaign?.Title
+      CampaignTitle = donation.Campaign?.Title,
+      
+      OwnerName = owner?.Name,
+      OwnerPhone = owner?.Phone,
+      OwnerAddress = owner is null
+        ?
+        null
+        :
+        $"{owner.Street}, {owner.Number}"
+          + (string.IsNullOrWhiteSpace(owner.Complement) ? "" : $" - {owner.Complement}")
+          + $" - {owner.Neighborhood}, {owner.City}/{owner.Uf}",
     };
   }
 }
