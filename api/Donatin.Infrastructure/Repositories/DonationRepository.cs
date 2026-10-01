@@ -1,3 +1,5 @@
+// CONSULTAS NO BANCO DE DADOS
+
 using Donatin.Domain.Interfaces.Repositories;
 using Donatin.Domain.Entities;
 using Donatin.Infrastructure.Data;
@@ -20,6 +22,7 @@ public class DonationRepository : IDonationRepository
     return await _context.Donations
       .Include(d => d.User)
       .Include(d => d.Campaign)
+        .ThenInclude(c => c!.User)
       .FirstOrDefaultAsync(d => d.Id == id);
   }
 
@@ -35,6 +38,7 @@ public class DonationRepository : IDonationRepository
   {
     return await _context.Donations
       .Include(d => d.Campaign)
+        .ThenInclude(c => c!.User)
       .Where(d => d.UserId == userId)
       .OrderByDescending(d => d.DonatedAt)
       .ToListAsync();
@@ -44,6 +48,7 @@ public class DonationRepository : IDonationRepository
   {
     return await _context.Donations
       .Include(d => d.Campaign)
+      .Include(d => d.User)
       .Where(d => d.CampaignId == campaignId)
       .OrderByDescending(d => d.DonatedAt)
       .ToListAsync();
