@@ -1,0 +1,20 @@
+/*Importa o Tailwind e a fonte Poppins e define as cores do tema (primary, dark, accent)*/
+
+@import "@fontsource/poppins/400.css";
+@import "@fontsource/poppins/500.css";
+@import "@fontsource/poppins/700.css";
+@import "@fontsource/poppins/800.css";
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Poppins", system-ui, sans-serif;
+  --color-primary: #5a9159;
+  --color-dark: #13301f;
+  --color-accent: #00875a;
+}
+
+@keyframes float-up {
+  0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+  15% { opacity: 0.5; }
+  100% { transform: translateY(-110vh) rotate(25deg); opacity: 0; }
+}
