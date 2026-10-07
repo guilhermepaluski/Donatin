@@ -19,6 +19,12 @@ public class DonationResponseDTO
   public string? OwnerPhone { get; set; }
   public string? OwnerAddress { get; set; }
 
+  static string? BuildAddress(User? u) => u is null ? null : string.Join(" - ", new[]
+  {
+    string.Join(", ", new[] { u.Street, u.Number }.Where(s => !string.IsNullOrWhiteSpace(s))),
+    u.Complement, u.Neighborhood, $"{u.City}/{u.Uf}"
+  }.Where(s => !string.IsNullOrWhiteSpace(s)));
+
   public static DonationResponseDTO FromEntity(Donation donation)
   {
     // validação de retorno enquanto a doação está pendente (só aparece se o status for Pendente)
@@ -43,13 +49,7 @@ public class DonationResponseDTO
       
       OwnerName = owner?.Name,
       OwnerPhone = owner?.Phone,
-      OwnerAddress = owner is null
-        ?
-        null
-        :
-        $"{owner.Street}, {owner.Number}"
-          + (string.IsNullOrWhiteSpace(owner.Complement) ? "" : $" - {owner.Complement}")
-          + $" - {owner.Neighborhood}, {owner.City}/{owner.Uf}",
+      OwnerAddress = BuildAddress(owner)
     };
   }
 }

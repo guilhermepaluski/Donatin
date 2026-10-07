@@ -13,10 +13,12 @@ namespace Donatin.Api.Controllers;
 public class CampaignsController : ControllerBase
 {
   private readonly ICampaignRepository _campaignRepository;
+  private readonly IUserRepository _userRepository;
 
-  public CampaignsController(ICampaignRepository campaignRepository)
+  public CampaignsController(ICampaignRepository campaignRepository, IUserRepository userRepository)
   {
     _campaignRepository = campaignRepository;
+    _userRepository = userRepository;
   }
 
   [HttpGet] // GET All (pega todas as campanhas ativas (e se baseia na categoria de cada uma))
@@ -57,6 +59,17 @@ public class CampaignsController : ControllerBase
     if (userIdClaim == null || !Guid.TryParse(userIdClaim, out var userId))
     {
       return Unauthorized(new { message = "Usuário não autenticado."});
+    }
+
+    if (dto.ReceiveOption is ReceiveOption.Entrega or ReceiveOption.ColetaOuEntrega)
+    {
+      var user = await _userRepository.GetByIdAsync(userId);
+      if (user is null || !user.HasCompleteAddress)
+        return BadRequest(new
+        {
+          message = "Complete seu endereço no perfil para receber doações por entrega.",
+          code = "ADDRESS_REQUIRED"
+        });
     }
 
     try

@@ -28,15 +28,15 @@ public class AuthController : ControllerBase // ControllerBase vem do 'Microsoft
   {
     // normaliza o e-mail: sem espaços nas pontas e tudo minúsculo
     var email = request.Email.Trim().ToLowerInvariant();
-
     if (await _userRepository.GetByEmailAsync(email, cancellationToken) != null)
     {
       return Conflict(new { message = "Este e-mail já está cadastrado." });
     }
 
-    if (await _userRepository.GetByCpfCnpjAsync(request.CpfCnpj, cancellationToken) != null)
+    var cnpj = string.IsNullOrWhiteSpace(request.CpfCnpj) ? null : request.CpfCnpj;
+    if (cnpj != null && await _userRepository.GetByCpfCnpjAsync(cnpj, cancellationToken) != null)
     {
-      return Conflict(new { message = "Este CPF/CNPJ já está cadastrado." });
+      return Conflict(new { message = "Este CNPJ já está cadastrado." });
     }
 
     // criptografa a senha

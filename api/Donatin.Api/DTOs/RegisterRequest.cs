@@ -8,30 +8,24 @@ public record RegisterRequest (
   [StringLength(100, ErrorMessage = "O nome não deve ter mais de 100 caracteres.")]
   string Name,
 
-  [Required(ErrorMessage = "O CPF ou CNPJ é obrigatório.")]
-  [RegularExpression(@"^(\d{11}|\d{14})$", ErrorMessage = "Informe apenas os dígitos do CPF (11) ou CNPJ (14).")]
-  string CpfCnpj,
+  [RegularExpression(@"^\d{14}$", ErrorMessage = "Informe apenas os dígitos do CNPJ (14).")]
+  string? CpfCnpj,
 
-  [Required(ErrorMessage = "A data de nascimento/fundação é obrigatória.")]
-  DateOnly BirthDate,
+  DateOnly? BirthDate,
 
   [Required(ErrorMessage = "O telefone é obrigatório.")]
   [RegularExpression(@"^\(\d{2}\) \d{5}-\d{4}$", ErrorMessage = "O telefone deve estar no formato (XX) XXXXX-XXXX")]
   string Phone,
 
-  [Required(ErrorMessage = "O CEP é obrigatório.")]
   [StringLength(8, MinimumLength = 8, ErrorMessage = "O CEP deve conter exatamente 8 dígitos.")]
   [RegularExpression(@"^\d{8}$", ErrorMessage = "O CEP deve conter apenas números.")]
-  string Cep,
+  string? Cep,
 
-  [Required(ErrorMessage = "A rua é obrigatória.")]
-  string Street,
+  string? Street,
   
-  [Required(ErrorMessage = "O bairro é obrigatório.")]
-  string Neighborhood,
+  string? Neighborhood,
   
-  [Required(ErrorMessage = "O número é obrigatório.")]
-  string Number,
+  string? Number,
 
   string? Complement,
 

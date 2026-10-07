@@ -13,21 +13,17 @@ public record UserUpdateDTO
   [RegularExpression(@"^\(\d{2}\) \d{5}-\d{4}$", ErrorMessage = "O telefone deve estar no formato (XX) XXXXX-XXXX")]
   public string Phone { get; set; } = string.Empty;
 
-  [Required(ErrorMessage = "O CEP é obrigatório.")]
   [StringLength(8, MinimumLength = 8, ErrorMessage = "O CEP deve conter exatamente 8 dígitos.")]
   [RegularExpression(@"^\d{8}$", ErrorMessage = "O CEP deve conter apenas números.")]
-  public string Cep { get; set; } = string.Empty;
+  public string? Cep { get; set; }
 
-  [Required(ErrorMessage = "A rua é obrigatória.")]
-  public string Street { get; set; } = string.Empty;
-  
-  [Required(ErrorMessage = "O bairro é obrigatório.")]
-  public string Neighborhood { get; set; } = string.Empty;
-  
-  [Required(ErrorMessage = "O número é obrigatório.")]
-  public string Number { get; set; } = string.Empty;
+  public string? Street { get; set; }
 
-  public string? Complement { get; set; } = string.Empty;
+  public string? Neighborhood { get; set; }
+
+  public string? Number { get; set; }
+
+  public string? Complement { get; set; }
 
   [Required(ErrorMessage = "A cidade é obrigatória.")]
   public string City { get; set; } = string.Empty;
