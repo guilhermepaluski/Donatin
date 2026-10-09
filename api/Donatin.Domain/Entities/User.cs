@@ -11,13 +11,14 @@ public class User
   public string? Street { get; private set; }
   public string? Neighborhood { get; private set; }
   public string? Number { get; private set; }
-  public string? Complement { get; private set; } // '?' depois de "string" porque o campo de complemento é opcional
+  public string? Complement { get; private set; }
   public string City { get; private set; } = string.Empty;
   public string Uf { get; private set; } = string.Empty;  
   public string? AboutMe { get; private set; } = string.Empty;
   public string? ProfilePhotoUrl { get; private set; } = string.Empty;
   public string Email { get; private set; } = string.Empty;
   public string PasswordHash { get; private set; } = string.Empty;
+  public bool ShowAddressPublicly { get; private set; }
   public DateTime CreatedAt { get; private set; }
 
   // Construtor privado para o EF Core / ORM

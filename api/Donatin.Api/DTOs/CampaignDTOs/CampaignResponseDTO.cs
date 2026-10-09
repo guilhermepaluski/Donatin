@@ -20,6 +20,7 @@ public class CampaignResponseDTO
   public DateTime CreatedAt { get; set; }
   public DateTime ConclusionDate { get; set; }
   public Guid UserId { get; set; }
+  public string? DeliveryNeighborhood { get; set; }
   public string? OwnerName { get; set; }
   public string? OwnerNeighborhood { get; set; }
   public string? OwnerCity { get; set; }
@@ -46,6 +47,7 @@ public class CampaignResponseDTO
       CreatedAt = campaign.CreatedAt,
       ConclusionDate = campaign.ConclusionDate,
       UserId = campaign.UserId,
+      DeliveryNeighborhood = campaign.DeliveryNeighborhood, // só retorna o bairro da campanha
       OwnerName = campaign.User?.Name,
       OwnerNeighborhood = campaign.User?.Neighborhood,
       OwnerCity = campaign.User?.City,

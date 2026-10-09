@@ -61,17 +61,6 @@ public class CampaignsController : ControllerBase
       return Unauthorized(new { message = "Usuário não autenticado."});
     }
 
-    if (dto.ReceiveOption is ReceiveOption.Entrega or ReceiveOption.ColetaOuEntrega)
-    {
-      var user = await _userRepository.GetByIdAsync(userId);
-      if (user is null || !user.HasCompleteAddress)
-        return BadRequest(new
-        {
-          message = "Complete seu endereço no perfil para receber doações por entrega.",
-          code = "ADDRESS_REQUIRED"
-        });
-    }
-
     try
     {
       var campaign = new Campaign(
@@ -83,7 +72,12 @@ public class CampaignsController : ControllerBase
         dto.ReceiveOption,
         userId,
         dto.ImageUrl,
-        dto.ConclusionDate
+        dto.ConclusionDate,
+        dto.DeliveryCep,
+        dto.DeliveryStreet,
+        dto.DeliveryNeighborhood,
+        dto.DeliveryNumber,
+        dto.DeliveryComplement
       );
 
       await _campaignRepository.AddAsync(campaign);
@@ -123,8 +117,8 @@ public class CampaignsController : ControllerBase
     try
     {
       // 4. Executa o método de domínio criado na Entidade
-      campaign.UpdateCampaign(dto.Title, dto.Description, dto.ImageUrl, dto.Category, dto.Product, dto.GoalAmount, dto.ReceiveOption, dto.ConclusionDate);
-
+      campaign.UpdateCampaign(dto.Title, dto.Description, dto.ImageUrl, dto.Category, dto.Product, dto.GoalAmount, dto.ReceiveOption, dto.ConclusionDate, dto.DeliveryCep, dto.DeliveryStreet, dto.DeliveryNeighborhood, dto.DeliveryNumber, dto.DeliveryComplement);
+      
       // 5. Persiste as alterações no PostgreSQL
       await _campaignRepository.UpdateAsync(campaign);
 

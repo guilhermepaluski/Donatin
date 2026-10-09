@@ -32,4 +32,15 @@ public record CampaignCreateDTO
 
   [OptionalUrl]
   public string? ImageUrl { get; set; }
+  
+  [RegularExpression(@"^\d{8}$", ErrorMessage = "O CEP deve conter exatamente 8 dígitos.")]
+  public string? DeliveryCep { get; set; }
+
+  public string? DeliveryStreet { get; set; }
+
+  public string? DeliveryNeighborhood { get; set; }
+
+  public string? DeliveryNumber { get; set; }
+
+  public string? DeliveryComplement { get; set; }
 }
