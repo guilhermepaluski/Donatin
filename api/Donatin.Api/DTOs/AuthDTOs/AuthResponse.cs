@@ -1,4 +1,4 @@
-namespace Donatin.Api.DTOs;
+namespace Donatin.Api.DTOs.AuthDTOs;
 
 // Dados devolvidos pela API ao frontend (depois de um login bem-sucedido)
 public record AuthResponse (

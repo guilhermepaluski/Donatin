@@ -1,4 +1,4 @@
-using Donatin.Api.DTOs;
+using Donatin.Api.DTOs.AuthDTOs;
 using Donatin.Domain.Entities;
 using Donatin.Domain.Interfaces.Repositories;
 using Donatin.Domain.Interfaces.Services;

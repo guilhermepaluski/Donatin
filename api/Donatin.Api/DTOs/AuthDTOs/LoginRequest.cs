@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Donatin.Api.DTOs;
+namespace Donatin.Api.DTOs.AuthDTOs;
 
 public record LoginRequest(
     [Required(ErrorMessage = "O e-mail é obrigatório.")]

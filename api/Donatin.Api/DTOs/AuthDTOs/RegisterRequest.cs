@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Donatin.Api.Validation;
 
-namespace Donatin.Api.DTOs;
+namespace Donatin.Api.DTOs.AuthDTOs;
 
 public record RegisterRequest (
   [Required(ErrorMessage = "O nome é obrigatório.")]
