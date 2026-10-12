@@ -13,12 +13,10 @@ namespace Donatin.Api.Controllers;
 public class CampaignsController : ControllerBase
 {
   private readonly ICampaignRepository _campaignRepository;
-  private readonly IUserRepository _userRepository;
 
-  public CampaignsController(ICampaignRepository campaignRepository, IUserRepository userRepository)
+  public CampaignsController(ICampaignRepository campaignRepository)
   {
     _campaignRepository = campaignRepository;
-    _userRepository = userRepository;
   }
 
   [HttpGet] // GET All (pega todas as campanhas ativas (e se baseia na categoria de cada uma))
@@ -30,7 +28,7 @@ public class CampaignsController : ControllerBase
   }
 
   [HttpGet("{id}")] // GET campanha pelo id
-  public async Task<ActionResult<IEnumerable<CampaignResponseDTO>>> GetCampaignById([FromRoute] Guid id)
+  public async Task<ActionResult<CampaignResponseDTO>> GetCampaignById([FromRoute] Guid id)
   {
     var campaignsId = await _campaignRepository.GetCampaignByIdAsync(id);
 

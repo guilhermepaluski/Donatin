@@ -21,7 +21,7 @@ public record CampaignUpdateDTO
   public CampaignCategory Category { get; set; }
 
   [Required(ErrorMessage = "O produto da campanha é obrigatório.")]
-  [StringLength(50, MinimumLength = 3, ErrorMessage = "A descrição deve ter entre 3 e 50 caracteres.")]
+  [StringLength(50, MinimumLength = 3, ErrorMessage = "O produto deve ter entre 3 e 50 caracteres.")]
   public string Product { get; set; } = string.Empty;
 
   [Range(0.01, double.MaxValue, ErrorMessage = "A meta arrecadada deve ser maior que zero.")]

@@ -21,6 +21,9 @@ public class User
   public bool ShowAddressPublicly { get; private set; }
   public DateTime CreatedAt { get; private set; }
 
+  // Propriedade calculada
+  public bool IsInstitution => !string.IsNullOrWhiteSpace(CpfCnpj);
+
   // Construtor privado para o EF Core / ORM
   private User()
   { }
@@ -32,11 +35,11 @@ public class User
     CpfCnpj = cpfCnpj;
     BirthDate = birthDate;
     Phone = phone;
-    Cep = cep;
-    Street = street;
-    Neighborhood = neighborhood;
-    Number = number;
-    Complement = complement;
+    Cep = IsInstitution ? cep : null;
+    Street = IsInstitution ? street : null;
+    Neighborhood = IsInstitution ? neighborhood : null;
+    Number = IsInstitution ? number : null;
+    Complement = IsInstitution ? complement : null;
     City = city;
     Uf = uf;
     AboutMe = aboutMe;
@@ -53,11 +56,11 @@ public class User
 
     Name = name;
     Phone = phone;
-    Cep = cep;
-    Street = street;
-    Neighborhood = neighborhood;
-    Number = number;
-    Complement = complement;
+    Cep = IsInstitution ? cep : null;
+    Street = IsInstitution ? street : null;
+    Neighborhood = IsInstitution ? neighborhood : null;
+    Number = IsInstitution ? number : null;
+    Complement = IsInstitution ? complement : null;
     City = city;
     Uf = uf;
     AboutMe = aboutMe;

@@ -9,32 +9,33 @@ public class DonationResponseDTO
   public decimal Quantity { get; set; }
   public string? Notes { get; set; }
   public DateTime DonatedAt { get; set; }
-  public DonationStatus Status { get; set; }    // enum 
+  public DonationStatus Status { get; set; }
   public Guid UserId { get; set; }
-  public string? DonorName { get; set; }       // só vem preenchido se o User foi carregado (Include)
+  public string? DonorName { get; set; }                 // só vem preenchido se o User foi carregado (Include)
   public Guid CampaignId { get; set; }
-  public string? CampaignTitle { get; set; }   // só vem preenchido se a Campaign foi carregada (Include)
-  
-  public string? OwnerName { get; set; }
-  public string? OwnerPhone { get; set; }
-  public string? OwnerAddress { get; set; }
+  public string? CampaignTitle { get; set; }
+  public string? CampaignOwnerName { get; set; }
+  public string? CampaignOwnerPhone { get; set; }
+  public string? CampaignDeliveryAddress { get; set; }
 
-  static string? BuildAddress(User? u) => u is null ? null : string.Join(" - ", new[]
+  private static string? BuildDeliveryAddress(Campaign? c)
   {
-    string.Join(", ", new[] { u.Street, u.Number }.Where(s => !string.IsNullOrWhiteSpace(s))),
-    u.Complement, u.Neighborhood, $"{u.City}/{u.Uf}"
-  }.Where(s => !string.IsNullOrWhiteSpace(s)));
+    if (c is null || string.IsNullOrWhiteSpace(c.DeliveryStreet)) return null;
+
+    return string.Join(" - ", new[]
+    {
+      string.Join(", ", new[] { c.DeliveryStreet, c.DeliveryNumber }.Where(s => !string.IsNullOrWhiteSpace(s))),
+      c.DeliveryComplement,
+      c.DeliveryNeighborhood,
+      c.User is null ? null : $"{c.User.City}/{c.User.Uf}"
+    }.Where(s => !string.IsNullOrWhiteSpace(s)));
+  }
 
   public static DonationResponseDTO FromEntity(Donation donation)
   {
-    // validação de retorno enquanto a doação está pendente (só aparece se o status for Pendente)
-    var owner = donation.Status == DonationStatus.Pendente
-      ?
-      donation.Campaign?.User
-      :
-      null;
+    var campaign = donation.Campaign;
+    var pending = donation.Status == DonationStatus.Pendente;
 
-    // é o que volta (retorno) no POSTMAN ao dar GET
     return new DonationResponseDTO
     {
       Id = donation.Id,
@@ -45,11 +46,11 @@ public class DonationResponseDTO
       UserId = donation.UserId,
       DonorName = donation.User?.Name,
       CampaignId = donation.CampaignId,
-      CampaignTitle = donation.Campaign?.Title,
-      
-      OwnerName = owner?.Name,
-      OwnerPhone = owner?.Phone,
-      OwnerAddress = BuildAddress(owner)
+      CampaignTitle = campaign?.Title,
+
+      CampaignOwnerName = campaign?.User?.Name,
+      CampaignOwnerPhone = pending ? campaign.User?.Phone : null,
+      CampaignDeliveryAddress = BuildDeliveryAddress(campaign)
     };
   }
 }

@@ -45,7 +45,7 @@ public class AuthController : ControllerBase // ControllerBase vem do 'Microsoft
     // instancia o Usuario
     var user = new User(
       request.Name,
-      request.CpfCnpj,
+      cnpj,
       request.BirthDate,
       request.Phone,
       request.Cep,
