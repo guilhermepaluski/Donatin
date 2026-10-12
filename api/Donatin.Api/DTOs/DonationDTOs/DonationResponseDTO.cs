@@ -49,7 +49,7 @@ public class DonationResponseDTO
       CampaignTitle = campaign?.Title,
 
       CampaignOwnerName = campaign?.User?.Name,
-      CampaignOwnerPhone = pending ? campaign.User?.Phone : null,
+      CampaignOwnerPhone = pending ? campaign?.User?.Phone : null,
       CampaignDeliveryAddress = BuildDeliveryAddress(campaign)
     };
   }
