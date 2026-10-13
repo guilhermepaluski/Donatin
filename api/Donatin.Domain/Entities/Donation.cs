@@ -9,6 +9,7 @@ public class Donation
   public string? Notes { get; private set; } = string.Empty;
   public DateTime DonatedAt { get; private set; }
   public DonationStatus Status { get; private set; }
+  public bool IsAnonymous { get; private set; }
 
   // FK User + FK Campaign
   public Guid UserId { get; private set; }
@@ -21,7 +22,7 @@ public class Donation
   { }
 
   // construtor
-  public Donation(decimal quantity, string? notes, Guid userId, Guid campaignId)
+  public Donation(decimal quantity, string? notes, Guid userId, Guid campaignId, bool isAnonymous = false)
   {
     QuantityBiggerThanZero(quantity);
 
@@ -30,6 +31,7 @@ public class Donation
     Notes = notes;
     DonatedAt = DateTime.UtcNow;
     Status = DonationStatus.Pendente;
+    IsAnonymous = isAnonymous;
     UserId = userId;
     CampaignId = campaignId;
   }

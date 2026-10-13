@@ -10,7 +10,8 @@ public class DonationResponseDTO
   public string? Notes { get; set; }
   public DateTime DonatedAt { get; set; }
   public DonationStatus Status { get; set; }
-  public Guid UserId { get; set; }
+  public bool IsAnonymous { get; set; }
+  public Guid? UserId { get; set; }
   public string? DonorName { get; set; }                 // só vem preenchido se o User foi carregado (Include)
   public Guid CampaignId { get; set; }
   public string? CampaignTitle { get; set; }
@@ -31,10 +32,12 @@ public class DonationResponseDTO
     }.Where(s => !string.IsNullOrWhiteSpace(s)));
   }
 
-  public static DonationResponseDTO FromEntity(Donation donation)
+  public static DonationResponseDTO FromEntity(Donation donation, Guid viewerId)
   {
     var campaign = donation.Campaign;
     var pending = donation.Status == DonationStatus.Pendente;
+
+    var anonymousDonor = donation.IsAnonymous && donation.UserId != viewerId;
 
     return new DonationResponseDTO
     {
@@ -43,8 +46,9 @@ public class DonationResponseDTO
       Notes = donation.Notes,
       DonatedAt = donation.DonatedAt,
       Status = donation.Status,
-      UserId = donation.UserId,
-      DonorName = donation.User?.Name,
+      IsAnonymous = donation.IsAnonymous,
+      UserId = anonymousDonor ? null : donation.UserId,
+      DonorName = anonymousDonor ? null : donation.User?.Name,
       CampaignId = donation.CampaignId,
       CampaignTitle = campaign?.Title,
 
