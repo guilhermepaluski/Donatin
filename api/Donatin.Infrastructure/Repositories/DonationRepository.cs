@@ -48,6 +48,7 @@ public class DonationRepository : IDonationRepository
   {
     return await _context.Donations
       .Include(d => d.Campaign)
+        .ThenInclude(c => c.User)
       .Include(d => d.User)
       .Where(d => d.CampaignId == campaignId)
       .OrderByDescending(d => d.DonatedAt)
