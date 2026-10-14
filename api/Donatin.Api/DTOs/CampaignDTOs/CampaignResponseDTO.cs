@@ -20,11 +20,10 @@ public class CampaignResponseDTO
   public DateTime CreatedAt { get; set; }
   public DateTime ConclusionDate { get; set; }
   public Guid UserId { get; set; }
-  public string? OwnerName { get; set; }
-  public string? OwnerNeighborhood { get; set; }
-  public string? OwnerCity { get; set; }
-  public string? OwnerUf { get; set; }
-
+  public string? DeliveryNeighborhood { get; set; }
+  public string? OwnerCampaignName { get; set; }
+  public string? OwnerCampaignCity { get; set; }
+  public string? OwnerCampaignUf { get; set; }
 
   public static CampaignResponseDTO FromEntity(Campaign campaign)
   {
@@ -46,10 +45,10 @@ public class CampaignResponseDTO
       CreatedAt = campaign.CreatedAt,
       ConclusionDate = campaign.ConclusionDate,
       UserId = campaign.UserId,
-      OwnerName = campaign.User?.Name,
-      OwnerNeighborhood = campaign.User?.Neighborhood,
-      OwnerCity = campaign.User?.City,
-      OwnerUf = campaign.User?.Uf,
+      OwnerCampaignName = campaign.User?.Name,
+      OwnerCampaignCity = campaign.User?.City,
+      OwnerCampaignUf = campaign.User?.Uf,
+      DeliveryNeighborhood = campaign.DeliveryNeighborhood,
     };
   }
 }

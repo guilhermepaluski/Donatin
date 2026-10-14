@@ -78,4 +78,17 @@ public class UsersController : ControllerBase
       return BadRequest(new { message = ex.Message });
     }
   }
+
+  [HttpGet("{id:guid}/public")] // retorno do perfil do usuário para outros usuários (público)
+  [AllowAnonymous]
+  public async Task<IActionResult> GetPublicProfileAsync(Guid id, CancellationToken cancellationToken = default)
+  {
+    var user = await _userRepository.GetByIdAsync(id, cancellationToken);
+    if (user == null)
+    {
+      return NotFound(new { message = "Usuário não encontrado." });
+    }
+
+    return Ok(PublicUserDTO.FromEntity(user));
+  }
 }

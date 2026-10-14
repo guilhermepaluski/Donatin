@@ -28,7 +28,7 @@ public class AppDbContext : DbContext
             entity.Property(u => u.PasswordHash).IsRequired();
             entity.Property(u => u.City).IsRequired().HasMaxLength(100);
             entity.Property(u => u.Uf).IsRequired().HasMaxLength(2);
-            entity.Property(u => u.CpfCnpj).IsRequired().HasMaxLength(14);
+            entity.Property(u => u.CpfCnpj).HasMaxLength(14);
             entity.Property(u => u.AboutMe).HasMaxLength(2000);
             entity.Property(u => u.ProfilePhotoUrl).HasMaxLength(500);
         });

@@ -28,7 +28,7 @@ public class CampaignsController : ControllerBase
   }
 
   [HttpGet("{id}")] // GET campanha pelo id
-  public async Task<ActionResult<IEnumerable<CampaignResponseDTO>>> GetCampaignById([FromRoute] Guid id)
+  public async Task<ActionResult<CampaignResponseDTO>> GetCampaignById([FromRoute] Guid id)
   {
     var campaignsId = await _campaignRepository.GetCampaignByIdAsync(id);
 
@@ -70,7 +70,12 @@ public class CampaignsController : ControllerBase
         dto.ReceiveOption,
         userId,
         dto.ImageUrl,
-        dto.ConclusionDate
+        dto.ConclusionDate,
+        dto.DeliveryCep,
+        dto.DeliveryStreet,
+        dto.DeliveryNeighborhood,
+        dto.DeliveryNumber,
+        dto.DeliveryComplement
       );
 
       await _campaignRepository.AddAsync(campaign);
@@ -110,8 +115,8 @@ public class CampaignsController : ControllerBase
     try
     {
       // 4. Executa o método de domínio criado na Entidade
-      campaign.UpdateCampaign(dto.Title, dto.Description, dto.ImageUrl, dto.Category, dto.Product, dto.GoalAmount, dto.ReceiveOption, dto.ConclusionDate);
-
+      campaign.UpdateCampaign(dto.Title, dto.Description, dto.ImageUrl, dto.Category, dto.Product, dto.GoalAmount, dto.ReceiveOption, dto.ConclusionDate, dto.DeliveryCep, dto.DeliveryStreet, dto.DeliveryNeighborhood, dto.DeliveryNumber, dto.DeliveryComplement);
+      
       // 5. Persiste as alterações no PostgreSQL
       await _campaignRepository.UpdateAsync(campaign);
 

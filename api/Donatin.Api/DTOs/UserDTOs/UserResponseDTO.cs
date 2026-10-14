@@ -6,19 +6,19 @@ public class UserResponseDTO
 {
   public Guid Id { get; private set; }
   public string Name { get; private set; } = string.Empty;
-  public string CpfCnpj { get; private set; } = string.Empty;
-  public DateOnly BirthDate { get; private set; }
+  public string? CpfCnpj { get; private set; }
+  public DateOnly? BirthDate { get; private set; }
   public string Phone { get; private set; } = string.Empty;
-  public string Cep { get; private set; } = string.Empty;
-  public string Street { get; private set; } = string.Empty;
-  public string Neighborhood { get; private set; } = string.Empty;
-  public string Number { get; private set; } = string.Empty;
+  public string? Cep { get; private set; }
+  public string? Street { get; private set; }
+  public string? Neighborhood { get; private set; }
+  public string? Number { get; private set; }
   public string? Complement { get; private set; }
   public string City { get; private set; } = string.Empty;
   public string Uf { get; private set; } = string.Empty;  
   public string Email { get; private set; } = string.Empty;
   public string? ProfilePhotoUrl { get; private set; }
-  public string? AboutMe { get; private set; } = string.Empty;
+  public string? AboutMe { get; private set; }
   public DateTime CreatedAt { get; private set; }
   
   public static UserResponseDTO FromEntity(User user)

@@ -21,7 +21,7 @@ public record CampaignUpdateDTO
   public CampaignCategory Category { get; set; }
 
   [Required(ErrorMessage = "O produto da campanha é obrigatório.")]
-  [StringLength(50, MinimumLength = 3, ErrorMessage = "A descrição deve ter entre 3 e 50 caracteres.")]
+  [StringLength(50, MinimumLength = 3, ErrorMessage = "O produto deve ter entre 3 e 50 caracteres.")]
   public string Product { get; set; } = string.Empty;
 
   [Range(0.01, double.MaxValue, ErrorMessage = "A meta arrecadada deve ser maior que zero.")]
@@ -32,4 +32,15 @@ public record CampaignUpdateDTO
 
   [Required(ErrorMessage = "A data de encerramento da campanha é obrigatória.")]
   public DateTime ConclusionDate { get; set; }
+
+  [RegularExpression(@"^\d{8}$", ErrorMessage = "O CEP deve conter exatamente 8 dígitos.")]
+  public string? DeliveryCep { get; set; }
+
+  public string? DeliveryStreet { get; set; }
+
+  public string? DeliveryNeighborhood { get; set; }
+
+  public string? DeliveryNumber { get; set; }
+
+  public string? DeliveryComplement { get; set; }
 }

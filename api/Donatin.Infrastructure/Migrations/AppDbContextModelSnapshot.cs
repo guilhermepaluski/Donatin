@@ -41,6 +41,21 @@ namespace Donatin.Infrastructure.Migrations
                     b.Property<decimal>("CurrentAmount")
                         .HasColumnType("numeric");
 
+                    b.Property<string>("DeliveryCep")
+                        .HasColumnType("text");
+
+                    b.Property<string>("DeliveryComplement")
+                        .HasColumnType("text");
+
+                    b.Property<string>("DeliveryNeighborhood")
+                        .HasColumnType("text");
+
+                    b.Property<string>("DeliveryNumber")
+                        .HasColumnType("text");
+
+                    b.Property<string>("DeliveryStreet")
+                        .HasColumnType("text");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(2000)
@@ -125,11 +140,10 @@ namespace Donatin.Infrastructure.Migrations
                         .HasMaxLength(2000)
                         .HasColumnType("character varying(2000)");
 
-                    b.Property<DateOnly>("BirthDate")
+                    b.Property<DateOnly?>("BirthDate")
                         .HasColumnType("date");
 
                     b.Property<string>("Cep")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("City")
@@ -141,7 +155,6 @@ namespace Donatin.Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("CpfCnpj")
-                        .IsRequired()
                         .HasMaxLength(14)
                         .HasColumnType("character varying(14)");
 
@@ -159,11 +172,9 @@ namespace Donatin.Infrastructure.Migrations
                         .HasColumnType("character varying(100)");
 
                     b.Property<string>("Neighborhood")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Number")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("PasswordHash")
@@ -178,8 +189,10 @@ namespace Donatin.Infrastructure.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
+                    b.Property<bool>("ShowAddressPublicly")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Street")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Uf")
