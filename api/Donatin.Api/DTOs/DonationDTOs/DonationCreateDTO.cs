@@ -13,4 +13,6 @@ public record DonationCreateDTO
   [Required(ErrorMessage = "A quantidade doada é obrigatória.")]
   [Range(0.01, double.MaxValue, ErrorMessage = "O valor da doação deve ser maior que zero.")]
   public decimal Quantity { get; set; }
+
+  public bool IsAnonymous { get; set; }
 }

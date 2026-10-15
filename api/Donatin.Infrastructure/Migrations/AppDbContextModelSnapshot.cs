@@ -106,6 +106,9 @@ namespace Donatin.Infrastructure.Migrations
                     b.Property<DateTime>("DonatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<bool>("IsAnonymous")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Notes")
                         .HasMaxLength(400)
                         .HasColumnType("character varying(400)");
