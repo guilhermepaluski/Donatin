@@ -106,6 +106,26 @@ namespace Donatin.Infrastructure.Migrations
                     b.Property<DateTime>("DonatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("DonationMethod")
+                        .IsRequired()
+                        .HasMaxLength(7)
+                        .HasColumnType("character varying(7)");
+
+                    b.Property<string>("DonorCep")
+                        .HasColumnType("text");
+
+                    b.Property<string>("DonorComplement")
+                        .HasColumnType("text");
+
+                    b.Property<string>("DonorNeighborhood")
+                        .HasColumnType("text");
+
+                    b.Property<string>("DonorNumber")
+                        .HasColumnType("text");
+
+                    b.Property<string>("DonorStreet")
+                        .HasColumnType("text");
+
                     b.Property<bool>("IsAnonymous")
                         .HasColumnType("boolean");
 
