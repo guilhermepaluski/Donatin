@@ -91,12 +91,44 @@ public class DonationsController : ControllerBase
     if (campaign.UserId == userId)
       return BadRequest(new { message = "Você não pode doar para a sua própria campanha." });
 
-    if (dto.IsAnonymous && campaign.ReceiveOption == ReceiveOption.Coleta)
-      return BadRequest(new { message = "Em campanhas de coleta é necessário se identificar para contato." });
+    DonationMethod method;
+    switch (campaign.ReceiveOption)
+    {
+      case ReceiveOption.Entrega:
+        method = DonationMethod.Entrega;
+        break;
+      case ReceiveOption.Coleta:
+        method = DonationMethod.Coleta;
+        break;
+      case ReceiveOption.ColetaOuEntrega:
+        if (dto.DonationMethod == null)
+        {
+          return BadRequest(new { message = "Selecione o método da doação: Coleta ou Entrega." });
+        }
+        method = dto.DonationMethod.Value;
+        break;
+
+      default:
+        throw new ArgumentOutOfRangeException(nameof(campaign.ReceiveOption));
+    }
+
+    if (dto.IsAnonymous && method == DonationMethod.Coleta)
+      return BadRequest(new { message = "Em doações com coleta é necessário se identificar." });
 
     try
     {
-      var donation = new Donation(dto.Quantity, dto.Notes, userId, campaign.Id, dto.IsAnonymous);
+      var donation = new Donation(
+        dto.Quantity,
+        dto.Notes,
+        method,
+        dto.DonorCep,
+        dto.DonorStreet,
+        dto.DonorNeighborhood,
+        dto.DonorNumber,
+        dto.DonorComplement,
+        userId,
+        campaign.Id,
+        dto.IsAnonymous);
       await _donationRepository.AddAsync(donation);
 
       return CreatedAtAction(nameof(GetById), new { id = donation.Id }, DonationResponseDTO.FromEntity(donation, userId));

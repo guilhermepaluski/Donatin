@@ -58,6 +58,7 @@ public class AppDbContext : DbContext
             entity.Property(d => d.Quantity).IsRequired();
             entity.Property(d => d.Notes).HasMaxLength(400);
             entity.Property(d => d.Status).HasConversion<string>().HasMaxLength(20);
+            entity.Property(d => d.DonationMethod).HasConversion<string>().HasMaxLength(7);
 
             entity.HasOne(d => d.User)
                   .WithMany()
