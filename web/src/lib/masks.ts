@@ -35,3 +35,13 @@ export function brDateToIso(v: string) {
   const d = new Date(iso)
   return !isNaN(d.getTime()) && d.toISOString().slice(0, 10) === iso && d <= new Date() ? iso : null
 }
+
+// CNPJ: 00.000.000/0000-00
+export function maskCnpj(v: string) {
+  const d = digits(v).slice(0, 14)
+  return d.replace(/^(\d{2})(\d)/, '$1.$2').replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
+    .replace(/\.(\d{3})(\d)/, '.$1/$2').replace(/(\d{4})(\d)/, '$1-$2')
+}
+
+// UF: só letras, maiúsculas, até 2
+export const maskUf = (v: string) => v.replace(/[^a-zA-Z]/g, '').toUpperCase().slice(0, 2)
