@@ -1,36 +1,43 @@
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Link, useNavigate } from 'react-router-dom'
 import { HandHeart, Lock, Mail } from 'lucide-react'
 import { Button } from '../components/PillButton'
 import { TextField } from '../components/TextField'
 import { FloatingEmojis } from '../components/FloatingEmojis'
+import { useAuth } from '../auth/AuthContext'
+import { ApiError } from '../lib/api'
 
 // rules definition
 const schema = z.object({
   email: z.string().min(1, 'Insira o e-mail.').email('Insira um email válido.'),
   password: z.string().min(1, 'Informe a senha'),
 })
-type FormData = z.infer<typeof schema>
+type LoginForm = z.infer<typeof schema>
 
 // Login function
 export default function LoginPage() {
-/*  const { login } = useAuth()
+  const { login } = useAuth()
   const navigate = useNavigate()
   const [formError, setFormError] = useState('')
-  const { registerInput, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormData>({ resolver: zodResolver(schema) })
-  
+  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<LoginForm>({
+    resolver: zodResolver(schema),
+  })
+
   const onSubmit = handleSubmit(async values => {
     setFormError('')
     try {
-      await login (values)
+      await login(values)
       navigate('/', { replace: true })
-    }
-    catch (e) {
-      if (e instanceof ApiError) setFormError(e.message)
-      else throw e
+    } catch (e) {
+      if (e instanceof ApiError)
+        setFormError(e.message)
+      else
+        throw e
     }
   })
-*/
 
   // web frontend
   return (
@@ -55,10 +62,31 @@ export default function LoginPage() {
           <h2 className="text-3xl font-bold text-dark">Bem-vindo de volta</h2>
           <p className="mt-1 text-neutral-600">Entre para continuar doando.</p>
 
-          <form noValidate className="mt-8 space-y-4">
-            <TextField label="E-mail" type="email" placeholder="exemplo@email.com" icon={<Mail size={20} />} />
-            <TextField label="Senha" type="password" placeholder="Digite a senha" icon={<Lock size={20} />} />
-            <Button type="button" className='cursor-pointer'>Entrar</Button>
+          <form noValidate onSubmit={onSubmit} className="mt-8 space-y-4">
+            <TextField
+              label="E-mail"
+              type="email"
+              autoComplete="email"
+              placeholder="exemplo@email.com"
+              icon={<Mail size={20} />}
+              error={errors.email?.message}
+              {...register('email')}
+            />
+            <TextField
+              label="Senha"
+              type="password"
+              autoComplete="current-password"
+              placeholder="Digite a senha"
+              icon={<Lock size={20} />}
+              error={errors.password?.message}
+              {...register('password')}
+            />
+
+            {formError && (
+              <p role="alert" className="rounded-xl bg-red-50 px-3 py-2 text-sm text-red-700">{formError}</p>
+            )}
+
+            <Button type="submit" loading={isSubmitting} className="cursor-pointer">Entrar</Button>
           </form>
 
           <p className="mt-6 text-center">
@@ -70,5 +98,5 @@ export default function LoginPage() {
         </div>
       </section>
     </main>
-  ) 
+  )
 }

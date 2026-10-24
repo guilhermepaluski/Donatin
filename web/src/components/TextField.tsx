@@ -1,6 +1,6 @@
-import type { InputHTMLAttributes, ReactNode } from 'react'
+import type { ComponentProps, ReactNode } from 'react'
 
-type Props = InputHTMLAttributes<HTMLInputElement> & { label: string; icon: ReactNode; error?: string }
+type Props = ComponentProps<'input'> & { label: string; icon: ReactNode; error?: string }
 
 export function TextField({ label, icon, error, id, ...rest }: Props) {
   const fieldId = id ?? rest.name ?? label
