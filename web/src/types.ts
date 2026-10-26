@@ -1,7 +1,15 @@
 // Espelham os DTOs da API (Donatin.Api/DTOs)
-export interface AuthResponse { token: string; userId: string; name: string; email: string }
+export interface AuthResponse {
+  token: string;
+  userId: string;
+  name: string;
+  email: string
+}
 
-export interface LoginRequest { email: string; password: string }
+export interface LoginRequest {
+  email: string;
+  password: string
+}
 
 export interface RegisterRequest {
   name: string
@@ -37,4 +45,30 @@ export interface UserProfile {
   profilePhotoUrl: string | null
   aboutMe: string | null
   createdAt: string
+}
+
+// Espelha CampaignResponseDTO (GET /campaigns)
+export type CampaignCategory = 'Animais' | 'Educacao' | 'Roupas' | 'Higiene' | 'Lazer'
+export type ReceiveOption = 'Coleta' | 'Entrega' | 'ColetaOuEntrega'
+
+export interface Campaign {
+  id: string
+  title: string
+  description: string
+  category: CampaignCategory
+  product: string
+  goalAmount: number
+  currentAmount: number
+  isGoalReached: boolean
+  receiveOption: ReceiveOption
+  imageUrl: string | null
+  isActive: boolean
+  hasExpired: boolean
+  createdAt: string
+  conclusionDate: string
+  userId: string
+  deliveryNeighborhood: string | null
+  ownerCampaignName: string | null
+  ownerCampaignCity: string | null
+  ownerCampaignUf: string | null
 }
