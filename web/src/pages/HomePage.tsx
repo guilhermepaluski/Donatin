@@ -3,20 +3,7 @@ import { ArrowRight, CalendarCheck, Gift, HandHeart, Search } from 'lucide-react
 import { useAuth } from '../auth/AuthContext'
 import { CampaignCard } from '../components/CampaignCard'
 import { CATEGORIES } from '../lib/campaigns'
-import type { Campaign } from '../types'
-
-// PROVISÓRIO: dados de exemplo. Serão trocados pela API (GET /campaigns).
-const base: Campaign = {
-  id: '', title: '', description: '', category: 'Roupas', product: 'peças', goalAmount: 100, currentAmount: 0,
-  isGoalReached: false, receiveOption: 'ColetaOuEntrega', imageUrl: null, isActive: true, hasExpired: false,
-  createdAt: '2026-10-01T00:00:00Z', conclusionDate: '2026-11-30T00:00:00Z', userId: '',
-  deliveryNeighborhood: null, ownerCampaignName: 'ONG Exemplo', ownerCampaignCity: 'Joinville', ownerCampaignUf: 'SC',
-}
-const MOCK: Campaign[] = [
-  { ...base, id: '1', title: 'Agasalhos para o inverno', category: 'Roupas', product: 'agasalhos', goalAmount: 80, currentAmount: 32 },
-  { ...base, id: '2', title: 'Ração para o abrigo de animais', category: 'Animais', product: 'kg de ração', goalAmount: 200, currentAmount: 150 },
-  { ...base, id: '3', title: 'Material escolar para 40 crianças', category: 'Educacao', product: 'kits', goalAmount: 40, currentAmount: 5 },
-]
+import { MOCK_CAMPAIGNS } from '../lib/mockCampaigns'
 
 const STEPS = [
   { icon: Search, title: 'Escolha uma campanha', text: 'Veja o que cada instituição precisa e quanto falta para a meta.' },
@@ -104,7 +91,7 @@ export default function HomePage() {
           </Link>
         </div>
         <div className="grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
-          {MOCK.map(c => <CampaignCard key={c.id} campaign={c} />)}
+          {MOCK_CAMPAIGNS.slice(0, 3).map(c => <CampaignCard key={c.id} campaign={c} />)}
         </div>
       </section>
     </div>
