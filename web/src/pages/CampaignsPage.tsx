@@ -1,8 +1,8 @@
-import { useSearchParams, Link } from 'react-router-dom'
+import { useSearchParams } from 'react-router-dom'
 import { Search } from 'lucide-react'
-import { CampaignCard } from '../components/CampaignCard'
+import { CampaignApiStatusList } from '../components/CampaignApiStatusList'
+import { useCampaigns, useDebounced } from '../lib/useCampaigns'
 import { CATEGORIES } from '../lib/campaigns'
-import { MOCK_CAMPAIGNS } from '../lib/mockCampaigns'
 
 export default function CampaignsPage() {
   // os filtros ficam na URL: /campaigns?category=Roupas&keyword=casaco
@@ -20,10 +20,9 @@ export default function CampaignsPage() {
     setParams(urlSearch, { replace: true })
   }
 
-  // PROVISÓRIO: filtra os dados de exemplo aqui. Com a API, o filtro passa a ser feito no servidor.
-  const campaigns = MOCK_CAMPAIGNS.filter(
-    c => (!category || c.category === category) && c.title.toLowerCase().includes(keyword.toLowerCase()),
-  )
+  // get the campaigns from the API
+  const debouncedKeywordFilter = useDebounced(keyword, 300)
+  const { campaigns, loading, error, reload } = useCampaigns(category, debouncedKeywordFilter)
 
   const categorySelected = (active: boolean) =>
     `cursor-pointer rounded-full border px-4 py-2 text-sm font-medium transition ${
@@ -46,7 +45,7 @@ export default function CampaignsPage() {
           type="search"
           value={keyword}
           onChange={e => setParam('keyword', e.target.value)}
-          placeholder="Buscar por título..."
+          placeholder="Buscar campanhas..."
           className="h-12 w-full rounded-full border border-neutral-300 bg-white pl-12 pr-4 outline-none focus:border-primary focus-visible:outline-2 focus-visible:outline-primary"
         />
       </div>
@@ -66,19 +65,22 @@ export default function CampaignsPage() {
       <div className='flex justify-between w-full'>
       {/* result */}
         <p aria-live="polite" className="text-sm text-neutral-600">
-          {campaigns.length} {campaigns.length === 1 ? 'campanha encontrada' : 'campanhas encontradas'}
+          {loading
+            ? 'Buscando...'
+            : error
+              ? ''
+              : `${campaigns.length} ${campaigns.length === 1 ? 'campanha encontrada' : 'campanhas encontradas'}`
+          }
         </p>
       </div>
 
-      {campaigns.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-neutral-300 bg-white p-10 text-center text-neutral-600">
-          Nenhuma campanha encontrada. Tente outra palavra ou categoria.
-        </div>
-      ) : (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {campaigns.map(c => <CampaignCard key={c.id} campaign={c} />)}
-        </div>
-      )}
+      <CampaignApiStatusList
+        campaigns={campaigns}
+        loading={loading}
+        error={error}
+        onRetry={reload}
+        emptyMessage='Nenhuma campanha encontrada. Tente outra palavra ou categoria.' 
+      />
     </div>
   )
 }

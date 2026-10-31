@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom'
 import { ArrowRight, CalendarCheck, Gift, HandHeart, Search } from 'lucide-react'
 import { useAuth } from '../auth/AuthContext'
-import { CampaignCard } from '../components/CampaignCard'
 import { CATEGORIES } from '../lib/campaigns'
-import { MOCK_CAMPAIGNS } from '../lib/mockCampaigns'
+import { useClosestToGoalCampaigns } from '../lib/useCampaigns'
+import { CampaignApiStatusList } from '../components/CampaignApiStatusList'
 
 const STEPS = [
   { icon: Search, title: 'Escolha uma campanha', text: 'Veja o que cada instituição precisa e quanto falta para a meta.' },
@@ -16,6 +16,7 @@ const sectionTitle = 'text-2xl font-extrabold tracking-tight text-dark sm:text-3
 export default function HomePage() {
   const { user } = useAuth()
   const firstName = user?.name.split(' ')[0]
+  const { campaigns, loading, error, reload } = useClosestToGoalCampaigns(3) // gets the 3 main campaigns
 
   return (
     <div className="space-y-16">
@@ -84,15 +85,19 @@ export default function HomePage() {
 
       {/* campaigns */}
       <section aria-labelledby="recentes">
-        <div className="mb-6 flex items-end justify-between gap-4">
+        <div className="mb-6 flex items-end gap-10">
           <h2 id="recentes" className={sectionTitle}>Campanhas em destaque</h2>
           <Link to="/campaigns" className="shrink-0 font-bold text-dark underline underline-offset-4 hover:text-primary">
             Ver todas
           </Link>
         </div>
-        <div className="grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
-          {MOCK_CAMPAIGNS.slice(0, 3).map(c => <CampaignCard key={c.id} campaign={c} />)}
-        </div>
+        <CampaignApiStatusList
+          campaigns={campaigns}
+          loading={loading}
+          error={error}
+          onRetry={reload}
+          emptyMessage='Ainda não há campanhas ativas.'
+        />
       </section>
     </div>
   )
