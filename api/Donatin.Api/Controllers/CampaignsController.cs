@@ -48,6 +48,15 @@ public class CampaignsController : ControllerBase
     return Ok(campaignsByUser.Select(CampaignResponseDTO.FromEntity));
   }
 
+  [HttpGet("closest-to-goal")]
+  public async Task<ActionResult<IEnumerable<CampaignResponseDTO>>> GetClosestToGoalCampaigns([FromQuery] int limit = 3)
+  {
+    limit = Math.Clamp(limit, 1, 20);
+    var closestToGoalCampaigns = await _campaignRepository.GetClosestToGoalCampaignsAsync(limit);
+
+    return Ok(closestToGoalCampaigns.Select(CampaignResponseDTO.FromEntity));
+  }
+
   [HttpPost] // POST (CRIA A CAMPANHA)
   [Authorize]
   public async Task<ActionResult<IEnumerable<CampaignResponseDTO>>> Create([FromBody] CampaignCreateDTO dto)

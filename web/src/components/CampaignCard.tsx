@@ -21,7 +21,7 @@ export function CampaignCard({ campaign: c }: { campaign: Campaign }) {
       )}
 
       <div className="flex flex-1 flex-col gap-3 p-4">
-        <span className="w-fit rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary">
+        <span className="w-fit rounded-full bg-primary px-3 py-1 text-xs font-bold text-white">
           {categoryLabel(c.category)}
         </span>
         <h3 className="line-clamp-2 text-lg font-bold text-dark">{c.title}</h3>

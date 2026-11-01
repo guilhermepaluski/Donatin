@@ -30,6 +30,16 @@ public class CampaignRepository : ICampaignRepository
       .ToListAsync();
   }
 
+  public async Task<IEnumerable<Campaign>> GetClosestToGoalCampaignsAsync(int limit)
+  {
+    return await _context.Campaigns
+      .Include(c => c.User)
+      .Where(c => c.CurrentAmount < c.GoalAmount && c.CurrentAmount > 0 && c.IsActive == true && c.ConclusionDate > DateTime.UtcNow)
+      .OrderByDescending(c => c.CurrentAmount / c.GoalAmount)
+      .Take(limit)
+      .ToListAsync();
+  }
+
   public async Task<IEnumerable<Campaign>> SearchActiveAsync(CampaignCategory? category, string? keyword)
   {
     var query = _context.Campaigns

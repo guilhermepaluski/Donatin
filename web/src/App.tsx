@@ -4,10 +4,10 @@ import AppLayout  from './components/AppLayout'
 import RegisterPage from './pages/RegisterPage'
 import LoginPage from './pages/LoginPage'
 import HomePage from './pages/HomePage'
+import CampaignsPage from './pages/CampaignsPage'
 import { GuestRoute, ProtectedRoute } from './components/ProtectedRoute'
 
 // PROVISÓRIAS: serão trocadas nos próximos passos
-const TempCampaigns = () => <h1 className="text-2xl font-bold text-dark">Campanhas (provisório)</h1>
 const TempCampaign = () => <h1 className="text-2xl font-bold text-dark">Detalhe da campanha (provisório)</h1>
 const TempDonations = () => <h1 className="text-2xl font-bold text-dark">Minhas doações (provisório)</h1>
 
@@ -23,12 +23,12 @@ export default function App() {
 
           <Route element={<AppLayout />}>
             <Route path="/" element={<HomePage />} />
-            <Route path="/campaigns" element={<TempCampaigns />} />
+            <Route path="/campaigns" element={<CampaignsPage />} />
             <Route path="/campaign/:id" element={<TempCampaign />} />
-          </Route>
 
-          <Route element={<ProtectedRoute />}>
-            <Route path="/donations" element={<TempDonations />} />
+            <Route element={<ProtectedRoute />}>
+              <Route path="/donations" element={<TempDonations />} />
+            </Route>
           </Route>
 
           <Route path="*" element={<Navigate to="/" replace />} />
