@@ -8,6 +8,12 @@ type Result = {
   error?: string
 }
 
+type DetailResult = {
+  key: string;
+  campaign?: Campaign;
+  error?: string
+}
+
 // request a list of campaigns and controls "carregando/erro/tentar de novo"
 function useCampaignRequest(path: string) {
   const [result, setResult] = useState<Result | null>(null)
@@ -50,6 +56,39 @@ export function useCampaigns(category: string, keyword: string) {
   
   const query = params.toString()
   return useCampaignRequest(`/campaigns${query ? `?${query}` : ''}`)
+}
+
+// GET /campaigns/${id}
+export function useCampaignDetails(id: string) {
+  const [result, setResult] = useState<DetailResult | null>(null)
+  const [attempt, setAttempt] = useState(0)
+
+  const key = `${id}|${attempt}`
+
+  useEffect(() => {
+    let cancelled = false
+
+    api<Campaign>(`/campaigns/${id}`)
+      .then(campaign => {
+        if (!cancelled)
+          setResult({ key, campaign })
+      })
+      .catch(e => {
+        if (!cancelled)
+          setResult({ key, error: e instanceof ApiError ? e.message : 'Não foi possível carregar a campanha.' })
+      })
+
+    return () => { cancelled = true }
+  }, [key, id])
+
+  const current = result?.key === key ? result : null
+
+  return {
+    campaign: current?.campaign ?? null,
+    loading: !current,
+    error: current?.error ?? null,
+    reload: () => setAttempt(n => n + 1)
+  }
 }
 
 // GET /campaigns/closest-to-goal?limit=3
