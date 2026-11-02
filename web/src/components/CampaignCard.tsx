@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { HandHeart, MapPin } from 'lucide-react'
-import { categoryLabel } from '../lib/campaigns'
+import { categoryLabel } from '../lib/campaignsEnums'
 import type { Campaign } from '../types'
 
 export function CampaignCard({ campaign: c }: { campaign: Campaign }) {
@@ -30,8 +30,8 @@ export function CampaignCard({ campaign: c }: { campaign: Campaign }) {
           <p className="flex items-center gap-1 text-sm text-neutral-600">
             <MapPin size={14} aria-hidden />
             <span className="truncate">
+              {`${c.ownerCampaignCity} · ` && `${c.ownerCampaignCity}/${c.ownerCampaignUf} · `}
               {c.ownerCampaignName}
-              {c.ownerCampaignCity && ` · ${c.ownerCampaignCity}/${c.ownerCampaignUf}`}
             </span>
           </p>
         )}
