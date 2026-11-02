@@ -1,5 +1,5 @@
 import { Link, useParams } from 'react-router-dom'
-import { ArrowLeft, CalendarDays, HandHeart, MapPin, Package, Truck } from 'lucide-react'
+import { CalendarDays, HandHeart, MapPin, Package, Truck } from 'lucide-react'
 import { categoryLabel, RECEIVE_LABELS } from '../lib/campaignsEnums'
 import { useCampaignDetails } from '../lib/useCampaigns'
 
