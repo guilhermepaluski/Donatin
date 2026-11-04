@@ -72,9 +72,6 @@ export default function AppLayout() {
 
       <footer className="border-t border-neutral-200 bg-white px-6 py-10 md:px-15">
         <HandHeart aria-hidden /> <h2 className="text-lg font-bold text-neutral-900">Donatin</h2>
-        <p className="max-w-xs text-sm text-neutral-500">
-          Conectando pessoas e instituições para transformar vidas por meio da doação.
-        </p>
 
         <div className="mx-auto flex max-w-6xl flex-col justify-between md:flex-row md:gap-15">
           {/* Navegação */}

@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { ArrowRight, CalendarCheck, Gift, HandHeart, Search } from 'lucide-react'
 import { useAuth } from '../auth/AuthContext'
-import { CATEGORIES } from '../lib/campaigns'
+import { CATEGORIES } from '../lib/campaignsEnums'
 import { useClosestToGoalCampaigns } from '../lib/useCampaigns'
 import { CampaignApiStatusList } from '../components/CampaignApiStatusList'
 
