@@ -6,6 +6,8 @@ import LoginPage from './pages/LoginPage'
 import HomePage from './pages/HomePage'
 import CampaignsPage from './pages/CampaignsPage'
 import CampaignDetailsPage from './pages/CampaignDetailsPage'
+import CreateCampaignPage from './pages/CreateCampaignPage'
+import DonatePage from './pages/DonatePage'
 import { GuestRoute, ProtectedRoute } from './components/ProtectedRoute'
 
 // PROVISÓRIAS: serão trocadas nos próximos passos
@@ -27,7 +29,10 @@ export default function App() {
             <Route path="/campaigns/:id" element={<CampaignDetailsPage />} />
 
             <Route element={<ProtectedRoute />}>
-              <Route path="/donations" element={<TempDonations />} />
+              <Route path="/create-campaign" element={<CreateCampaignPage />} />
+              <Route path="/campaigns/:id/donate" element={<DonatePage />} />
+              <Route path="/my-donations" element={<TempDonations />} />
+              <Route path="/my-donations/:id" element={<TempDonations />} />
             </Route>
           </Route>
 
