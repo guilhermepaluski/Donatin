@@ -8,7 +8,7 @@ import { Button } from '../components/PillButton'
 import { TextField } from '../components/TextField'
 import { CATEGORIES, RECEIVE_LABELS } from '../lib/campaignsEnums'
 import { api, ApiError } from '../lib/api'
-import { digits, maskCep } from '../lib/masks'
+import { digits, maskCep, maskUf } from '../lib/masks'
 import type { Campaign, CampaignRequest, ReceiveOption } from '../types'
 import { Field, box } from '../components/FieldBox'
 
@@ -30,6 +30,8 @@ const schema = z.object({
   deliveryNeighborhood: z.string(),
   deliveryNumber: z.string(),
   deliveryComplement: z.string(),
+  deliveryCity: z.string(),
+  deliveryUf: z.string(),
 }).superRefine((v, ctx) => {
   const issue = (path: string, message: string) => ctx.addIssue({ code: 'custom', path: [path], message })
 
@@ -45,12 +47,16 @@ const schema = z.object({
     issue('deliveryNeighborhood', 'Informe o bairro.')
   if (!v.deliveryNumber.trim())
     issue('deliveryNumber', 'Informe o número.')
+  if (!v.deliveryCity.trim())
+    issue('deliveryCity', 'Informe a cidade.')
+  if (!/^[A-Za-z]{2}$/.test(v.deliveryUf))
+    issue('deliveryUf', 'O estado deve ter 2 letras (ex.: SC)')
 })
 type CampaignForm = z.infer<typeof schema>
 
 // campos que podem receber erro vindo da API
 const FIELDS = ['title', 'description', 'category', 'product', 'goalAmount', 'receiveOption', 'imageUrl', 'conclusionDate',
-  'deliveryCep', 'deliveryStreet', 'deliveryNeighborhood', 'deliveryNumber', 'deliveryComplement']
+  'deliveryCep', 'deliveryStreet', 'deliveryNeighborhood', 'deliveryNumber', 'deliveryComplement', 'deliveryCity', 'deliveryUf']
 
 const OPTIONS: { value: ReceiveOption; hint: string }[] = [
   { value: 'Entrega', hint: 'O doador leva o item até o endereço que você informar.' },
@@ -66,11 +72,13 @@ export default function CreateCampaignPage() {
   const { register, handleSubmit, control, setValue, setError, formState: { errors, isSubmitting, isSubmitted } } =
     useForm<CampaignForm>({
       resolver: zodResolver(schema),
+
       defaultValues: {
-        title: '', description: '', product: '', receiveOption: 'Entrega', imageUrl: '',
-        conclusionDate: '', deliveryCep: '', deliveryStreet: '', deliveryNeighborhood: '', deliveryNumber: '', deliveryComplement: '',
+        title: '', description: '', product: '', receiveOption: 'Entrega', imageUrl: '', conclusionDate: '',
+        deliveryCep: '', deliveryStreet: '', deliveryNeighborhood: '', deliveryNumber: '', deliveryComplement: '', deliveryCity: '', deliveryUf: ''
       },
     })
+
   const receiveOption = useWatch({ control, name: 'receiveOption' })
   const imageUrl = useWatch({ control, name: 'imageUrl' })
   const needsAddress = receiveOption !== 'Coleta'
@@ -93,6 +101,8 @@ export default function CreateCampaignPage() {
         deliveryNeighborhood: v.deliveryNeighborhood.trim(),
         deliveryNumber: v.deliveryNumber.trim(),
         deliveryComplement: v.deliveryComplement.trim() || undefined,
+        deliveryCity: v.deliveryCity.trim(),
+        deliveryUf: v.deliveryUf
       }),
     }
 
@@ -233,7 +243,10 @@ export default function CreateCampaignPage() {
         {needsAddress && (
           <section className={card}>
             <h2 className="text-lg font-bold text-dark">Endereço de entrega</h2>
-            <p className="-mt-2 text-sm text-neutral-600">Para onde os doadores devem levar os itens.</p>
+            <p className="-mt-2 text-sm text-neutral-600">
+              Para onde os doadores devem levar os itens. <b><span className='text-red-600'>Este endereço será exibido publicamente</span></b> para todos os
+  visitantes. É recomendável informar um ponto de entrega, não necessariamente a sua casa.
+            </p>
             <div className="grid gap-4 sm:grid-cols-2">
               <TextField
                 label="CEP"
@@ -251,6 +264,18 @@ export default function CreateCampaignPage() {
               </div>
               <TextField label="Bairro" placeholder="Bairro" icon={<MapPin size={20} />} error={errors.deliveryNeighborhood?.message} {...register('deliveryNeighborhood')} />
               <TextField label="Complemento (opcional)" placeholder="Sala, bloco..." icon={<MapPin size={20} />} error={errors.deliveryComplement?.message} {...register('deliveryComplement')} />
+              <div className='flex gap-4 grid-cols-[1fr_6rem]'>
+                <TextField label="Cidade" placeholder="Cidade" icon={<MapPin size={20} />} error={errors.deliveryCity?.message} {...register('deliveryCity')}/>
+                <TextField
+                  label="UF"
+                  placeholder="UF"
+                  icon={<MapPin size={20} />}
+                  error={errors.deliveryUf?.message}
+                  {...register('deliveryUf', {
+                    onChange: e => setValue('deliveryUf', maskUf(e.target.value), { shouldValidate: isSubmitted })
+                  })}
+                />
+              </div>
             </div>
           </section>
         )}

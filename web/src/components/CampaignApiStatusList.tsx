@@ -26,7 +26,7 @@ export function CampaignApiStatusList({ campaigns, loading, error, onRetry, empt
 
   if (loading && campaigns.length === 0) // while its loading
     return (
-      <div role="status" aria-label="Carregando campanhas" className={grid}>
+      <div role="status" aria-label="Carregando campanhas..." className={grid}>
         {[0, 1, 2].map(i => <div key={i} className="h-80 animate-pulse rounded-2xl bg-neutral-200" />)}
       </div>
     )

@@ -20,13 +20,27 @@ public class CampaignResponseDTO
   public DateTime CreatedAt { get; set; }
   public DateTime ConclusionDate { get; set; }
   public Guid UserId { get; set; }
-  public string? DeliveryNeighborhood { get; set; }
   public string? OwnerCampaignName { get; set; }
   public string? OwnerCampaignCity { get; set; }
   public string? OwnerCampaignUf { get; set; }
+  public string? CampaignDeliveryAddress { get; set; }
+
+  private static string? BuildDeliveryAddress(Campaign? c)
+  {
+    if (c is null || string.IsNullOrWhiteSpace(c.DeliveryStreet)) return null;
+
+    return string.Join(" - ", new[]
+    {
+      string.Join(", ", new[] { c.DeliveryStreet, c.DeliveryNumber }.Where(s => !string.IsNullOrWhiteSpace(s))),
+      string.Join(", ", new[] { c.DeliveryNeighborhood, $"{c.DeliveryCity}/{c.DeliveryUf}" }.Where(s => !string.IsNullOrWhiteSpace(s))),
+      c.DeliveryComplement
+    }.Where(s => !string.IsNullOrWhiteSpace(s)));
+  }
 
   public static CampaignResponseDTO FromEntity(Campaign campaign)
   {
+    var deliveryOption = campaign.ReceiveOption != ReceiveOption.Coleta;
+
     // é o que volta (retorno) no POSTMAN ao dar GET
     return new CampaignResponseDTO
     {
@@ -48,7 +62,7 @@ public class CampaignResponseDTO
       OwnerCampaignName = campaign.User?.Name,
       OwnerCampaignCity = campaign.User?.City,
       OwnerCampaignUf = campaign.User?.Uf,
-      DeliveryNeighborhood = campaign.DeliveryNeighborhood,
+      CampaignDeliveryAddress = deliveryOption ? BuildDeliveryAddress(campaign) : null
     };
   }
 }

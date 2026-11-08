@@ -84,7 +84,9 @@ public class CampaignsController : ControllerBase
         dto.DeliveryStreet,
         dto.DeliveryNeighborhood,
         dto.DeliveryNumber,
-        dto.DeliveryComplement
+        dto.DeliveryComplement,
+        dto.DeliveryCity,
+        dto.DeliveryUf
       );
 
       await _campaignRepository.AddAsync(campaign);
@@ -124,7 +126,7 @@ public class CampaignsController : ControllerBase
     try
     {
       // 4. Executa o método de domínio criado na Entidade
-      campaign.UpdateCampaign(dto.Title, dto.Description, dto.ImageUrl, dto.Category, dto.Product, dto.GoalAmount, dto.ReceiveOption, dto.ConclusionDate, dto.DeliveryCep, dto.DeliveryStreet, dto.DeliveryNeighborhood, dto.DeliveryNumber, dto.DeliveryComplement);
+      campaign.UpdateCampaign(dto.Title, dto.Description, dto.ImageUrl, dto.Category, dto.Product, dto.GoalAmount, dto.ReceiveOption, dto.ConclusionDate, dto.DeliveryCep, dto.DeliveryStreet, dto.DeliveryNeighborhood, dto.DeliveryNumber, dto.DeliveryComplement, dto.DeliveryCity, dto.DeliveryUf);
       
       // 5. Persiste as alterações no PostgreSQL
       await _campaignRepository.UpdateAsync(campaign);

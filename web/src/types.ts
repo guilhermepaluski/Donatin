@@ -67,10 +67,10 @@ export interface Campaign {
   createdAt: string
   conclusionDate: string
   userId: string
-  deliveryNeighborhood: string | null
   ownerCampaignName: string | null
   ownerCampaignCity: string | null
   ownerCampaignUf: string | null
+  campaignDeliveryAddress: string | null
 }
 
 export interface CampaignRequest {
@@ -87,6 +87,8 @@ export interface CampaignRequest {
   deliveryNeighborhood?: string
   deliveryNumber?: string
   deliveryComplement?: string
+  deliveryCity?: string
+  deliveryUf?: string
 }
 
 export type DonationMethod = 'Coleta' | 'Entrega'

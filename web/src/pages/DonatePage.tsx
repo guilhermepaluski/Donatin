@@ -186,8 +186,7 @@ function DonationForms({ campaign }: { campaign: Campaign }) {
           <p className="flex items-start gap-2 rounded-xl bg-primary/10 px-4 py-3 text-sm text-neutral-700">
             <MapPin size={18} aria-hidden className="mt-0.5 shrink-0 text-primary" />
             <span>
-              {campaign.deliveryNeighborhood && <>Local de entrega: bairro <b>{campaign.deliveryNeighborhood}</b>. </>}
-              O endereço completo aparece depois que você registrar a doação.
+              {campaign.campaignDeliveryAddress && <>Local de entrega: <b>{campaign.campaignDeliveryAddress}</b>. </>}
             </span>
           </p>
         )}
