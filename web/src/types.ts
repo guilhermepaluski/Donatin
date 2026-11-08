@@ -67,8 +67,65 @@ export interface Campaign {
   createdAt: string
   conclusionDate: string
   userId: string
-  deliveryNeighborhood: string | null
   ownerCampaignName: string | null
   ownerCampaignCity: string | null
   ownerCampaignUf: string | null
+  campaignDeliveryAddress: string | null
+}
+
+export interface CampaignRequest {
+  title: string
+  description: string
+  category: CampaignCategory
+  product: string
+  goalAmount: number
+  receiveOption: ReceiveOption
+  conclusionDate: string // ISO em UTC
+  imageUrl?: string
+  deliveryCep?: string
+  deliveryStreet?: string
+  deliveryNeighborhood?: string
+  deliveryNumber?: string
+  deliveryComplement?: string
+  deliveryCity?: string
+  deliveryUf?: string
+}
+
+export type DonationMethod = 'Coleta' | 'Entrega'
+export type DonationStatus = 'Concluida' | 'Pendente' | 'Expirada' | 'Cancelada'
+
+export interface Donation {
+  id: string
+  quantity: number
+  notes: string | null
+  donationMethod: DonationMethod
+  donatedAt: string
+  status: DonationStatus
+  isAnonymous: boolean
+  userId: string | null
+  donorName: string | null
+  donorPhone: string | null
+  donorCep: string | null
+  donorStreet: string | null
+  donorNeighborhood: string | null
+  donorNumber: string | null
+  donorComplement: string | null
+  campaignId: string
+  campaignTitle: string | null
+  campaignOwnerName: string | null
+  campaignOwnerPhone: string | null
+  campaignDeliveryAddress: string | null
+}
+
+export interface DonationRequest {
+  campaignId: string
+  quantity: number
+  notes?: string
+  donationMethod: DonationMethod
+  donorCep?: string
+  donorStreet?: string
+  donorNeighborhood?: string
+  donorNumber?: string
+  donorComplement?: string
+  isAnonymous: boolean
 }

@@ -24,6 +24,8 @@ public class Campaign
   public string? DeliveryNeighborhood { get; private set; }
   public string? DeliveryNumber { get; private set; }
   public string? DeliveryComplement { get; private set; }
+  public string? DeliveryCity { get; private set; }
+  public string? DeliveryUf { get; private set; }
   
   // propriedades CALCULADAS (não vão para o banco)
   public bool IsGoalReached => CurrentAmount >= GoalAmount;
@@ -37,12 +39,12 @@ public class Campaign
   { }
 
   // construtor real
-  public Campaign(string title, string description, CampaignCategory category, string product, decimal goalAmount, ReceiveOption receiveOption, Guid userId, string? imageUrl, DateTime conclusionDate, string? deliveryCep = null, string? deliveryStreet = null, string? deliveryNeighborhood = null, string? deliveryNumber = null, string? deliveryComplement = null)
+  public Campaign(string title, string description, CampaignCategory category, string product, decimal goalAmount, ReceiveOption receiveOption, Guid userId, string? imageUrl, DateTime conclusionDate, string? deliveryCep = null, string? deliveryStreet = null, string? deliveryNeighborhood = null, string? deliveryNumber = null, string? deliveryComplement = null, string? deliveryCity = null, string? deliveryUf = null)
   {
     ValidateTitle(title);
     GoalBiggerThanZero(goalAmount);
     ConclusionDateInTheFuture(conclusionDate);
-    ValidateDeliveryAddress(receiveOption, deliveryCep, deliveryStreet, deliveryNeighborhood, deliveryNumber);
+    ValidateDeliveryAddress(receiveOption, deliveryCep, deliveryStreet, deliveryNeighborhood, deliveryNumber, deliveryCity, deliveryUf);
 
     Id = Guid.NewGuid();
     Title = title;
@@ -58,7 +60,7 @@ public class Campaign
     CreatedAt = DateTime.UtcNow;
     ConclusionDate = conclusionDate;
     
-    SetDeliveryAddress(receiveOption, deliveryCep, deliveryStreet, deliveryNeighborhood, deliveryNumber, deliveryComplement);
+    SetDeliveryAddress(receiveOption, deliveryCep, deliveryStreet, deliveryNeighborhood, deliveryNumber, deliveryComplement, deliveryCity, deliveryUf);
   }
 
   public void AddDonation(decimal amount)
@@ -76,7 +78,7 @@ public class Campaign
     CurrentAmount += amount;
   }
 
-  public void UpdateCampaign(string title, string description, string? imageUrl, CampaignCategory category, string product, decimal goalAmount, ReceiveOption receiveOption, DateTime conclusionDate, string? deliveryCep = null, string? deliveryStreet = null, string? deliveryNeighborhood = null, string? deliveryNumber = null, string? deliveryComplement = null)
+  public void UpdateCampaign(string title, string description, string? imageUrl, CampaignCategory category, string product, decimal goalAmount, ReceiveOption receiveOption, DateTime conclusionDate, string? deliveryCep = null, string? deliveryStreet = null, string? deliveryNeighborhood = null, string? deliveryNumber = null, string? deliveryComplement = null, string? deliveryCity = null, string? deliveryUf = null)
   {
     if (!IsActive) // se a campanha não estiver mais ativa
     {
@@ -87,7 +89,7 @@ public class Campaign
     GoalBiggerThanZero(goalAmount);
     GoalBiggerThanCurrentAmount(goalAmount, CurrentAmount);
     ConclusionDateInTheFuture(conclusionDate);
-    ValidateDeliveryAddress(receiveOption, deliveryCep, deliveryStreet, deliveryNeighborhood, deliveryNumber);
+    ValidateDeliveryAddress(receiveOption, deliveryCep, deliveryStreet, deliveryNeighborhood, deliveryNumber, deliveryCity, deliveryUf);
 
     Title = title;
     Description = description;
@@ -98,7 +100,7 @@ public class Campaign
     ReceiveOption = receiveOption;
     ConclusionDate = conclusionDate;
 
-    SetDeliveryAddress(receiveOption, deliveryCep, deliveryStreet, deliveryNeighborhood, deliveryNumber, deliveryComplement);
+    SetDeliveryAddress(receiveOption, deliveryCep, deliveryStreet, deliveryNeighborhood, deliveryNumber, deliveryComplement, deliveryCity, deliveryUf);
   }
 
   public void CloseCampaign()
@@ -141,7 +143,7 @@ public class Campaign
   private static bool NeedsDeliveryAddress(ReceiveOption option) =>
     option is ReceiveOption.Entrega or ReceiveOption.ColetaOuEntrega;
   
-  private static void ValidateDeliveryAddress(ReceiveOption option, string? cep, string? street, string? neighborhood, string? number)
+  private static void ValidateDeliveryAddress(ReceiveOption option, string? cep, string? street, string? neighborhood, string? number, string? city, string? uf)
   {
     if (!NeedsDeliveryAddress(option)) return;
 
@@ -154,10 +156,20 @@ public class Campaign
     {
       throw new ArgumentException("Informe o CEP do endereço de entrega (8 dígitos).");
     }
+
+    if (city == null)
+    {
+      throw new ArgumentException("Insira a cidade do endereço de entrega.");
+    }
+
+    if (uf == null)
+    {
+      throw new ArgumentException("Informe o estado do endereço de entrega.");
+    }
   }
 
   // só guarda o endereço quando a campanha precisa informar (LGPD)
-  private void SetDeliveryAddress(ReceiveOption option, string? cep, string? street, string? neighborhood, string? number, string? complement)
+  private void SetDeliveryAddress(ReceiveOption option, string? cep, string? street, string? neighborhood, string? number, string? complement, string? city, string? uf)
   {
     var optionSelected = NeedsDeliveryAddress(option);
     DeliveryCep = optionSelected ? cep : null;
@@ -165,5 +177,7 @@ public class Campaign
     DeliveryNeighborhood = optionSelected ? neighborhood?.Trim() : null;
     DeliveryNumber = optionSelected ? number?.Trim() : null;
     DeliveryComplement = optionSelected ? complement?.Trim() : null;
+    DeliveryCity = optionSelected ? city?.Trim() : null;
+    DeliveryUf = optionSelected ? uf : null;
   }
 }

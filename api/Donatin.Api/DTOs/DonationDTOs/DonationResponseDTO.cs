@@ -33,9 +33,8 @@ public class DonationResponseDTO
     return string.Join(" - ", new[]
     {
       string.Join(", ", new[] { c.DeliveryStreet, c.DeliveryNumber }.Where(s => !string.IsNullOrWhiteSpace(s))),
-      c.DeliveryComplement,
-      c.DeliveryNeighborhood,
-      c.User is null ? null : $"{c.User.City}/{c.User.Uf}"
+      string.Join(", ", new[] { c.DeliveryNeighborhood, $"{c.DeliveryCity}/{c.DeliveryUf}" }.Where(s => !string.IsNullOrWhiteSpace(s))),
+      c.DeliveryComplement
     }.Where(s => !string.IsNullOrWhiteSpace(s)));
   }
 

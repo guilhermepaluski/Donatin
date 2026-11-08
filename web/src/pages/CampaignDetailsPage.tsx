@@ -1,20 +1,28 @@
 import { Link, useParams } from 'react-router-dom'
-import { CalendarDays, HandHeart, MapPin, Package, Truck } from 'lucide-react'
+import { CalendarDays, HandHeart, MapPin, Package, Truck, User2 } from 'lucide-react'
 import { categoryLabel, RECEIVE_LABELS } from '../lib/campaignsEnums'
 import { useCampaignDetails } from '../lib/useCampaigns'
+import { donationBlockedReason } from '../lib/donationRules'
+import { useAuth } from '../auth/AuthContext'
 
 export default function CampaignDetailPage() {
   const { id = '' } = useParams()
-  const { campaign, loading, error } = useCampaignDetails(id)
+  const { campaign, loading, error, reload } = useCampaignDetails(id)
+  const { user } = useAuth()
 
   if (loading)
-    return <div role="status" aria-label="Carregando campanhas" className="h-96 animate-pulse rounded-3xl bg-neutral-200" />
+    return <div role="status" aria-label="Carregando campanha..." className="h-96 animate-pulse rounded-3xl bg-neutral-200" />
   
   if (error || !campaign)
     return (
       <div role="alert" className="rounded-2xl border border-red-200 bg-red-50 p-8 text-center text-red-700">
-        <p>{error ?? 'Campanha não encontrada'}</p>
-        <Link to="/campaigns" className="mt-3 inline-block font-bold underline">
+        <p>{error ?? 'Campanha não encontrada.'}</p>
+        <p>
+          <button onClick={reload} className='mt-9 cursor-pointer bg-red-500 rounded-2xl w-45 font-bold text-white'>
+            Tentar novamente
+          </button>
+        </p>
+        <Link to="/campaigns" className="mt-5 inline-block font-bold underline">
           Voltar para a página de Campanhas
         </Link>
       </div>
@@ -22,21 +30,13 @@ export default function CampaignDetailPage() {
 
   const c = campaign
   const percent = Math.min(100, Math.round((c.currentAmount / c.goalAmount) * 100))
-
-  // motivo pelo qual não dá para doar (null = pode doar)
-  const closedReason = !c.isActive
-    ? 'Esta campanha foi encerrada.'
-    : c.hasExpired
-      ? 'O prazo desta campanha terminou.'
-      : c.isGoalReached
-        ? 'Esta campanha já atingiu a meta.'
-        : null
+  const closedReason = donationBlockedReason(c, user?.id)
 
   const facts = [
     { icon: Package, label: 'Estamos arrecadando:', value: c.product },
     { icon: Truck, label: 'Método da doação:', value: RECEIVE_LABELS[c.receiveOption] }, // RECEIVE_LABELS from campaignsEnums.ts
     { icon: CalendarDays, label: 'Prazo:', value: new Date(c.conclusionDate).toLocaleDateString('pt-BR') },
-    ...(c.deliveryNeighborhood ? [{ icon: MapPin, label: 'Local de entrega:', value: c.deliveryNeighborhood }] : []),
+    ...(c.campaignDeliveryAddress ? [{ icon: MapPin, label: 'Local de entrega:', value: c.campaignDeliveryAddress }] : []),
   ]
 
   return (
@@ -65,14 +65,21 @@ export default function CampaignDetailPage() {
           </h1>
 
           {c.ownerCampaignName && (
-            <p className="mt-2 text-neutral-600">
-              Campanha de <b className="text-dark">{c.ownerCampaignName}</b>
-              {c.ownerCampaignCity && ` · ${c.ownerCampaignCity}/${c.ownerCampaignUf}`}
+            <p className="flex mt-2 gap-1 text-neutral-600">
+              <User2 className='text-primary'/> Campanha de <b className="text-dark">{c.ownerCampaignName}</b>
             </p>
           )}
 
+          {/* descrição */}
+          <section aria-labelledby="sobre" className="mt-8">
+            <h2 id="sobre" className="text-[20px] font-extrabold tracking-tight text-dark">Sobre a campanha:</h2>
+            <p className="mt-2 whitespace-pre-line leading-relaxed text-neutral-700">{c.description}</p>
+          </section>
+
+          <hr className="my-6 h-px border-0 bg-gray-300" />
+
           {/* progresso */}
-          <div className="mt-8">
+          <div className="mt-0">
             <p className="text-neutral-600">
               <b className="text-3xl font-extrabold text-dark">{c.currentAmount}</b> de {c.goalAmount} · {c.product}
             </p>
@@ -103,28 +110,31 @@ export default function CampaignDetailPage() {
           </dl>
 
           {/* ação */}
-          <div className="flex justify-center mt-12">
+          <div className="flex flex-col justify-center items-center mt-12">
+            {closedReason ? (
+              <button
+                type="button"
+                disabled
+                className="h-14 w-85 cursor-pointer rounded-full bg-primary text-lg font-bold text-white transition hover:brightness-95 disabled:cursor-not-allowed disabled:bg-neutral-300 disabled:text-neutral-500"
+              >
+                Doar para esta campanha
+              </button>
+            ) : (
+              <Link
+                to={`/campaigns/${id}/donate`}
+                className="grid h-14 w-85 place-items-center rounded-full bg-primary text-lg font-bold text-white transition hover:brightness-95"
+              >
+                Doar para esta campanha
+              </Link>
+            )}
             {closedReason && (
-              <p role="status" className="mb-3 rounded-xl bg-neutral-100 px-4 py-3 text-sm text-neutral-700">
+              <p role="status" className="mb-3 rounded-xl px-4 py-3 text-red-700 mt-6">
                 {closedReason}
               </p>
             )}
-            <button
-              type="button"
-              disabled={!!closedReason}
-              className="h-14 w-85 cursor-pointer rounded-full bg-primary text-lg font-bold text-white transition hover:brightness-95 disabled:cursor-not-allowed disabled:bg-neutral-300 disabled:text-neutral-500"
-            >
-              Doar para esta campanha
-            </button>
           </div>
         </div>
       </div>
-
-      {/* descrição */}
-      <section aria-labelledby="sobre" className="">
-        <h2 id="sobre" className="text-2xl font-extrabold uppercase tracking-tight text-dark">Sobre a campanha</h2>
-        <p className="mt-4 whitespace-pre-line leading-relaxed text-neutral-700">{c.description}</p>
-      </section>
     </div>
   )
 }

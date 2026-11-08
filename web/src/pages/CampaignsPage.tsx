@@ -1,5 +1,5 @@
-import { useSearchParams } from "react-router-dom";
-import { Search } from "lucide-react";
+import { Link, useSearchParams } from "react-router-dom";
+import { PlusCircleIcon, Search } from "lucide-react";
 import { CampaignApiStatusList } from "../components/CampaignApiStatusList";
 import { useCampaigns, useDebounced } from "../lib/useCampaigns";
 import { CATEGORIES } from "../lib/campaignsEnums";
@@ -93,6 +93,13 @@ export default function CampaignsPage() {
               ? ""
               : `${campaigns.length} ${campaigns.length === 1 ? "campanha encontrada" : "campanhas encontradas"}`}
         </p>
+
+        <Link to="/create-campaign">
+          <button className="flex h-14 w-50 items-center justify-center gap-2 rounded-2xl bg-primary text-white cursor-pointer">
+            <PlusCircleIcon className="w-5 h-5"/>
+            <span>Nova campanha</span>
+          </button>
+        </Link>
       </div>
 
       <CampaignApiStatusList

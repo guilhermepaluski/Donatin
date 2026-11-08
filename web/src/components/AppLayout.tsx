@@ -10,7 +10,7 @@ export default function AppLayout() {
   const links = [
     { to: '/', label: 'Início', end: true },
     { to: '/campaigns', label: 'Campanhas', end: false },
-    { to: '/donations', label: 'Doações', end: false },
+    { to: '/my-donations', label: 'Minhas doações', end: false },
   ]
 
   return (

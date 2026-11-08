@@ -30,7 +30,9 @@ export function CampaignCard({ campaign: c }: { campaign: Campaign }) {
           <p className="flex items-center gap-1 text-sm text-neutral-600">
             <MapPin size={14} aria-hidden />
             <span className="truncate">
-              {`${c.ownerCampaignCity} · ` && `${c.ownerCampaignCity}/${c.ownerCampaignUf} · `}
+              {c.ownerCampaignCity && (
+                `${c.ownerCampaignCity}/${c.ownerCampaignUf} · `
+              )}
               {c.ownerCampaignName}
             </span>
           </p>

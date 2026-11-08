@@ -15,5 +15,5 @@ export const categoryLabel = (c: CampaignCategory) => CATEGORIES.find(x => x.val
 export const RECEIVE_LABELS: Record<ReceiveOption, string> = {
   Coleta: 'Coleta',
   Entrega: 'Entrega',
-  ColetaOuEntrega: 'Coleta ou entrega'
+  ColetaOuEntrega: 'Coleta ou Entrega'
 }

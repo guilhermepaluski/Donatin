@@ -43,4 +43,9 @@ public record CampaignUpdateDTO
   public string? DeliveryNumber { get; set; }
 
   public string? DeliveryComplement { get; set; }
+ 
+  public string? DeliveryCity { get; set; }
+
+  [RegularExpression(@"^[A-Za-z]{2}$", ErrorMessage = "A UF deve conter exatamente 2 letras (ex.: SC).")]
+  public string? DeliveryUf { get; set; }
 }

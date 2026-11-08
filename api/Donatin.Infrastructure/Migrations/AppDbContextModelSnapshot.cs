@@ -44,6 +44,9 @@ namespace Donatin.Infrastructure.Migrations
                     b.Property<string>("DeliveryCep")
                         .HasColumnType("text");
 
+                    b.Property<string>("DeliveryCity")
+                        .HasColumnType("text");
+
                     b.Property<string>("DeliveryComplement")
                         .HasColumnType("text");
 
@@ -54,6 +57,9 @@ namespace Donatin.Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("DeliveryStreet")
+                        .HasColumnType("text");
+
+                    b.Property<string>("DeliveryUf")
                         .HasColumnType("text");
 
                     b.Property<string>("Description")
