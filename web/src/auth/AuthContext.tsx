@@ -17,15 +17,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(() => !!tokenStorage.get())
 
   // ao abrir o site: se há token salvo, busca o perfil para confirmar que ainda é válido
+  // usa o próprio `loading` (calculado uma vez ao montar) para decidir: assim ele nunca fica preso em true
   useEffect(() => {
-    if (!tokenStorage.get())
+    if (!loading)
       return
-    
+
     api<UserProfile>('/users/me')
       .then(setUser)
       .catch(() => tokenStorage.clear()) // token expirado/inválido
       .finally(() => setLoading(false))
-  }, [])
+  }, [loading])
 
   // saves the token in localStorage and loads the complete profile
   async function startSession(auth: AuthResponse) {
