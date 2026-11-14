@@ -10,7 +10,7 @@ export default function AppLayout() {
   const links = [
     { to: '/', label: 'Início', end: true },
     { to: '/campaigns', label: 'Campanhas', end: false },
-    { to: '/my-donations', label: 'Minhas doações', end: false },
+    { to: '/my-donations', label: 'Doações', end: false },
   ]
 
   return (
@@ -70,61 +70,61 @@ export default function AppLayout() {
         <Outlet />
       </main>
 
-      <footer className="border-t border-neutral-200 bg-white px-6 py-10 md:px-15">
-        <HandHeart aria-hidden /> <h2 className="text-lg font-bold text-neutral-900">Donatin</h2>
+      <footer className="mx-auto mt-20 border-t border-neutral-200 bg-dark px-6 py-10 md:px-15">
+        <HandHeart aria-hidden /> <h2 className="text-lg font-bold text-white">Donatin</h2>
 
-        <div className="mx-auto flex max-w-6xl flex-col justify-between md:flex-row md:gap-15">
+        <div className="mx-auto mt-8 flex max-w-6xl flex-col justify-between md:flex-row md:gap-15">
           {/* Navegação */}
           <div className="flex flex-col gap-1">
-            <h2 className="text-lg font-bold text-neutral-900">Início</h2>
+            <h2 className="text-lg font-bold text-white">Início</h2>
 
-            <a href="/campanhas" className="text-sm text-neutral-600 hover:text-green-600">
+            <a href="/campanhas" className="text-sm text-white hover:text-green-600">
               Explorar campanhas
             </a>
 
-            <a href="/instituicoes" className="text-sm text-neutral-600 hover:text-green-600">
+            <a href="/instituicoes" className="text-sm text-white hover:text-green-600">
               Instituições
             </a>
 
-            <a href="/como-funciona" className="text-sm text-neutral-600 hover:text-green-600">
+            <a href="/como-funciona" className="text-sm text-white hover:text-green-600">
               Como funciona?
             </a>
           </div>
 
           {/* Para você */}
           <div className="flex flex-col gap-1">
-            <h2 className="text-lg font-bold text-neutral-900">Para você</h2>
+            <h2 className="text-lg font-bold text-white">Para você</h2>
 
-            <a href="/doar" className="text-sm text-neutral-600 hover:text-green-600">
+            <a href="/doar" className="text-sm text-white hover:text-green-600">
               Quero doar
             </a>
 
-            <a href="/campanhas/criar" className="text-sm text-neutral-600 hover:text-green-600">
+            <a href="/campanhas/criar" className="text-sm text-white hover:text-green-600">
               Criar uma campanha
             </a>
 
-            <a href="/instituicoes/cadastrar" className="text-sm text-neutral-600 hover:text-green-600">
+            <a href="/instituicoes/cadastrar" className="text-sm text-white hover:text-green-600">
               Cadastrar uma instituição
             </a>
           </div>
 
           {/* Suporte */}
           <div className="flex flex-col gap-1">
-            <h2 className="text-lg font-bold text-neutral-900">Suporte</h2>
+            <h2 className="text-lg font-bold text-white">Suporte</h2>
 
-            <a href="/faq" className="text-sm text-neutral-600 hover:text-green-600">
+            <a href="/faq" className="text-sm text-white hover:text-green-600">
               Dúvidas frequentes
             </a>
 
-            <a href="/contato" className="text-sm text-neutral-600 hover:text-green-600">
+            <a href="/contato" className="text-sm text-white hover:text-green-600">
               Entre em contato
             </a>
 
-            <a href="/privacidade" className="text-sm text-neutral-600 hover:text-green-600">
+            <a href="/privacidade" className="text-sm text-white hover:text-green-600">
               Política de Privacidade
             </a>
 
-            <a href="/termos" className="text-sm text-neutral-600 hover:text-green-600">
+            <a href="/termos" className="text-sm text-white hover:text-green-600">
               Termos de Uso
             </a>
           </div>
@@ -132,8 +132,8 @@ export default function AppLayout() {
         </div>
 
         {/* Rodapé inferior */}
-        <div className="mx-auto mt-10 max-w-6xl border-t border-neutral-200 pt-6">
-          <p className="text-center text-sm text-neutral-500">
+        <div className="mx-auto mt-10 max-w-6xl border-t border-white pt-6">
+          <p className="text-center text-sm text-white">
             © {new Date().getFullYear()} Donatin. Todos os direitos reservados.
           </p>
         </div>

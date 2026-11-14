@@ -33,7 +33,7 @@ export default function CampaignsPage() {
     }`;
 
   return (
-    <div className="space-y-6">
+    <div className="mx-auto max-w-6xl space-y-6">
       <header>
         <h1 className="text-3xl font-extrabold text-dark">Campanhas</h1>
         <p className="mt-1 text-neutral-600">
