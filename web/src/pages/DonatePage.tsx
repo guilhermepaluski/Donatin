@@ -25,7 +25,9 @@ const schema = z.object({
   donorStreet: z.string(),
   donorNeighborhood: z.string(),
   donorNumber: z.string(),
-  donorComplement: z.string()
+  donorComplement: z.string(),
+  scheduleDate: z.string().min(1, 'Escolha a data e o horário.')
+    .refine(v => !v || new Date(v).getTime() > Date.now(), 'Escolha uma data e horário futuros.')
 }).superRefine((v, ctx) => {
   // regras que só valem na coleta (a instituição busca na casa do doador)
   if (v.donationMethod !== 'Coleta')
@@ -46,9 +48,15 @@ const schema = z.object({
 type DonationForms = z.infer<typeof schema>
 
 const FIELDS = ['quantity', 'notes', 'donationMethod',
-  'donorCep', 'donorStreet', 'donorNeighborhood', 'donorNumber', 'donorComplement', 'isAnonymous']
+  'donorCep', 'donorStreet', 'donorNeighborhood', 'donorNumber', 'donorComplement', 'isAnonymous',
+  'scheduleDate']
 
 const card = 'space-y-4 rounded-3xl border border-neutral-200 bg-white p-6'
+
+const nowForInput = () => {
+  const d = new Date()
+  return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16)
+}
 
 const METHODS = [
   { value: 'Entrega', hint: 'Você leva o item até a instituição.' },
@@ -79,6 +87,7 @@ function DonationForms({ campaign }: { campaign: Campaign }) {
       defaultValues: {
         donationMethod: getMethod, isAnonymous: false, notes: '',
         donorCep: '', donorStreet: '', donorNeighborhood: '', donorNumber: '', donorComplement: '',
+        scheduleDate: '',
       },
     })
   const donationMethod = useWatch({ control, name: 'donationMethod' })
@@ -100,6 +109,7 @@ function DonationForms({ campaign }: { campaign: Campaign }) {
       notes: v.notes.trim(),
       donationMethod: v.donationMethod,
       isAnonymous: v.isAnonymous,
+      scheduleDate: new Date(v.scheduleDate).toISOString(),
       ...(isColeta && {
         donorCep: digits(v.donorCep),
         donorStreet: v.donorStreet.trim(),
@@ -110,8 +120,8 @@ function DonationForms({ campaign }: { campaign: Campaign }) {
     }
 
     try {
-      const donated = await api<Donation>('/donations', { method: 'POST', body })
-      navigate(`/my-donations/${donated.id}`)
+      await api<Donation>('/donations', { method: 'POST', body })
+      navigate(`/my-donations`)
     } catch (e) {
       if (!(e instanceof ApiError))
         throw e
@@ -128,7 +138,7 @@ function DonationForms({ campaign }: { campaign: Campaign }) {
   })
 
   return (
-    <form noValidate onSubmit={onSubmit} className="space-y-6">
+    <form noValidate onSubmit={onSubmit} className="mx-auto max-w-6xl space-y-6">
       {/* quantidade */}
       <section className={card}>
         <h2 className="text-lg font-bold text-dark">Sua doação</h2>
@@ -190,6 +200,25 @@ function DonationForms({ campaign }: { campaign: Campaign }) {
             </span>
           </p>
         )}
+      </section>
+
+      {/* quando */}
+      <section className={card}>
+        <h2 className="text-lg font-bold text-dark">Quando você vai doar?</h2>
+        <p className="-mt-2 text-sm text-neutral-600">
+          {isColeta
+            ? 'Sugira um dia e horário para o dono da campanha buscar a doação.'
+            : 'Sugira um dia e horário para você levar a doação.'}{' '}
+          O dono da campanha poderá pedir outra data caso não consiga receber nesse horário.
+        </p>
+        <TextField
+          label="Data e horário"
+          type="datetime-local"
+          min={nowForInput()}
+          icon={<CalendarDays size={20} />}
+          error={errors.scheduleDate?.message}
+          {...register('scheduleDate')}
+        />
       </section>
 
       {/* endereço de retirada (só na coleta) */}
@@ -294,7 +323,7 @@ export default function DonatePage() {
   const percent = Math.min(100, Math.round((c.currentAmount / c.goalAmount) * 100))
 
   return (
-    <div className="mx-auto space-y-6">
+    <div className="mx-auto max-w-6xl space-y-6">
       <Link to={`/campaigns/${c.id}`} className="inline-flex items-center gap-2 text-sm font-medium text-neutral-600 hover:text-primary">
         <ArrowLeft size={18} aria-hidden /> Voltar para a campanha
       </Link>

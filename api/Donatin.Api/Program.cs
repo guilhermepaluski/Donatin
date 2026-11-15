@@ -19,6 +19,7 @@ builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<ICampaignRepository, CampaignRepository>();
 builder.Services.AddScoped<IDonationRepository, DonationRepository>();
+builder.Services.AddScoped<IScheduleRepository, ScheduleRepository>();
 
 // ConnectionString vem do .env / variável de ambiente
 var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__DonatinDb")

@@ -28,4 +28,7 @@ public record DonationCreateDTO
   public string? DonorComplement { get; set; }
 
   public bool IsAnonymous { get; set; }
+
+  // Schedule
+  public DateTime ScheduleDate { get; set; }
 }

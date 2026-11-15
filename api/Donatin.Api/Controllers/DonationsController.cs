@@ -15,11 +15,13 @@ public class DonationsController : ControllerBase
 {
   private readonly IDonationRepository _donationRepository;
   private readonly ICampaignRepository _campaignRepository;
+  private readonly IScheduleRepository _scheduleRepository;
 
-  public DonationsController(IDonationRepository donationRepository, ICampaignRepository campaignRepository)
+  public DonationsController(IDonationRepository donationRepository, ICampaignRepository campaignRepository, IScheduleRepository scheduleRepository)
   {
     _donationRepository = donationRepository;
     _campaignRepository = campaignRepository;
+    _scheduleRepository = scheduleRepository;
   }
 
   // extrai o id do usuário logado do token JWT
@@ -72,7 +74,7 @@ public class DonationsController : ControllerBase
     return Ok(DonationResponseDTO.FromEntity(donation, userId));
   }
 
-  [HttpPost] // POST (registra uma doação para uma campanha)
+  [HttpPost] // POST new donation
   public async Task<ActionResult<DonationResponseDTO>> Create([FromBody] DonationCreateDTO dto)
   {
     if (!TryGetUserId(out var userId))
@@ -129,7 +131,12 @@ public class DonationsController : ControllerBase
         userId,
         campaign.Id,
         dto.IsAnonymous);
-      await _donationRepository.AddAsync(donation);
+
+      var schedule = new Schedule(
+        donation.Id,
+        dto.ScheduleDate);
+
+      await _donationRepository.AddWithScheduleAsync(donation, schedule); // method that saves Donation and Schedule together
 
       return CreatedAtAction(nameof(GetById), new { id = donation.Id }, DonationResponseDTO.FromEntity(donation, userId));
     }
@@ -187,6 +194,10 @@ public class DonationsController : ControllerBase
     try
     {
       donation.CancelDonation();
+
+      var schedule = await _scheduleRepository.GetScheduleByDonationIdAsync(id);
+      schedule?.RefuseWithDonation();
+
       await _donationRepository.SaveChangesAsync();
       return Ok(DonationResponseDTO.FromEntity(donation, userId));
     }

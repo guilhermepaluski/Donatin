@@ -12,6 +12,7 @@ public class AppDbContext : DbContext
     public DbSet<User> Users => Set<User>();
     public DbSet<Campaign> Campaigns => Set<Campaign>();
     public DbSet<Donation> Donations => Set<Donation>();
+    public DbSet<Schedule> Schedules => Set<Schedule>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -69,6 +70,21 @@ public class AppDbContext : DbContext
                   .WithMany()
                   .HasForeignKey(d => d.CampaignId) // FK
                   .OnDelete(DeleteBehavior.Restrict); // restrict é para anonimizar, ao invés de excluir do banco
+        });
+
+        // modelBuilder de Schedule
+        modelBuilder.Entity<Schedule>(entity =>
+        {
+            entity.HasKey(s => s.Id);
+            entity.Property(s => s.Status).HasConversion<string>().HasMaxLength(20);
+            entity.Property(s => s.CancellationReason).HasMaxLength(400);
+
+            entity.HasOne(s => s.Donation)
+                    .WithOne()
+                    .HasForeignKey<Schedule>(s => s.DonationId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasIndex(s => s.DonationId).IsUnique(); // RN05
         });
     }
 }

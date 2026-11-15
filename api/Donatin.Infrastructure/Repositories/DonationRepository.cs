@@ -55,12 +55,13 @@ public class DonationRepository : IDonationRepository
       .ToListAsync();
   }
 
-  public async Task AddAsync(Donation donation)
+public async Task AddWithScheduleAsync(Donation donation, Schedule schedule)
   {
     await _context.Donations.AddAsync(donation);
+    await _context.Schedules.AddAsync(schedule);
     await _context.SaveChangesAsync();
   }
-  
+
   public async Task UpdateAsync(Donation donation)
   {
     _context.Donations.Update(donation);

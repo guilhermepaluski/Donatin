@@ -159,6 +159,38 @@ namespace Donatin.Infrastructure.Migrations
                     b.ToTable("Donations");
                 });
 
+            modelBuilder.Entity("Donatin.Domain.Entities.Schedule", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("CancellationReason")
+                        .HasMaxLength(400)
+                        .HasColumnType("character varying(400)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("DonationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("ScheduleDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DonationId")
+                        .IsUnique();
+
+                    b.ToTable("Schedules");
+                });
+
             modelBuilder.Entity("Donatin.Domain.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -268,6 +300,17 @@ namespace Donatin.Infrastructure.Migrations
                     b.Navigation("Campaign");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Donatin.Domain.Entities.Schedule", b =>
+                {
+                    b.HasOne("Donatin.Domain.Entities.Donation", "Donation")
+                        .WithOne()
+                        .HasForeignKey("Donatin.Domain.Entities.Schedule", "DonationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Donation");
                 });
 #pragma warning restore 612, 618
         }
