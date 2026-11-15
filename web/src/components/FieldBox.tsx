@@ -13,3 +13,14 @@ export function Field({ label, htmlFor, error, children }: { label: string; html
     </div>
   )
 }
+
+// JUST for ScheduleCard
+export function Field2({ label, htmlFor, error, children }: { label: string; htmlFor: string; error?: string; children: ReactNode }) {
+  return (
+    <div>
+      <label htmlFor={htmlFor} className="mb-1 block text-sm font-medium text-white">{label}</label>
+      {children}
+      {error && <p role="alert" className="mt-1 text-sm text-red-600">{error}</p>}
+    </div>
+  )
+}

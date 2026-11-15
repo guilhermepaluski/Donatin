@@ -28,9 +28,10 @@ export function useFetch<T>(path: string | null) {
   }, [key, path])
 
   const current = result?.key === key ? result : null
+  const oldResult = result?.key.startsWith(`${path}|`) ? result : null
 
   return {
-    data: current?.data ?? null,
+    data: (current ?? oldResult)?.data ?? null,
     loading: !!path && !current,
     error: current?.error ?? null,
     reload: () => setAttempt(n => n + 1),

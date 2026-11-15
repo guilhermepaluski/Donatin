@@ -9,7 +9,7 @@ public interface IDonationRepository
   Task<IEnumerable<Donation>> GetDonationByStatusAsync(DonationStatus status);
   Task<IEnumerable<Donation>> GetDonationByUserIdAsync(Guid userId);
   Task<IEnumerable<Donation>> GetDonationByCampaignIdAsync(Guid campaignId);
-  Task AddAsync(Donation donation);
+  Task AddWithScheduleAsync(Donation donation, Schedule schedule); // doação + agendamento na mesma transação
   Task UpdateAsync(Donation donation);
   Task SaveChangesAsync();
 }

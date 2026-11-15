@@ -128,4 +128,24 @@ export interface DonationRequest {
   donorNumber?: string
   donorComplement?: string
   isAnonymous: boolean
+  scheduleDate: string
+}
+
+export type ScheduleStatus = 'Confirmado' | 'Recusado'
+
+export interface Schedule {
+  id: string
+  scheduleDate: string
+  status: ScheduleStatus
+  cancellationReason: string | null
+  createdAt: string
+  viewerRole: 'Donor' | 'Owner'
+  donationId: string
+  donationMethod: DonationMethod
+  donationStatus: DonationStatus
+  quantity: number
+  donorName: string | null
+  campaignId: string
+  campaignTitle: string | null
+  campaignOwnerName: string | null
 }

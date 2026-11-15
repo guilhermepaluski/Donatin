@@ -1,13 +1,17 @@
 import { Link } from 'react-router-dom'
-import { CalendarDays, CheckCircle2, MapPin, Package, Phone, StickyNote, Truck, XCircle } from 'lucide-react'
+import { CheckCircle2, MapPin, Package, Phone, StickyNote, Truck, XCircle } from 'lucide-react'
 import { RECEIVE_LABELS } from '../lib/campaignsEnums'
 import { STATUS } from '../lib/donationsEnums'
 import { digits } from '../lib/masks'
-import type { Donation } from '../types'
+import { ScheduleCard, type ScheduleActionHandlers } from './ScheduleCard'
+import type { Donation, Schedule } from '../types'
 
 interface Props {
   donation: Donation
+  schedule?: Schedule
+  scheduleActions?: ScheduleActionHandlers
   view: 'donor' | 'owner'
+  busy?: boolean
   onConfirm?: () => void
   onCancel?: () => void
 }
@@ -27,7 +31,7 @@ function CallPhone_({ phone, label }: { phone: string; label: string }) {
   )
 }
 
-export function DonationCard({ donation: d, view, onConfirm, onCancel }: Props) {
+export function DonationCard({ donation: d, schedule, scheduleActions, view, busy, onConfirm, onCancel }: Props) {
   const status = STATUS[d.status]
   const pending = d.status === 'Pendente'
   const address = d.donationMethod === 'Coleta' ? donorPickupAddress(d) : ''
@@ -39,12 +43,25 @@ export function DonationCard({ donation: d, view, onConfirm, onCancel }: Props) 
           {view === 'donor' ? (
             <>
               <h3 className="truncate text-lg font-bold text-dark">
-                <Link to={`/campaigns/${d.campaignId}`} className="hover:underline">{d.campaignTitle}</Link>
+                <Link to={`/campaigns/${d.campaignId}`} className="hover:underline">
+                  {d.campaignTitle}
+                </Link>
               </h3>
-              {d.campaignOwnerName && <p className="text-sm text-neutral-500">{d.campaignOwnerName}</p>}
+              <p className="text-sm text-neutral-500">
+                Dono da campanha: {d.campaignOwnerName}
+              </p>
             </>
           ) : (
-            <h3 className="truncate text-lg font-bold text-dark">{d.isAnonymous ? 'Doador anônimo' : d.donorName}</h3>
+            <>
+              <h3 className="truncate text-lg font-bold text-dark">
+                <Link to={`/campaigns/${d.campaignId}`} className="hover:underline">
+                  {d.campaignTitle}
+                </Link>
+              </h3>
+              <p className='text-sm text-neutral-500'>
+                Doador: {d.donorName}
+              </p>
+            </>
           )}
         </div>
         <span className={`shrink-0 rounded-full px-3 py-1 text-xs font-bold ${status.className}`}>{status.label}</span>
@@ -57,14 +74,11 @@ export function DonationCard({ donation: d, view, onConfirm, onCancel }: Props) 
         <li className="flex items-center gap-2">
           <Truck size={16} aria-hidden className="text-primary" /> {RECEIVE_LABELS[d.donationMethod]}
         </li>
-        <li className="flex items-center gap-2">
-          <CalendarDays size={16} aria-hidden className="text-primary" />
-          {new Date(d.donatedAt).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })}
-        </li>
       </ul>
 
-      {/* informações úteis para cada lado */}
       <div className="mt-4 space-y-2 text-sm text-neutral-700">
+        
+        {/* DONOR */}
         {view === 'donor' && pending && d.donationMethod === 'Entrega' && d.campaignDeliveryAddress && (
           <p className="flex items-start gap-2">
             <MapPin size={16} aria-hidden className="mt-0.5 shrink-0 text-primary" />
@@ -72,6 +86,8 @@ export function DonationCard({ donation: d, view, onConfirm, onCancel }: Props) 
           </p>
         )}
         {view === 'donor' && d.campaignOwnerPhone && <CallPhone_ phone={d.campaignOwnerPhone} label="Contato" />}
+
+        {/* OWNER */}
         {view === 'owner' && !d.isAnonymous && d.donorPhone && <CallPhone_ phone={d.donorPhone} label="Telefone do doador" />}
         {view === 'owner' && address && (
           <p className="flex items-start gap-2">
@@ -79,6 +95,8 @@ export function DonationCard({ donation: d, view, onConfirm, onCancel }: Props) 
             <span>Retirar em: <b className="text-dark">{address}</b></span>
           </p>
         )}
+
+        {/* BOTH */}
         {d.notes && (
           <p className="flex items-start gap-2">
             <StickyNote size={16} aria-hidden className="mt-0.5 shrink-0 text-primary" />
@@ -87,13 +105,19 @@ export function DonationCard({ donation: d, view, onConfirm, onCancel }: Props) 
         )}
       </div>
 
-      {/* ações: só enquanto a doação está pendente */}
+      {/* schedule section */}
+      {schedule && scheduleActions && (
+        <ScheduleCard schedule={schedule} view={view} donationPending={pending} busy={busy} actions={scheduleActions} />
+      )}
+
+      {/* confirm donation and cancel donation */}
       {pending && (
         <footer className="mt-5 flex flex-wrap justify-end gap-3 border-t border-neutral-100 pt-4">
           <button
             type="button"
             onClick={onCancel}
-            className="flex gap-2 cursor-pointer rounded-full border border-neutral-300 px-5 py-2 text-sm font-bold bg-red-700 text-white hover:brightness-95"
+            disabled={busy}
+            className="flex gap-2 cursor-pointer rounded-full border border-red-900 px-5 py-2 text-sm font-bold bg-red-900 text-white hover:bg-red-700 hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
           >
             <XCircle size={20} /> Cancelar doação
           </button>
@@ -101,7 +125,8 @@ export function DonationCard({ donation: d, view, onConfirm, onCancel }: Props) 
             <button
               type="button"
               onClick={onConfirm}
-              className="flex gap-2 cursor-pointer rounded-full bg-primary px-5 py-2 text-sm font-bold text-white hover:brightness-95"
+              disabled={busy}
+              className="flex gap-2 cursor-pointer rounded-full border bg-white text-primary hover:bg-primary px-5 py-2 text-sm font-bold hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
             >
               <CheckCircle2 size={20} /> Confirmar recebimento
             </button>

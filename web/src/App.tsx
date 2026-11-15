@@ -30,7 +30,6 @@ export default function App() {
               <Route path="/create-campaign" element={<CreateCampaignPage />} />
               <Route path="/campaigns/:id/donate" element={<DonatePage />} />
               <Route path="/my-donations" element={<MyCampaignsAndDonationsPage />} />
-              <Route path="/my-donations/:id" element={<MyCampaignsAndDonationsPage />} />
             </Route>
           </Route>
 
