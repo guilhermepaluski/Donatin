@@ -149,3 +149,14 @@ export interface Schedule {
   campaignTitle: string | null
   campaignOwnerName: string | null
 }
+
+export type NotificationType = | 'DoacaoRecebida' | 'ReagendamentoSolicitado' | 'Reagendado' | 'DoacaoConcluida' | 'DoacaoCancelada' | 'DoacaoExpirada' | 'Lembrete'
+
+export interface AppNotification {
+  id: string
+  type: NotificationType
+  content: string
+  read: boolean
+  createdAt: string
+  donationId: string
+}

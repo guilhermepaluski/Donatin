@@ -15,11 +15,20 @@ public class SchedulesController : ControllerBase
 {
   private readonly IScheduleRepository _scheduleRepository;
   private readonly IDonationRepository _donationRepository;
+  private readonly INotificationRepository _notificationRepository;
 
-  public SchedulesController(IScheduleRepository scheduleRepository, IDonationRepository donationRepository)
+  public SchedulesController(IScheduleRepository scheduleRepository, IDonationRepository donationRepository, INotificationRepository notificationRepository)
   {
     _scheduleRepository = scheduleRepository;
     _donationRepository = donationRepository;
+    _notificationRepository = notificationRepository;
+  }
+
+  private Task Notify(Guid recipientId, Guid senderId, Guid donationId, NotificationType type, string content)
+  {
+    return recipientId == senderId
+      ? Task.CompletedTask
+      : _notificationRepository.AddAsync(new Notification(type, content, recipientId, donationId));
   }
 
   private bool TryGetUserId(out Guid userId)
@@ -27,6 +36,8 @@ public class SchedulesController : ControllerBase
     var claim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
     return Guid.TryParse(claim, out userId);
   }
+
+
 
   [HttpGet("mine")] // GET ALL my schedules as donor or owner (RF18)
   public async Task<ActionResult<IEnumerable<ScheduleResponseDTO>>> GetMySchedules()
@@ -73,6 +84,8 @@ public class SchedulesController : ControllerBase
     {
       Guid scheduleId;
 
+      await Notify(donation.Campaign!.UserId, userId, donation.Id, NotificationType.Reagendado, $"O doador escolheu uma nova data para a doação da campanha \"{donation.Campaign.Title}\".");
+
       if (existing == null)
       {
         var schedule = new Schedule(
@@ -99,8 +112,7 @@ public class SchedulesController : ControllerBase
   }
 
   [HttpPost("{id:guid}/refuse")] // POST refuses the donor schedule — RF17/RN08
-  public async Task<ActionResult<ScheduleResponseDTO>> RefuseDonorSchedule(Guid id,
-    [FromBody(EmptyBodyBehavior = Microsoft.AspNetCore.Mvc.ModelBinding.EmptyBodyBehavior.Allow)] ScheduleRefuseDTO? dto)
+  public async Task<ActionResult<ScheduleResponseDTO>> RefuseDonorSchedule(Guid id, [FromBody(EmptyBodyBehavior = Microsoft.AspNetCore.Mvc.ModelBinding.EmptyBodyBehavior.Allow)] ScheduleRefuseDTO? dto)
   {
     if (!TryGetUserId(out var userId))
       return Unauthorized(new { message = "Usuário não autenticado." });
@@ -118,6 +130,10 @@ public class SchedulesController : ControllerBase
     try
     {
       schedule.RefuseSchedule(dto?.Reason);
+
+      var reason = string.IsNullOrWhiteSpace(dto?.Reason) ? "" : $" Motivo: {dto!.Reason.Trim()}";
+      await Notify(schedule.Donation.UserId, userId, schedule.DonationId, NotificationType.ReagendamentoSolicitado, $"O dono da campanha \"{schedule.Donation.Campaign.Title}\" pediu outra data para a sua doação.{reason}");
+
       await _scheduleRepository.SaveChangesAsync();
       return Ok(ScheduleResponseDTO.FromEntity(schedule, userId));
     }

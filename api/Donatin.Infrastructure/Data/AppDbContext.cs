@@ -13,6 +13,7 @@ public class AppDbContext : DbContext
     public DbSet<Campaign> Campaigns => Set<Campaign>();
     public DbSet<Donation> Donations => Set<Donation>();
     public DbSet<Schedule> Schedules => Set<Schedule>();
+    public DbSet<Notification> Notifications => Set<Notification>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -85,6 +86,26 @@ public class AppDbContext : DbContext
                     .OnDelete(DeleteBehavior.Restrict);
 
             entity.HasIndex(s => s.DonationId).IsUnique(); // RN05
+        });
+
+        // modelBuilder de Notification
+        modelBuilder.Entity<Notification>(entity =>
+        {
+            entity.HasKey(n => n.Id);
+            entity.Property(n => n.Type).HasConversion<string>().HasMaxLength(30);
+            entity.Property(n => n.Content).IsRequired().HasMaxLength(600);
+
+            entity.HasOne(n => n.User)
+                  .WithMany()
+                  .HasForeignKey(n => n.UserId) // FK UserId
+                  .OnDelete(DeleteBehavior.Cascade); // user notifications are deleted if the user is deleted too
+
+            entity.HasOne(n => n.Donation)
+                  .WithMany()
+                  .HasForeignKey(n => n.DonationId) // FK DonationId
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasIndex(n => new { n.UserId, n.CreatedAt });
         });
     }
 }

@@ -16,12 +16,21 @@ public class DonationsController : ControllerBase
   private readonly IDonationRepository _donationRepository;
   private readonly ICampaignRepository _campaignRepository;
   private readonly IScheduleRepository _scheduleRepository;
+  private readonly INotificationRepository _notificationRepository;
 
-  public DonationsController(IDonationRepository donationRepository, ICampaignRepository campaignRepository, IScheduleRepository scheduleRepository)
+  public DonationsController(IDonationRepository donationRepository, ICampaignRepository campaignRepository, IScheduleRepository scheduleRepository, INotificationRepository notificationRepository)
   {
     _donationRepository = donationRepository;
     _campaignRepository = campaignRepository;
     _scheduleRepository = scheduleRepository;
+    _notificationRepository = notificationRepository;
+  }
+
+  private Task Notify(Guid recipientId, Guid senderId, Guid donationId, NotificationType type, string content)
+  {
+    return recipientId == senderId
+      ? Task.CompletedTask
+      : _notificationRepository.AddAsync(new Notification(type, content, recipientId, donationId));
   }
 
   // extrai o id do usuário logado do token JWT
@@ -30,6 +39,8 @@ public class DonationsController : ControllerBase
     var claim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
     return Guid.TryParse(claim, out userId);
   }
+
+
 
   [HttpGet("mine")] // GET histórico do doador (RF24)
   public async Task<ActionResult<IEnumerable<DonationResponseDTO>>> GetMine()
@@ -136,6 +147,7 @@ public class DonationsController : ControllerBase
         donation.Id,
         dto.ScheduleDate);
 
+      await Notify(campaign.UserId, userId, donation.Id, NotificationType.DoacaoRecebida, $"Você recebeu uma nova doação na campanha \"{campaign.Title}\".");
       await _donationRepository.AddWithScheduleAsync(donation, schedule); // method that saves Donation and Schedule together
 
       return CreatedAtAction(nameof(GetById), new { id = donation.Id }, DonationResponseDTO.FromEntity(donation, userId));
@@ -164,6 +176,7 @@ public class DonationsController : ControllerBase
       donation.ConfirmDonation();
       donation.Campaign.AddDonation(donation.Quantity); // atualiza o CurrentAmount da campanha
 
+      await Notify(donation.UserId, userId, donation.Id, NotificationType.DoacaoConcluida, $"Sua doação para a campanha \"{donation.Campaign.Title}\" foi recebida. Obrigado!");
       await _donationRepository.SaveChangesAsync();
 
       return Ok(DonationResponseDTO.FromEntity(donation, userId));
@@ -198,7 +211,13 @@ public class DonationsController : ControllerBase
       var schedule = await _scheduleRepository.GetScheduleByDonationIdAsync(id);
       schedule?.RefuseWithDonation();
 
+      var cancelledByDonor = donation.UserId == userId;
+      var recipientId = cancelledByDonor ? donation.Campaign!.UserId : donation.UserId;
+      var who = cancelledByDonor ? "O doador" : "O dono da campanha";
+
+      await Notify(recipientId, userId, donation.Id, NotificationType.DoacaoCancelada, $"{who} cancelou a doação da campanha \"{donation.Campaign!.Title}\".");
       await _donationRepository.SaveChangesAsync();
+      
       return Ok(DonationResponseDTO.FromEntity(donation, userId));
     }
     catch (InvalidOperationException ex)
