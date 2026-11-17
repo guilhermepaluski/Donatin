@@ -1,6 +1,7 @@
 import { Link, NavLink, Outlet } from 'react-router-dom'
 import { HandHeart, LogOut, UserCircle2 } from 'lucide-react'
 import { useAuth } from '../auth/AuthContext'
+import { NotificationBell } from './NotificationBell'
 
 // menu de cima + o conteúdo da página (Outlet) embaixo
 export default function AppLayout() {
@@ -43,6 +44,9 @@ export default function AppLayout() {
           {/* lado direito: some enquanto confere o token salvo, para não piscar "Entrar" */}
           {!loading && (user ? (
             <>
+              {/* Notification */}
+              <NotificationBell />
+
               <span className="cursor-pointer hidden max-w-40 truncate text-sm text-neutral-600 md:block sm:inline rounded-full px-2 py-2 hover:bg-neutral-100"><UserCircle2 /> </span>
               <button
                 type="button"

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { api, ApiError } from './api'
 
 type Result<T> = {
@@ -29,11 +29,12 @@ export function useFetch<T>(path: string | null) {
 
   const current = result?.key === key ? result : null
   const oldResult = result?.key.startsWith(`${path}|`) ? result : null
+  const reload = useCallback(() => setAttempt(n => n + 1), [])
 
   return {
     data: (current ?? oldResult)?.data ?? null,
     loading: !!path && !current,
     error: current?.error ?? null,
-    reload: () => setAttempt(n => n + 1),
+    reload,
   }
 }
