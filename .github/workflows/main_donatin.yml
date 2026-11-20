@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'web/**'
+      - '.github/workflows/main_donatin.yml'
   workflow_dispatch:
 
 env:
@@ -35,6 +38,8 @@ jobs:
       - name: Build frontend
         working-directory: web
         run: npm run build
+        env:
+          VITE_API_URL: https://donatin-api-ehdvhbd5gzh8eza5.brazilsouth-01.azurewebsites.net/api
 
       - name: Verify build output
         run: |
