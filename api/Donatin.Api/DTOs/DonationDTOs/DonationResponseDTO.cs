@@ -22,6 +22,7 @@ public class DonationResponseDTO
   public string? DonorComplement { get; set; }
   public Guid CampaignId { get; set; }
   public string? CampaignTitle { get; set; }
+  public Guid? CampaignOwnerId { get; set; }             // link para o perfil público do dono
   public string? CampaignOwnerName { get; set; }
   public string? CampaignOwnerPhone { get; set; }
   public string? CampaignDeliveryAddress { get; set; }
@@ -65,6 +66,7 @@ public class DonationResponseDTO
 
       CampaignId = donation.CampaignId,
       CampaignTitle = campaign?.Title,
+      CampaignOwnerId = campaign?.UserId,
       CampaignOwnerName = campaign?.User?.Name,
       CampaignOwnerPhone = campaign?.User?.Phone,
       CampaignDeliveryAddress = byDelivery ? BuildDeliveryAddress(campaign) : null

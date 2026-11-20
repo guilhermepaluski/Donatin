@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Bell, CalendarCheck, CalendarClock, CalendarX, CheckCircle2, Gift, Hourglass, XCircle, type LucideIcon } from 'lucide-react'
 import { api } from '../lib/api'
 import { useFetch } from '../lib/useFetch'
+import { useDismiss } from '../lib/useDismiss'
 import type { AppNotification, NotificationType } from '../types'
 
 const POLL_MS = 30_000
@@ -35,27 +36,7 @@ export function NotificationBell() {
     return () => clearInterval(id)
   }, [reloadCount])
 
-  useEffect(() => {
-    if (!open)
-      return
-
-    const onClick = (e: MouseEvent) => {
-      if (!boxRef.current?.contains(e.target as Node))
-        setOpen(false)
-    }
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape')
-        setOpen(false)
-    }
-    
-    document.addEventListener('mousedown', onClick)
-    document.addEventListener('keydown', onKey)
-    
-    return () => {
-      document.removeEventListener('mousedown', onClick)
-      document.removeEventListener('keydown', onKey)
-    }
-  }, [open])
+  useDismiss(boxRef, open, setOpen)
 
   async function openNotification(n: AppNotification) {
     if (!n.read) await api(`/notifications/${n.id}/read`, { method: 'POST' }).catch(() => {})

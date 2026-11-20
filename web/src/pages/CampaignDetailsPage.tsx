@@ -66,7 +66,8 @@ export default function CampaignDetailPage() {
 
           {c.ownerCampaignName && (
             <p className="flex mt-2 gap-1 text-neutral-600">
-              <User2 className='text-primary'/> Campanha de <b className="text-dark">{c.ownerCampaignName}</b>
+              <User2 className='text-primary'/> Campanha de{' '}
+              <Link to={`/users/${c.userId}`} className="font-bold text-dark hover:underline">{c.ownerCampaignName}</Link>
             </p>
           )}
 

@@ -47,6 +47,35 @@ export interface UserProfile {
   createdAt: string
 }
 
+// Espelha UserUpdateDTO (PUT /users/me). Endereço só é salvo para instituição
+export interface UserUpdateRequest {
+  name: string
+  phone: string
+  cep?: string
+  street?: string
+  neighborhood?: string
+  number?: string
+  complement?: string
+  city: string
+  uf: string
+  aboutMe: string
+  profilePhotoUrl?: string
+}
+
+// Espelha PublicUserDTO (GET /users/{id}/public). CNPJ, telefone e endereço só vêm para instituição
+export interface PublicProfile {
+  id: string
+  name: string
+  aboutMe: string | null
+  profilePhotoUrl: string | null
+  city: string
+  uf: string
+  isInstitution: boolean
+  cpfCnpj: string | null
+  phone: string | null
+  address: string | null
+}
+
 // Espelha CampaignResponseDTO (GET /campaigns)
 export type CampaignCategory = 'Animais' | 'Educacao' | 'Roupas' | 'Higiene' | 'Lazer'
 export type ReceiveOption = 'Coleta' | 'Entrega' | 'ColetaOuEntrega'
@@ -112,6 +141,7 @@ export interface Donation {
   donorComplement: string | null
   campaignId: string
   campaignTitle: string | null
+  campaignOwnerId: string | null
   campaignOwnerName: string | null
   campaignOwnerPhone: string | null
   campaignDeliveryAddress: string | null

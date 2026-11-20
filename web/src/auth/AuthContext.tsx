@@ -8,6 +8,7 @@ interface AuthContextValue {
   login: (data: LoginRequest) => Promise<void>
   register: (data: RegisterRequest) => Promise<void>
   logout: () => void
+  updateUser: (profile: UserProfile) => void // atualiza o usuário depois de editar o perfil
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null)
@@ -56,7 +57,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, updateUser: setUser }}>
       {children}
     </AuthContext.Provider>
   )
