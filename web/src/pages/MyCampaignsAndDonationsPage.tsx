@@ -133,7 +133,7 @@ export default function MyCampaignsAndDonationsPage() {
   return (
     <div className="mx-auto max-w-6xl space-y-6">
       <header>
-        <h1 className="text-3xl font-extrabold tracking-tight text-dark">Minhas doações</h1>
+        <h1 className="text-3xl font-extrabold tracking-tight text-dark">Doações</h1>
         <p className="mt-1 text-neutral-600">Acompanhe o que você doou e o que suas campanhas receberam.</p>
       </header>
 

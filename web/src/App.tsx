@@ -9,6 +9,7 @@ import CampaignDetailsPage from './pages/CampaignDetailsPage'
 import CreateCampaignPage from './pages/CreateCampaignPage'
 import DonatePage from './pages/DonatePage'
 import MyCampaignsAndDonationsPage from './pages/MyCampaignsAndDonationsPage'
+import ProfilePage from './pages/ProfilePage'
 import { GuestRoute, ProtectedRoute } from './components/ProtectedRoute'
 
 export default function App() {
@@ -25,11 +26,13 @@ export default function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/campaigns" element={<CampaignsPage />} />
             <Route path="/campaigns/:id" element={<CampaignDetailsPage />} />
+            <Route path="/users/:id" element={<ProfilePage />} />
 
             <Route element={<ProtectedRoute />}>
               <Route path="/create-campaign" element={<CreateCampaignPage />} />
               <Route path="/campaigns/:id/donate" element={<DonatePage />} />
               <Route path="/my-donations" element={<MyCampaignsAndDonationsPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
             </Route>
           </Route>
 

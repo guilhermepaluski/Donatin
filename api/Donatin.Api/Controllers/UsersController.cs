@@ -25,19 +25,19 @@ public class UsersController : ControllerBase
     var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
     if (string.IsNullOrWhiteSpace(userIdClaim))
     {
-      return Unauthorized("Usuário não encontrado no token.");
+      return Unauthorized(new { message = "Usuário não encontrado no token." });
     }
 
     if (!Guid.TryParse(userIdClaim, out var userId))
     {
-      return Unauthorized("Identificador de usuário inválido no token.");
+      return Unauthorized(new { message = "Identificador de usuário inválido no token." });
     }
 
     // busca os dados completos no banco através do Id encontrado
     var user = await _userRepository.GetByIdAsync(userId, cancellationToken);
     if (user == null)
     {
-      return NotFound("Usuário não encontrado.");
+      return NotFound(new { message = "Usuário não encontrado." });
     }
 
     // ao invés de retornar apenas 'user', retornamos UserResponseDTO.FromEntity(user) para ser puxado do UserResponseDTO, evitando retornar dados sensíveis, como o PasswordHash
@@ -51,18 +51,18 @@ public class UsersController : ControllerBase
 
     if (string.IsNullOrWhiteSpace(userIdClaim))
     {
-      return Unauthorized("Usuário não encnotrado no token.");
+      return Unauthorized(new { message = "Usuário não encontrado no token." });
     }
 
     if (!Guid.TryParse(userIdClaim, out var userId))
     {
-      return Unauthorized("Você não tem permissão para alterar esses dados.");
+      return Unauthorized(new { message = "Identificador de usuário inválido no token." });
     }
 
     var user = await _userRepository.GetByIdAsync(userId, cancellationToken);
     if (user == null)
     {
-      return NotFound("Usuário não encontrado");
+      return NotFound(new { message = "Usuário não encontrado." });
     }
 
     // atualiza os dados

@@ -48,7 +48,10 @@ export function DonationCard({ donation: d, schedule, scheduleActions, view, bus
                 </Link>
               </h3>
               <p className="text-sm text-neutral-500">
-                Dono da campanha: {d.campaignOwnerName}
+                Dono da campanha:{' '}
+                {d.campaignOwnerId ? (
+                  <Link to={`/users/${d.campaignOwnerId}`} className="font-medium text-dark hover:underline">{d.campaignOwnerName}</Link>
+                ) : d.campaignOwnerName}
               </p>
             </>
           ) : (
@@ -59,7 +62,12 @@ export function DonationCard({ donation: d, schedule, scheduleActions, view, bus
                 </Link>
               </h3>
               <p className='text-sm text-neutral-500'>
-                Doador: {d.donorName}
+                Doador:{' '}
+                {d.userId ? (
+                  <Link to={`/users/${d.userId}`} className="font-medium text-dark hover:underline">{d.donorName}</Link>
+                ) : (
+                  d.donorName ?? 'Anônimo'
+                )}
               </p>
             </>
           )}

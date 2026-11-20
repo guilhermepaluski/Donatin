@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { HandHeart, MapPin } from 'lucide-react'
+import { Calendar, HandHeart, MapPin } from 'lucide-react'
 import { categoryLabel } from '../lib/campaignsEnums'
 import type { Campaign } from '../types'
 
@@ -19,12 +19,21 @@ export function CampaignCard({ campaign: c }: { campaign: Campaign }) {
           <HandHeart size={48} aria-hidden />
         </div>
       )}
-
-      <div className="flex flex-1 flex-col gap-3 p-4">
+      
+      <div className='flex justify-between items-center p-4 -mb-4'>
         <span className="w-fit rounded-full bg-primary px-3 py-1 text-xs font-bold text-white">
           {categoryLabel(c.category)}
         </span>
-        <h3 className="line-clamp-2 text-lg font-bold text-dark">{c.title}</h3>
+        <div className='flex gap-1 items-center'>
+          <Calendar size={15}/>
+          <p className="text-xs text-neutral-500">
+            Até {new Date(c.conclusionDate).toLocaleDateString('pt-BR')}
+          </p>
+        </div>
+      </div>
+
+      <div className="flex flex-1 flex-col gap-3 p-4">
+        <h3 className="line-clamp-1 text-lg font-bold text-dark">{c.title}</h3>
 
         {c.ownerCampaignName && (
           <p className="flex items-center gap-1 text-sm text-neutral-600">
@@ -52,9 +61,6 @@ export function CampaignCard({ campaign: c }: { campaign: Campaign }) {
           </div>
           <p className="mt-2 text-sm text-neutral-600">
             <b className="text-dark">{c.currentAmount}</b> de {c.goalAmount} {c.product} ({percent}%)
-          </p>
-          <p className="text-xs text-neutral-500">
-            Até {new Date(c.conclusionDate).toLocaleDateString('pt-BR')}
           </p>
         </div>
       </div>
