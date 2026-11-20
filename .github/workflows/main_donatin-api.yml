@@ -7,6 +7,9 @@ on:
   push:
     branches:
       - 'main'
+    paths:
+      - 'api/**'
+      - '.github/workflows/main_donatin-api.yml'
   workflow_dispatch:
 
 jobs:
@@ -24,10 +27,13 @@ jobs:
           dotnet-version: '10.x'
 
       - name: Build with dotnet
-        run: dotnet build --configuration Release
+        run: dotnet build api/Donatin.sln --configuration Release
+
+      - name: Run tests
+        run: dotnet test api/Donatin.sln --configuration Release --no-build
 
       - name: dotnet publish
-        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+        run: dotnet publish api/Donatin.Api/Donatin.Api.csproj -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -47,7 +53,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: .net-app
-      
+
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -62,4 +68,3 @@ jobs:
           app-name: 'donatin-api'
           slot-name: 'Production'
           package: .
-          
