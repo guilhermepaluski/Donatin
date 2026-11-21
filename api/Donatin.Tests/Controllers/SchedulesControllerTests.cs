@@ -179,8 +179,6 @@ public class SchedulesControllerTests
   }
 
   // ---------- POST /schedules/{id}/refuse (RF17 / RN08) ----------
-  // Obs.: o caso "recusar depois da data prevista" fica de fora de propósito:
-  // hoje ele lança InvalidCastException (bug) e será coberto no ciclo de TDD da correção.
 
   [Fact]
   public async Task Refuse_PeloDono_RecusaGuardaOMotivoENotificaODoador()
