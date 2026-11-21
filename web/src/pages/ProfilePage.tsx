@@ -42,7 +42,6 @@ const fullAddress = (u: UserProfile) =>
     .filter(Boolean)
     .join(' - ')
 
-// /profile -> meu perfil (editável) | /users/:id -> perfil público de qualquer usuário
 export default function ProfilePage() {
   const { user, updateUser } = useAuth()
   const params = useParams()
@@ -152,7 +151,7 @@ export default function ProfilePage() {
                     <Icon size={20} aria-hidden className="mt-0.5 shrink-0 text-primary" />
                     <div className="min-w-0">
                       <dt className="text-xs font-medium uppercase tracking-wide text-neutral-500">{label}</dt>
-                      <dd className="break-words font-bold text-dark">{value}</dd>
+                      <dd className="wrap-break-word font-bold text-dark">{value}</dd>
                     </div>
                   </div>
                 ))}
