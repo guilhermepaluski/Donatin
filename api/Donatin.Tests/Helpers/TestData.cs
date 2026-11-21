@@ -38,6 +38,14 @@ public static class TestData
     return donation;
   }
 
+  // agendamento já "ligado" à doação (e, por ela, à campanha), como o EF devolveria com Include
+  public static Schedule Schedule(Donation donation, DateTime? date = null)
+  {
+    var schedule = new Schedule(donation.Id, date ?? Future);
+    SetPrivate(schedule, "Donation", donation);
+    return schedule;
+  }
+
   public static User User(string? cnpj = null) =>
     new("Maria", cnpj, null, "47999999999", "89201000", "Rua A", "Centro", "10", null,
         "Joinville", "SC", null, null, "maria@email.com", "hash");
@@ -47,12 +55,16 @@ public static class TestData
       .SetValue(target, value);
 
   // simula o usuário logado (o que o JWT colocaria no HttpContext)
-  public static void LoginAs(ControllerBase controller, Guid userId)
+  public static void LoginAs(ControllerBase controller, Guid userId) =>
+    LoginWithClaim(controller, userId.ToString());
+
+  // claimValue null = requisição sem usuário no token; qualquer texto = o valor que veio no token
+  public static void LoginWithClaim(ControllerBase controller, string? claimValue)
   {
-    var identity = new ClaimsIdentity([new Claim(ClaimTypes.NameIdentifier, userId.ToString())], "Test");
+    var claims = claimValue == null ? [] : new[] { new Claim(ClaimTypes.NameIdentifier, claimValue) };
     controller.ControllerContext = new ControllerContext
     {
-      HttpContext = new DefaultHttpContext { User = new ClaimsPrincipal(identity) }
+      HttpContext = new DefaultHttpContext { User = new ClaimsPrincipal(new ClaimsIdentity(claims, "Test")) }
     };
   }
 }
