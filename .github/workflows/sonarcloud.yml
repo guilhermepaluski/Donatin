@@ -38,7 +38,7 @@ jobs:
       - name: Testes do front
         working-directory: web
         run: |
-          npm ci
+          npm ci --ignore-scripts
           npm run coverage
 
       # ---------- back: análise + testes + cobertura ----------

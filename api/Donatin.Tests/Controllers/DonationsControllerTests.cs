@@ -27,7 +27,7 @@ public class DonationsControllerTests
     return controller;
   }
 
-  private DonationCreateDTO Dto(Guid campaignId) => new()
+  private static DonationCreateDTO Dto(Guid campaignId) => new()
   {
     CampaignId = campaignId,
     Quantity = 2,
