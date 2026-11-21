@@ -42,7 +42,7 @@ public class Schedule
       throw new InvalidOperationException("Este agendamento já foi recusado. Aguarde o doador propor uma nova data.");
 
     if (ScheduleDate <= DateTime.UtcNow)
-      throw new InvalidCastException("Só é possível recusar o agendamento antes da data prevista.");
+      throw new InvalidOperationException("Só é possível recusar o agendamento antes da data prevista.");
 
     Status = ScheduleStatus.Recusado;
     CancellationReason = string.IsNullOrWhiteSpace(reason) ? null : reason.Trim();
