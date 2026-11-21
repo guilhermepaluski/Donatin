@@ -1,0 +1,71 @@
+name: SonarCloud
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+
+jobs:
+  sonar:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # o Sonar precisa do histórico completo
+
+      - uses: actions/setup-java@v4 # o scanner do Sonar roda em Java
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.x'
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.x'
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      # ---------- front: testes + cobertura (gera web/coverage/lcov.info) ----------
+      - name: Testes do front
+        working-directory: web
+        run: |
+          npm ci
+          npm run coverage
+
+      # ---------- back: análise + testes + cobertura ----------
+      - name: Instalar o SonarScanner
+        run: dotnet tool install --global dotnet-sonarscanner
+
+      - name: Iniciar análise
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: >
+          dotnet sonarscanner begin
+          /k:"guilhermepaluski_Donatin"
+          /o:"guilhermepaluski"
+          /d:sonar.token="$SONAR_TOKEN"
+          /d:sonar.host.url="https://sonarcloud.io"
+          /d:sonar.cs.opencover.reportsPaths="${{ github.workspace }}/api/TestResults/**/coverage.opencover.xml"
+          /d:sonar.javascript.lcov.reportPaths="${{ github.workspace }}/web/coverage/lcov.info"
+          /d:sonar.exclusions="**/Migrations/**,**/node_modules/**,**/dist/**,**/coverage/**"
+          /d:sonar.coverage.exclusions="**/Migrations/**,**/Program.cs,**/AppDbContextFactory.cs,**/Donatin.Tests/**,web/src/main.tsx,web/src/test/**,**/*.test.ts,**/*.test.tsx"
+
+      - name: Build
+        run: dotnet build api/Donatin.sln --configuration Release
+
+      - name: Testes do back
+        run: dotnet test api/Donatin.sln --configuration Release --no-build --settings api/coverage.runsettings --results-directory api/TestResults
+
+      - name: Enviar análise
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: dotnet sonarscanner end /d:sonar.token="$SONAR_TOKEN"
