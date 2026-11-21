@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { brDateToIso, digits, maskCep, maskCnpj, maskCpfCnpj, maskDate, maskPhone, maskUf } from './masks'
+import { brDateToIso, digits, maskCep, maskCnpj, maskCpfCnpj, maskDate, maskPhone, maskUf } from '../masks'
 
 describe('masks', () => {
   it('digits mantém só números', () => {

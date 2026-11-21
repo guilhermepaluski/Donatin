@@ -2,12 +2,12 @@ import { describe, expect, it, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
-import LoginPage from './LoginPage'
-import { ApiError } from '../lib/api'
+import LoginPage from '../LoginPage'
+import { ApiError } from '../../lib/api'
 
 // substitui o contexto de autenticação real por um falso
 const login = vi.fn()
-vi.mock('../auth/AuthContext', () => ({ useAuth: () => ({ login }) }))
+vi.mock('../../auth/AuthContext', () => ({ useAuth: () => ({ login }) }))
 
 const renderPage = () => render(<MemoryRouter><LoginPage /></MemoryRouter>)
 
