@@ -32,6 +32,18 @@ public class ScheduleTests
   }
 
   [Fact]
+  public void RefuseSchedule_DepoisDaDataPrevista_LancaInvalidOperationException() // RN08
+  {
+    var schedule = new Schedule(Guid.NewGuid(), TestData.Future);
+    TestData.SetPrivate(schedule, nameof(Schedule.ScheduleDate), DateTime.UtcNow.AddHours(-1)); // a data já passou
+
+    var ex = Assert.Throws<InvalidOperationException>(() => schedule.RefuseSchedule("motivo"));
+
+    Assert.Equal("Só é possível recusar o agendamento antes da data prevista.", ex.Message);
+    Assert.Equal(ScheduleStatus.Confirmado, schedule.Status); // nada mudou
+  }
+
+  [Fact]
   public void RefuseSchedule_DuasVezes_LancaExcecao()
   {
     var schedule = new Schedule(Guid.NewGuid(), TestData.Future);

@@ -250,6 +250,21 @@ public class SchedulesControllerTests
   }
 
   [Fact]
+  public async Task Refuse_DepoisDaDataPrevista_RetornaBadRequestENaoNotifica() // RN08
+  {
+    var schedule = TestData.Schedule(PendingDonation());
+    TestData.SetPrivate(schedule, nameof(Schedule.ScheduleDate), DateTime.UtcNow.AddHours(-1)); // a data já passou
+    _schedules.Setup(r => r.GetScheduleByIdAsync(schedule.Id)).ReturnsAsync(schedule);
+
+    var result = await ControllerLoggedAs(_ownerId).RefuseDonorSchedule(schedule.Id, null);
+
+    var badRequest = Assert.IsType<BadRequestObjectResult>(result.Result);
+    Assert.Contains("antes da data prevista", badRequest.Value!.ToString());
+    _notifications.Verify(r => r.AddAsync(It.IsAny<Notification>()), Times.Never);
+    _schedules.Verify(r => r.SaveChangesAsync(), Times.Never);
+  }
+
+  [Fact]
   public async Task Refuse_AgendamentoJaRecusado_RetornaBadRequest()
   {
     var schedule = TestData.Schedule(PendingDonation());
