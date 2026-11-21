@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { donationBlockedReason } from './donationRules'
-import type { Campaign } from '../types'
+import { donationBlockedReason } from '../donationRules'
+import type { Campaign } from '../../types'
 
 const campaign = (over: Partial<Campaign> = {}): Campaign => ({
   id: 'c1', title: 'Agasalhos', description: '', category: 'Roupas', product: 'agasalhos',

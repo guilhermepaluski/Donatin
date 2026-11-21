@@ -1,0 +1,114 @@
+import type { AppNotification, Campaign, Donation, PublicProfile, Schedule, UserProfile } from '../types'
+
+// Fábricas de dados falsos no formato que a API devolve. Cada teste muda só o que importa.
+
+const future = () => new Date(Date.now() + 10 * 24 * 60 * 60 * 1000).toISOString()
+
+export const makeUser = (over: Partial<UserProfile> = {}): UserProfile => ({
+  id: 'user-1',
+  name: 'Maria Souza',
+  cpfCnpj: null,
+  phone: '(47) 99999-0000',
+  cep: null,
+  street: null,
+  neighborhood: null,
+  number: null,
+  complement: null,
+  city: 'Joinville',
+  uf: 'SC',
+  email: 'maria@email.com',
+  profilePhotoUrl: null,
+  aboutMe: null,
+  createdAt: '2026-01-15T12:00:00Z',
+  ...over,
+})
+
+export const makeCampaign = (over: Partial<Campaign> = {}): Campaign => ({
+  id: 'camp-1',
+  title: 'Agasalhos para o inverno',
+  description: 'Arrecadação de agasalhos',
+  category: 'Roupas',
+  product: 'agasalhos',
+  goalAmount: 10,
+  currentAmount: 4,
+  isGoalReached: false,
+  receiveOption: 'Entrega',
+  imageUrl: null,
+  isActive: true,
+  hasExpired: false,
+  createdAt: '2026-01-01T12:00:00Z',
+  conclusionDate: future(),
+  userId: 'owner-1',
+  ownerCampaignName: 'Abrigo Esperança',
+  ownerCampaignCity: 'Joinville',
+  ownerCampaignUf: 'SC',
+  campaignDeliveryAddress: 'Rua XV, 100 - Centro, Joinville/SC',
+  ...over,
+})
+
+export const makeDonation = (over: Partial<Donation> = {}): Donation => ({
+  id: 'don-1',
+  quantity: 2,
+  notes: null,
+  donationMethod: 'Entrega',
+  donatedAt: '2026-01-02T12:00:00Z',
+  status: 'Pendente',
+  isAnonymous: false,
+  userId: 'user-1',
+  donorName: 'Maria Souza',
+  donorPhone: '(47) 99999-0000',
+  donorCep: null,
+  donorStreet: null,
+  donorNeighborhood: null,
+  donorNumber: null,
+  donorComplement: null,
+  campaignId: 'camp-1',
+  campaignTitle: 'Agasalhos para o inverno',
+  campaignOwnerId: 'owner-1',
+  campaignOwnerName: 'Abrigo Esperança',
+  campaignOwnerPhone: '(47) 98888-1111',
+  campaignDeliveryAddress: 'Rua XV, 100 - Centro, Joinville/SC',
+  ...over,
+})
+
+export const makeSchedule = (over: Partial<Schedule> = {}): Schedule => ({
+  id: 'sch-1',
+  scheduleDate: future(),
+  status: 'Confirmado',
+  cancellationReason: null,
+  createdAt: '2026-01-02T12:00:00Z',
+  viewerRole: 'Donor',
+  donationId: 'don-1',
+  donationMethod: 'Entrega',
+  donationStatus: 'Pendente',
+  quantity: 2,
+  donorName: 'Maria Souza',
+  campaignId: 'camp-1',
+  campaignTitle: 'Agasalhos para o inverno',
+  campaignOwnerName: 'Abrigo Esperança',
+  ...over,
+})
+
+export const makeNotification = (over: Partial<AppNotification> = {}): AppNotification => ({
+  id: 'not-1',
+  type: 'DoacaoRecebida',
+  content: 'Você recebeu uma nova doação.',
+  read: false,
+  createdAt: '2026-01-02T12:00:00Z',
+  donationId: 'don-1',
+  ...over,
+})
+
+export const makePublicProfile = (over: Partial<PublicProfile> = {}): PublicProfile => ({
+  id: 'owner-1',
+  name: 'Abrigo Esperança',
+  aboutMe: 'Cuidamos de animais.',
+  profilePhotoUrl: null,
+  city: 'Joinville',
+  uf: 'SC',
+  isInstitution: true,
+  cpfCnpj: '12345678000199',
+  phone: '(47) 98888-1111',
+  address: 'Rua XV, 100 - Centro - Joinville/SC',
+  ...over,
+})

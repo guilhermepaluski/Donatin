@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { api, ApiError, tokenStorage } from './api'
+import { api, ApiError, tokenStorage } from '../api'
 
 const mockFetch = (status: number, body?: unknown) =>
   vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
