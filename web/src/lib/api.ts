@@ -27,8 +27,11 @@ type Options = {
 
 // api function:
 export async function api<T>(path: string, { method = 'GET', body }: Options = {}): Promise<T> {
+  // arquivo (FormData) vai como está: o navegador monta o multipart e o Content-Type
+  const isFile = body instanceof FormData
+
   const headers: Record<string, string> = {}
-  if (body !== undefined)
+  if (body !== undefined && !isFile)
     headers['Content-Type'] = 'application/json'
 
   const token = tokenStorage.get()
@@ -41,7 +44,7 @@ export async function api<T>(path: string, { method = 'GET', body }: Options = {
     res = await fetch(`${BASE}${path}`, {
       method,
       headers,
-      body: body !== undefined ? JSON.stringify(body) : undefined,
+      body: isFile ? body : body !== undefined ? JSON.stringify(body) : undefined,
     })
   } catch {
     throw new ApiError(0, 'Não foi possível se conectar ao servidor. Tente novamente.')

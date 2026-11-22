@@ -178,6 +178,39 @@ sequenceDiagram
 
 ---
 
+## Fluxo 6 — Enviar a imagem da capa (RF06, RNF19)
+
+```mermaid
+sequenceDiagram
+    actor R as Receptor
+    participant F as CreateCampaignPage
+    participant C as UploadsController
+    participant S as BlobImageStorage
+    participant B as Azure Blob Storage
+
+    R->>F: clica na moldura e escolhe a imagem
+    F->>C: POST /api/uploads/image (FormData, campo "file")
+    C->>C: arquivo existe? JPG/PNG/WEBP? até 5 MB?
+    alt inválido
+        C-->>F: 400 { message } → aparece embaixo da moldura
+    else ok
+        C->>C: nome aleatório: GUID + extensão
+        C->>S: UploadAsync(arquivo, nome, tipo)
+        S->>B: salva no contêiner "images"
+        S-->>C: URL pública
+        C-->>F: 200 { url } → prévia aparece
+    end
+    R->>F: Publicar campanha
+    F->>F: POST /api/campaigns com imageUrl = URL
+```
+
+- **Onde fica cada coisa:** a validação em [`UploadsController.cs`](../blob/main/api/Donatin.Api/Controllers/UploadsController.cs); a conversa com a Azure em [`BlobImageStorage.cs`](../blob/main/api/Donatin.Infrastructure/Services/BlobImageStorage.cs), atrás da interface `IImageStorage` (nos testes, o Moq faz o papel do Storage); no front, `onImageChange` em [`CreateCampaignPage.tsx`](../blob/main/web/src/pages/CreateCampaignPage.tsx).
+- **Segurança:** só usuário logado envia; **SVG e HTML são recusados** (podem conter script); o arquivo nunca usa o nome enviado pelo usuário; o tipo gravado no Blob é definido pela API; `RequestSizeLimit` corta requisições gigantes antes de ler tudo.
+- **No front:** a moldura é um `<label htmlFor="image">` — clicar nela abre o `<input type="file">`, que fica escondido visualmente (`sr-only`) mas acessível por teclado. A imagem fica numa moldura de tamanho fixo (`absolute` + `object-cover`), então nunca estica a tela.
+- **A função `api()`** manda `FormData` como está (sem `JSON.stringify` nem `Content-Type`), porque o navegador monta o envio do arquivo.
+
+---
+
 ## Notificações (RN15)
 
 Todo controller que muda o estado de uma doação chama um `Notify(destinatário, remetente, ...)`. Se o destinatário é a própria pessoa que fez a ação, nada é enviado. No front, o [`NotificationBell.tsx`](../blob/main/web/src/components/NotificationBell.tsx) busca `GET /notifications/unread-count` para o número no sininho, lista `GET /notifications/mine` e marca como lida com `POST /notifications/{id}/read` (ou `read-all`).
@@ -218,6 +251,7 @@ Todo controller que muda o estado de uma doação chama um `Notify(destinatário
 | GET | `/api/schedules/donation/{id}` | ✔ | Agendamento de uma doação |
 | POST | `/api/schedules` | ✔ doador | Propõe (nova) data |
 | POST | `/api/schedules/{id}/refuse` | ✔ dono | Recusa a data |
+| POST | `/api/uploads/image` | ✔ | Envia uma imagem (JPG/PNG/WEBP, até 5 MB) e devolve a URL |
 | GET | `/api/notifications/mine` | ✔ | Minhas notificações |
 | GET | `/api/notifications/unread-count` | ✔ | Quantidade não lida |
 | POST | `/api/notifications/{id}/read` | ✔ | Marca uma como lida |

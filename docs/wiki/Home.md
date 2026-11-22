@@ -25,6 +25,7 @@ Projeto de Portfólio (TCC) de Engenharia de Software da **Católica SC**, linha
 | Testes | xUnit + Moq + coverlet (back) · Vitest + Testing Library (front) |
 | CI/CD | GitHub Actions → Azure App Service |
 | Qualidade | SonarCloud |
+| Imagens | Azure Blob Storage (upload pela API) |
 | Monitoramento | Azure Application Insights |
 
 ## Páginas desta Wiki

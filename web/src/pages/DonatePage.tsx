@@ -338,19 +338,19 @@ export default function DonatePage() {
 
         {/* resumo da campanha (no celular aparece antes do formulário) */}
         <aside aria-label="Resumo da campanha" className="order-first space-y-4 rounded-3xl border border-neutral-200 bg-white p-5 lg:sticky lg:top-24 lg:order-last">
-          <div className="aspect-4/3 overflow-hidden rounded-2xl bg-neutral-100">
+          <div className="relative aspect-4/3 overflow-hidden rounded-2xl bg-neutral-100">
             {c.imageUrl ? (
-              <img src={c.imageUrl} alt="" className="size-full object-cover" />
+              <img src={c.imageUrl} alt="" className="absolute inset-0 size-full object-cover" />
             ) : (
               <div className="grid size-full place-items-center text-primary/40">
                 <HandHeart size={56} aria-hidden />
               </div>
             )}
           </div>
-          <span className="inline-block rounded-full bg-primary px-3 py-1 text-xs font-bold uppercase tracking-wide text-white">
+          <span className="inline-block rounded-full bg-primary px-3 py-1 text-xs font-bold tracking-wide text-white">
             {categoryLabel(c.category)}
           </span>
-          <h2 className="text-lg font-bold leading-snug text-dark">{c.title}</h2>
+          <h2 className="text-lg capitalize font-bold leading-snug text-dark">{c.title}</h2>
           {c.ownerCampaignName && (
             <p className="text-sm text-neutral-600">
               {c.ownerCampaignName}{c.ownerCampaignCity && ` · ${c.ownerCampaignCity}/${c.ownerCampaignUf}`}

@@ -32,6 +32,18 @@ describe('api', () => {
     expect((init!.headers as Record<string, string>)['Content-Type']).toBe('application/json')
   })
 
+  it('envia arquivo (FormData) sem converter para JSON', async () => {
+    mockFetch(200, { url: 'https://x/images/a.png' })
+    const form = new FormData()
+    form.append('file', new File(['img'], 'capa.png', { type: 'image/png' }))
+
+    await api('/uploads/image', { method: 'POST', body: form })
+
+    const [, init] = vi.mocked(fetch).mock.calls[0]
+    expect(init!.body).toBe(form) // vai como está; o navegador monta o multipart
+    expect((init!.headers as Record<string, string>)['Content-Type']).toBeUndefined()
+  })
+
   it('retorna undefined em 204', async () => {
     mockFetch(204)
     await expect(api('/x', { method: 'POST' })).resolves.toBeUndefined()

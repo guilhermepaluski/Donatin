@@ -40,13 +40,14 @@ export default function CampaignDetailPage() {
   ]
 
   return (
-    <div className="space-y-10">
+    <div className="mx-auto max-w-6xl space-y-10">
 
       <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
         {/* imagem (ou ícone, se a campanha não tiver) */}
-        <div className="overflow-hidden rounded-3xl bg-neutral-100">
+        {/* moldura com proporção fixa (4:3): a imagem preenche e é cortada, sem esticar a tela */}
+        <div className="relative aspect-4/3 w-full overflow-hidden rounded-3xl bg-neutral-100">
           {c.imageUrl ? (
-            <img src={c.imageUrl} alt="" className="size-full object-cover" />
+            <img src={c.imageUrl} alt="" className="absolute inset-0 size-full object-cover" />
           ) : (
             <div className="grid size-full place-items-center text-primary/40">
               <HandHeart size={96} aria-hidden />
@@ -56,13 +57,13 @@ export default function CampaignDetailPage() {
 
         {/* informações */}
         <div className="flex flex-col">
-          <span className="w-fit rounded-full bg-primary px-3 py-1 text-xs font-bold uppercase tracking-wide text-white">
+          <span className="w-fit rounded-full bg-primary px-3 py-1 text-xs font-bold tracking-wide text-white">
             {categoryLabel(c.category)}
           </span>
 
-          <h1 className="mt-4 text-3xl font-extrabold uppercase leading-tight tracking-tight text-dark sm:text-3xl">
+          <h1 className="mt-4 text-3xl font-extrabold capitalize leading-tight tracking-tight text-dark sm:text-3xl">
             {c.title}
-          </h1>
+          </h1> 
 
           {c.ownerCampaignName && (
             <p className="flex mt-2 gap-1 text-neutral-600">
