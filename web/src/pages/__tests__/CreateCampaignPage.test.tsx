@@ -69,17 +69,48 @@ describe('CreateCampaignPage', () => {
     expect(await screen.findByText('A data deve ser hoje ou futura.')).toBeInTheDocument()
   })
 
-  it('link de imagem inválido é recusado; válido mostra a prévia', async () => {
+  // ---------- imagem da capa: upload para o Azure Blob Storage (RNF19) ----------
+
+  const capa = () => new File(['conteudo'], 'capa.png', { type: 'image/png' })
+  const imageInput = () => screen.getByLabelText('Imagem da capa (opcional)')
+  const uploadedUrl = 'https://donatinimagens.blob.core.windows.net/images/abc.png'
+
+  it('escolher uma imagem envia o arquivo e mostra a prévia', async () => {
+    const upload = vi.fn().mockReturnValue({ url: uploadedUrl })
+    routeApi(apiMock, { 'POST /uploads/image': upload })
     renderPage()
+    const file = capa()
 
-    await userEvent.type(screen.getByLabelText('Link da imagem (opcional)'), 'https://site.com/capa.png')
-    expect(screen.getByAltText('Prévia da capa')).toHaveAttribute('src', 'https://site.com/capa.png')
+    await userEvent.upload(imageInput(), file)
 
-    await userEvent.clear(screen.getByLabelText('Link da imagem (opcional)'))
-    await userEvent.type(screen.getByLabelText('Link da imagem (opcional)'), 'capa.png')
+    const sent = upload.mock.calls[0][0] as FormData
+    expect(sent).toBeInstanceOf(FormData)
+    expect(sent.get('file')).toBe(file)
+    expect(await screen.findByAltText('Prévia da capa')).toHaveAttribute('src', uploadedUrl)
+  })
+
+  it('ao publicar, envia a URL da imagem que foi salva', async () => {
+    const create = vi.fn().mockReturnValue(makeCampaign({ id: 'nova' }))
+    routeApi(apiMock, { 'POST /uploads/image': { url: uploadedUrl }, 'POST /campaigns': create })
+    renderPage()
+    await fillAbout()
+    await userEvent.click(screen.getByRole('radio', { name: /Você busca o item/ }))
+
+    await userEvent.upload(imageInput(), capa())
+    await screen.findByAltText('Prévia da capa')
     await submit()
 
-    expect(await screen.findByText('Use um link que comece com http:// ou https://')).toBeInTheDocument()
+    expect(create).toHaveBeenCalledWith(expect.objectContaining({ imageUrl: uploadedUrl }))
+  })
+
+  it('erro no envio da imagem aparece na tela e não mostra prévia', async () => {
+    routeApi(apiMock, { 'POST /uploads/image': new ApiError(400, 'Envie uma imagem JPG, PNG ou WEBP.') })
+    renderPage()
+
+    await userEvent.upload(imageInput(), capa())
+
+    expect(await screen.findByText('Envie uma imagem JPG, PNG ou WEBP.')).toBeInTheDocument()
+    expect(screen.queryByAltText('Prévia da capa')).toBeNull()
   })
 
   it('só coleta: não pede endereço, envia e abre a campanha criada', async () => {
