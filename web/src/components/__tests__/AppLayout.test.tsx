@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import AppLayout from '../AppLayout'
 import { makeUser } from '../../test/factories'
@@ -60,5 +60,23 @@ describe('AppLayout', () => {
 
     expect(screen.queryByRole('link', { name: 'Entrar' })).toBeNull()
     expect(screen.queryByText('menu do usuário')).toBeNull()
+  })
+
+  it('rodapé: todos os links levam para rotas que existem', () => {
+    renderLayout()
+
+    const footer = within(screen.getByRole('contentinfo'))
+    expect(footer.getByRole('link', { name: 'Explorar campanhas' })).toHaveAttribute('href', '/campaigns')
+    expect(footer.getByRole('link', { name: 'Como funciona?' })).toHaveAttribute('href', '/how-it-works')
+    expect(footer.getByRole('link', { name: 'Quero doar' })).toHaveAttribute('href', '/campaigns')
+    expect(footer.getByRole('link', { name: 'Criar uma campanha' })).toHaveAttribute('href', '/create-campaign')
+    expect(footer.getByRole('link', { name: 'Política de Privacidade' })).toHaveAttribute('href', '/privacy')
+    expect(footer.getByRole('link', { name: 'Termos de Uso' })).toHaveAttribute('href', '/terms')
+  })
+
+  it('rodapé: não tem link de "Instituições" (lista de instituições fica para depois)', () => {
+    renderLayout()
+
+    expect(within(screen.getByRole('contentinfo')).queryByRole('link', { name: 'Instituições' })).toBeNull()
   })
 })
