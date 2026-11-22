@@ -80,43 +80,39 @@ export default function AppLayout() {
           <div className="flex flex-col gap-1">
             <h2 className="text-lg font-bold text-white">Início</h2>
 
-            <a href="/campanhas" className="text-sm text-white hover:text-green-600">
+            <Link to="/campaigns" className="text-sm text-white hover:text-green-600">
               Explorar campanhas
-            </a>
+            </Link>
 
-            <a href="/instituicoes" className="text-sm text-white hover:text-green-600">
-              Instituições
-            </a>
-
-            <a href="/como-funciona" className="text-sm text-white hover:text-green-600">
+            <Link to="/how-it-works" className="text-sm text-white hover:text-green-600">
               Como funciona?
-            </a>
+            </Link>
           </div>
 
           {/* Para você */}
           <div className="flex flex-col gap-1">
             <h2 className="text-lg font-bold text-white">Para você</h2>
 
-            <a href="/campaigns" className="text-sm text-white hover:text-green-600">
+            <Link to="/campaigns" className="text-sm text-white hover:text-green-600">
               Quero doar
-            </a>
+            </Link>
 
-            <a href="/create-campaign" className="text-sm text-white hover:text-green-600">
+            <Link to="/create-campaign" className="text-sm text-white hover:text-green-600">
               Criar uma campanha
-            </a>
+            </Link>
           </div>
 
           {/* Suporte */}
           <div className="flex flex-col gap-1">
             <h2 className="text-lg font-bold text-white">Suporte</h2>
 
-            <a href="/privacidade" className="text-sm text-white hover:text-green-600">
+            <Link to="/privacy" className="text-sm text-white hover:text-green-600">
               Política de Privacidade
-            </a>
+            </Link>
 
-            <a href="/termos" className="text-sm text-white hover:text-green-600">
+            <Link to="/terms" className="text-sm text-white hover:text-green-600">
               Termos de Uso
-            </a>
+            </Link>
           </div>
 
         </div>
