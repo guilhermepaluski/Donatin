@@ -63,13 +63,11 @@ public class Campaign
     SetDeliveryAddress(receiveOption, deliveryCep, deliveryStreet, deliveryNeighborhood, deliveryNumber, deliveryComplement, deliveryCity, deliveryUf);
   }
 
+  // soma ao arrecadado quando o recebimento é confirmado (RF20).
+  // não checa se a campanha está ativa/expirada: a doação foi feita dentro do prazo,
+  // e quem bloqueia NOVAS doações é o POST /donations
   public void AddDonation(decimal amount)
   {
-    if (!IsActive || HasExpired) // se a campanha não estiver mais ativa OU se já expirou
-    {
-      throw new InvalidOperationException("Não é possível doar para uma campanha inativa.");
-    }
-
     if (amount <= 0) // se a doação for negativa
     {
       throw new ArgumentException("A quantidade doada deve ser positiva.", nameof(amount));
