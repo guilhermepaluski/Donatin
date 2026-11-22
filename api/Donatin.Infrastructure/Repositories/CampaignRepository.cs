@@ -25,6 +25,7 @@ public class CampaignRepository : ICampaignRepository
   public async Task<IEnumerable<Campaign>> GetCampaignByUserIdAsync(Guid userId)
   {
     return await _context.Campaigns
+      .Include(c => c.User)
       .Where(c => c.UserId == userId)
       .OrderByDescending(c => c.CreatedAt)
       .ToListAsync();
