@@ -63,9 +63,6 @@ public class Campaign
     SetDeliveryAddress(receiveOption, deliveryCep, deliveryStreet, deliveryNeighborhood, deliveryNumber, deliveryComplement, deliveryCity, deliveryUf);
   }
 
-  // soma ao arrecadado quando o recebimento é confirmado (RF20).
-  // não checa se a campanha está ativa/expirada: a doação foi feita dentro do prazo,
-  // e quem bloqueia NOVAS doações é o POST /donations
   public void AddDonation(decimal amount)
   {
     if (amount <= 0) // se a doação for negativa
