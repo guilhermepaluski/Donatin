@@ -122,6 +122,37 @@ public class DonationsControllerTests
   }
 
   [Fact]
+  public async Task Confirm_DepoisQueACampanhaExpirou_ConcluiEAtualizaArrecadado()
+  {
+    var campaign = TestData.Campaign(_ownerId);
+    var donation = TestData.Donation(campaign, _donorId, quantity: 4);
+    TestData.SetPrivate(campaign, nameof(Campaign.ConclusionDate), DateTime.UtcNow.AddDays(-1)); // expirou depois da doação
+    _donations.Setup(r => r.GetDonationByIdAsync(donation.Id)).ReturnsAsync(donation);
+
+    var result = await ControllerLoggedAs(_ownerId).ConfirmReceipt(donation.Id);
+
+    Assert.IsType<OkObjectResult>(result.Result);
+    Assert.Equal(DonationStatus.Concluida, donation.Status);
+    Assert.Equal(4, campaign.CurrentAmount);
+    _donations.Verify(r => r.SaveChangesAsync(), Times.Once);
+  }
+
+  [Fact]
+  public async Task Confirm_DepoisQueACampanhaFoiEncerrada_ConcluiEAtualizaArrecadado()
+  {
+    var campaign = TestData.Campaign(_ownerId);
+    var donation = TestData.Donation(campaign, _donorId, quantity: 2);
+    campaign.CloseCampaign();
+    _donations.Setup(r => r.GetDonationByIdAsync(donation.Id)).ReturnsAsync(donation);
+
+    var result = await ControllerLoggedAs(_ownerId).ConfirmReceipt(donation.Id);
+
+    Assert.IsType<OkObjectResult>(result.Result);
+    Assert.Equal(DonationStatus.Concluida, donation.Status);
+    Assert.Equal(2, campaign.CurrentAmount);
+  }
+
+  [Fact]
   public async Task Confirm_PorQuemNaoEhDono_RetornaForbidden()
   {
     var donation = TestData.Donation(TestData.Campaign(_ownerId), _donorId);
