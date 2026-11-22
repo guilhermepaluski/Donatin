@@ -115,13 +115,28 @@ public class CampaignTests
     Assert.Throws<ArgumentException>(() => campaign.AddDonation(0));
   }
 
+  // a doação foi feita dentro do prazo: confirmar o recebimento depois que a campanha
+  // expirou ou foi encerrada ainda deve somar no arrecadado (só NOVAS doações são bloqueadas)
   [Fact]
-  public void AddDonation_EmCampanhaEncerrada_LancaExcecao()
+  public void AddDonation_EmCampanhaEncerrada_AindaSomaNoArrecadado()
   {
     var campaign = TestData.Campaign();
     campaign.CloseCampaign();
 
-    Assert.Throws<InvalidOperationException>(() => campaign.AddDonation(1));
+    campaign.AddDonation(1);
+
+    Assert.Equal(1, campaign.CurrentAmount);
+  }
+
+  [Fact]
+  public void AddDonation_EmCampanhaExpirada_AindaSomaNoArrecadado()
+  {
+    var campaign = TestData.Campaign();
+    TestData.SetPrivate(campaign, nameof(Campaign.ConclusionDate), DateTime.UtcNow.AddDays(-1)); // prazo já terminou
+
+    campaign.AddDonation(2);
+
+    Assert.Equal(2, campaign.CurrentAmount);
   }
 
   [Fact]

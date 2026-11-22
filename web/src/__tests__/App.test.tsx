@@ -34,4 +34,15 @@ describe('App (rotas)', () => {
 
     expect(await screen.findByText(/Pequenos gestos/)).toBeInTheDocument()
   })
+
+  it.each([
+    ['/how-it-works', 'Como funciona?'],
+    ['/privacy', 'Política de Privacidade'],
+    ['/terms', 'Termos de Uso'],
+  ])('"%s" abre a página "%s" (links do rodapé)', async (path, title) => {
+    window.history.pushState({}, '', path)
+    render(<App />)
+
+    expect(await screen.findByRole('heading', { level: 1, name: title })).toBeInTheDocument()
+  })
 })

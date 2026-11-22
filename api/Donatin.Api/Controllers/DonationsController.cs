@@ -101,6 +101,9 @@ public class DonationsController : ControllerBase
     if (!campaign.IsActive || campaign.HasExpired)
       return BadRequest(new { message = "Esta campanha não está mais recebendo doações." });
 
+    if (campaign.IsGoalReached)
+      return BadRequest(new { message = "Esta campanha já atingiu a meta." });
+
     if (campaign.UserId == userId)
       return BadRequest(new { message = "Você não pode doar para a sua própria campanha." });
 

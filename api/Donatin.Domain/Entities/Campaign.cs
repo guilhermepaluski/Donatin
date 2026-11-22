@@ -65,11 +65,6 @@ public class Campaign
 
   public void AddDonation(decimal amount)
   {
-    if (!IsActive || HasExpired) // se a campanha não estiver mais ativa OU se já expirou
-    {
-      throw new InvalidOperationException("Não é possível doar para uma campanha inativa.");
-    }
-
     if (amount <= 0) // se a doação for negativa
     {
       throw new ArgumentException("A quantidade doada deve ser positiva.", nameof(amount));
