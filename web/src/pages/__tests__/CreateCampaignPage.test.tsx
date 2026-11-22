@@ -89,6 +89,13 @@ describe('CreateCampaignPage', () => {
     expect(await screen.findByAltText('Prévia da capa')).toHaveAttribute('src', uploadedUrl)
   })
 
+  it('a moldura é o botão de escolher a imagem (clicar nela abre o seletor de arquivos)', () => {
+    renderPage()
+
+    const frame = screen.getByText('Clique para escolher a imagem da capa (opcional)').closest('label')
+    expect(frame).toHaveAttribute('for', imageInput().id)
+  })
+
   it('ao publicar, envia a URL da imagem que foi salva', async () => {
     const create = vi.fn().mockReturnValue(makeCampaign({ id: 'nova' }))
     routeApi(apiMock, { 'POST /uploads/image': { url: uploadedUrl }, 'POST /campaigns': create })

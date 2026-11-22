@@ -33,7 +33,7 @@ export function CampaignCard({ campaign: c }: { campaign: Campaign }) {
       </div>
 
       <div className="flex flex-1 flex-col gap-3 p-4">
-        <h3 className="line-clamp-1 text-lg font-bold text-dark">{c.title}</h3>
+        <h3 className="line-clamp-1 capitalize text-lg font-bold text-dark">{c.title}</h3>
 
         {c.ownerCampaignName && (
           <p className="flex items-center gap-1 text-sm text-neutral-600">

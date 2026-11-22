@@ -148,7 +148,7 @@ export default function CreateCampaignPage() {
   })
 
   return (
-    <div className="mx-auto space-y-6">
+    <div className="mx-auto max-w-6xl space-y-6">
 
       <header>
         <h1 className="text-3xl font-extrabold tracking-tight text-dark">Criar campanha</h1>
@@ -183,38 +183,52 @@ export default function CreateCampaignPage() {
                 </Field>
             </div>
 
-            {/* Lado direito (Área de upload customizada preenchendo 100% da altura) */}
-            {/* Lado direito: prévia da capa + escolher a imagem */}
-            <div className="flex w-full flex-1 flex-col gap-4">
-              <div className="flex min-h-48 flex-1 items-center justify-center overflow-hidden rounded-xl border border-dashed border-neutral-300 bg-neutral-50">
+            {/* Lado direito: a própria moldura é o botão de escolher a imagem */}
+            <div className="flex w-full flex-1 flex-col gap-2">
+              {/* <label htmlFor="image">: clicar na moldura abre o seletor de arquivos do input escondido.
+                  A moldura ocupa a altura que sobra ao lado dos campos (flex-1) e a imagem fica "por cima"
+                  (absolute), então nunca estica a moldura */}
+              <label
+                htmlFor="image"
+                className={`group relative flex min-h-40 w-full flex-1 items-center justify-center overflow-hidden rounded-xl border border-dashed bg-neutral-50 transition focus-within:ring-2 focus-within:ring-primary ${
+                  imageError ? 'border-red-500' : 'border-neutral-300 hover:border-primary'
+                } ${uploading ? 'cursor-wait' : 'cursor-pointer'}`}
+              >
                 {/^https?:\/\/\S+$/i.test(imageUrl.trim()) ? (
-                  <img
-                    key={imageUrl}
-                    src={imageUrl.trim()}
-                    alt="Prévia da capa"
-                    className="size-full object-cover"
-                    onError={e => (e.currentTarget.style.display = 'none')}
-                  />
+                  <>
+                    <img
+                      key={imageUrl}
+                      src={imageUrl.trim()}
+                      alt="Prévia da capa"
+                      className="absolute inset-0 size-full object-cover"
+                      onError={e => (e.currentTarget.style.display = 'none')}
+                    />
+                    <span className="absolute bottom-3 rounded-full bg-black/60 px-3 py-1 text-sm text-white opacity-0 transition group-hover:opacity-100">
+                      Trocar imagem
+                    </span>
+                  </>
                 ) : (
-                  <div className="flex flex-col items-center gap-2 p-6 text-center text-neutral-400">
+                  <span className="flex flex-col items-center gap-2 p-6 text-center text-neutral-400 group-hover:text-primary">
                     <ImageIcon size={32} aria-hidden />
-                    <span className="text-sm">A prévia da capa aparece aqui</span>
-                  </div>
+                    <span className="text-sm">{uploading ? 'Enviando imagem...' : 'Clique para escolher a imagem da capa (opcional)'}</span>
+                  </span>
                 )}
-              </div>
-              <TextField
-                id="image"
-                type="file"
-                accept="image/jpeg,image/png,image/webp"
-                label="Imagem da capa (opcional)"
-                icon={<ImageIcon size={20} />}
-                error={imageError || errors.imageUrl?.message}
-                disabled={uploading}
-                onChange={onImageChange}
-              />
-              <p className="text-sm text-neutral-500">
-                {uploading ? 'Enviando imagem...' : 'JPG, PNG ou WEBP, até 5 MB.'}
-              </p>
+
+                {/* input de arquivo escondido visualmente (sr-only), mas ainda acessível por teclado e leitor de tela */}
+                <input
+                  id="image"
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  aria-label="Imagem da capa (opcional)"
+                  className="sr-only"
+                  disabled={uploading}
+                  onChange={onImageChange}
+                />
+              </label>
+
+              {imageError || errors.imageUrl?.message
+                ? <p role="alert" className="text-sm text-red-600">{imageError || errors.imageUrl?.message}</p>
+                : <p className="text-sm text-neutral-500">{uploading ? 'Enviando imagem...' : 'JPG, PNG ou WEBP, até 5 MB.'}</p>}
             </div>
           </div>
         </section>
