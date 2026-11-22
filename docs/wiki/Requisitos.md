@@ -15,7 +15,7 @@ Requisitos do [RFC](../blob/main/docs/RFC-Donatin-Guilherme_Mafra_Paluski.md) e 
 | RF03 | Recuperar senha | ⏳ | depende de serviço de envio de e-mail |
 | RF04 | Editar perfil | ✅ | `PUT /users/me` · `ProfilePage` |
 | RF05 | Cadastrar doação | ✅ | `POST /donations` · `DonatePage` |
-| RF06 | Informar descrição, categoria, quantidade e imagens | 🟡 | imagem da campanha é uma URL; upload (Firebase Storage) é futuro |
+| RF06 | Informar descrição, categoria, quantidade e imagens | ✅ | imagem da capa enviada por upload (`POST /uploads/image`) na `CreateCampaignPage` |
 | RF07 | Visualizar campanhas disponíveis | ✅ | `GET /campaigns` · `CampaignsPage`, `HomePage` |
 | RF08 | Pesquisar por categoria ou palavra-chave | ✅ | `GET /campaigns?category=&keyword=` |
 | RF09 | Editar ou remover a própria doação | 🟡 | doação pode ser **cancelada** enquanto pendente; não é editável |
@@ -77,7 +77,7 @@ Regras adicionais que surgiram na implementação:
 | RNF12 / RNF13 / RNF14 | Interface simples, padronizada e responsiva | ✅ Tailwind + componentes reutilizáveis |
 | RNF16 | Android/iOS com Flutter | ➖ projeto reposicionado para Web Apps |
 | RNF18 | Serviços em nuvem | ✅ Azure |
-| RNF19 | Imagens no Firebase Storage | ⏳ |
+| RNF19 | Imagens em serviço externo de mídia, banco guarda só a URL | ✅ Azure Blob Storage (no lugar do Firebase Storage, ver [Decisões Técnicas](Decisoes-Tecnicas)) |
 
 ## Trabalho futuro
 
@@ -88,6 +88,5 @@ Regras adicionais que surgiram na implementação:
 | RF27 — Impacto estimado | Priorizados os fluxos principais |
 | RN12 — Denúncias | Precisa de um papel de administrador para moderar |
 | RF13 — Lista de instituições | Hoje as instituições são vistas pelo perfil público |
-| RNF19 — Upload de imagens | Hoje a imagem é informada por URL |
 | Tela de editar/encerrar campanha | A API já suporta (`PUT` / `DELETE /campaigns/{id}`) |
 | Exclusão de conta (LGPD) | Anonimizar os dados pessoais mantendo o histórico |

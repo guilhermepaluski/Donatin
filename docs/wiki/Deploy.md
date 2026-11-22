@@ -3,7 +3,7 @@
 | Ambiente | Front | API | Banco |
 |---|---|---|---|
 | **Desenvolvimento** (local) | `npm run dev` → http://localhost:5173 | `dotnet run` → http://localhost:5034 (ou Docker → :5080) | PostgreSQL local ou container Docker |
-| **Produção** (Azure, Brazil South) | App Service `donatin` | App Service `donatin-api` | PostgreSQL Flexible Server `donatin-db` |
+| **Produção** (Azure, Brazil South) | App Service `donatin` | App Service `donatin-api` | PostgreSQL Flexible Server `donatin-db` + Blob Storage (imagens) |
 
 ## Produção na Azure
 
@@ -24,6 +24,7 @@ flowchart LR
 | `donatin` (front) | Node; o build do Vite (`dist/`) é servido pelo comando `npm start` → `serve -s dist -l 8080` (o `-s` faz toda rota cair no `index.html`, necessário para o React Router) |
 | `donatin-api` | .NET 10 por código (sem container); Application Insights habilitado |
 | `donatin-db` | Azure Database for PostgreSQL – Flexible Server, B1ms, 32 GB, banco `donatin`; firewall liberado só para serviços da Azure |
+| Conta de armazenamento | Standard, LRS, contêiner `images` com acesso anônimo **só de leitura de blobs** (qualquer um vê uma imagem pela URL, ninguém lista nem envia); Defender desligado (é pago) |
 
 ### Configuração da API (App settings do App Service)
 
@@ -34,6 +35,7 @@ Os segredos ficam nas **variáveis de ambiente** do App Service (Configurações
 | `ConnectionStrings__DonatinDb` | Conexão com o PostgreSQL da Azure |
 | `Jwt__Secret` | Chave de assinatura do JWT (mín. 32 caracteres; a API não sobe sem ela) |
 | `Cors__AllowedOrigins__0` | URL do front, a única origem que pode chamar a API pelo navegador |
+| `Storage__ConnectionString` | Cadeia de conexão da conta de armazenamento (upload de imagens). Sem ela a API sobe normalmente; só o upload falha |
 
 > O `__` (dois sublinhados) é como o .NET lê seções do `appsettings.json` a partir de variáveis de ambiente: `Jwt__Secret` vira `Jwt:Secret`.
 
@@ -72,6 +74,8 @@ cp api/.env.example api/.env  # sempre: Jwt__Secret e ConnectionStrings__Donatin
 ```dotenv
 Jwt__Secret=uma_chave_aleatoria_com_pelo_menos_32_caracteres
 ConnectionStrings__DonatinDb=Host=localhost;Port=5432;Database=donatin_db;Username=SEU_USUARIO;Password=SUA_SENHA
+# opcional: só para testar o upload de imagens
+Storage__ConnectionString=cadeia_de_conexao_da_conta_de_armazenamento
 ```
 
 Para gerar o segredo: `openssl rand -base64 48`. Os dois `.env` estão no `.gitignore`.

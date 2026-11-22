@@ -57,3 +57,10 @@ Cada decisão com o contexto, o que foi escolhido e o custo (trade-off).
 ## 13. Migrations aplicadas na subida da API
 - **Decisão:** `db.Database.Migrate()` no `Program.cs`.
 - **Trade-off:** simplifica o deploy (o banco se atualiza sozinho), mas numa escala maior o ideal seria rodar as migrations como um passo separado do pipeline.
+
+## 14. Imagens no Azure Blob Storage (em vez do Firebase Storage)
+- **Contexto:** o RNF19 do RFC previa o Firebase Storage. Desde fevereiro de 2026, o Firebase Storage não funciona no plano gratuito (Spark): é preciso o plano Blaze, com conta de faturamento (cartão).
+- **Decisão:** usar o **Azure Blob Storage**, na mesma assinatura e região (Brazil South) da API e do banco, com um contêiner `images` de leitura pública. A API recebe o arquivo, valida e envia ao Blob; o banco guarda só a URL — exatamente a ideia do RNF19.
+- **Por quê:** sem cartão (usa os créditos do Azure for Students), custo de centavos por mês, tudo num provedor só e perto da API.
+- **Trade-off:** o upload passa pela API (consome banda do App Service) em vez de ir direto do navegador ao Storage. Para o volume do projeto isso não é problema, e permite validar tipo e tamanho no servidor.
+

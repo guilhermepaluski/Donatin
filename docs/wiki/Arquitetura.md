@@ -31,12 +31,15 @@ flowchart TB
         api["<b>API</b><br/>ASP.NET Core .NET 10<br/>App Service <i>donatin-api</i>"]
         db[("<b>Banco de dados</b><br/>PostgreSQL Flexible Server<br/><i>donatin-db</i>")]
         ai["<b>Application Insights</b><br/>logs, requisições, erros"]
+        blob[("<b>Blob Storage</b><br/>contêiner <i>images</i><br/>(capas das campanhas)")]
     end
 
     user -->|"HTTPS"| web
     web -->|"HTTPS + JSON<br/>Authorization: Bearer JWT"| api
     api -->|"EF Core / Npgsql"| db
     api -.->|"telemetria"| ai
+    api -->|"upload (Azure.Storage.Blobs)"| blob
+    user -.->|"carrega a imagem pela URL pública"| blob
 ```
 
 | Container | Responsabilidade |
@@ -45,6 +48,7 @@ flowchart TB
 | API | Autenticação, regras de negócio, autorização (quem pode o quê), notificações |
 | PostgreSQL | Usuários, campanhas, doações, agendamentos e notificações |
 | Application Insights | Monitoramento da API em produção (ver [Monitoramento](Monitoramento)) |
+| Blob Storage | Guarda as imagens enviadas; o banco guarda só a URL (RNF19) |
 
 ## C4 — Nível 3: Componentes da API
 
@@ -53,16 +57,16 @@ A solução `api/Donatin.sln` tem 4 projetos:
 ```mermaid
 flowchart LR
     subgraph Api["Donatin.Api"]
-        C["Controllers<br/>Auth · Users · Campaigns<br/>Donations · Schedules · Notifications"]
+        C["Controllers<br/>Auth · Users · Campaigns<br/>Donations · Schedules · Notifications · Uploads"]
         DTO["DTOs<br/>(entrada/saída JSON)"]
     end
     subgraph Domain["Donatin.Domain"]
         E["Entidades<br/>User · Campaign · Donation<br/>Schedule · Notification"]
-        I["Interfaces<br/>IxxxRepository · ITokenService<br/>IPasswordHasher"]
+        I["Interfaces<br/>IxxxRepository · ITokenService<br/>IPasswordHasher · IImageStorage"]
     end
     subgraph Infra["Donatin.Infrastructure"]
         R["Repositórios (EF Core)"]
-        S["TokenService (JWT)<br/>PasswordHasher (BCrypt)"]
+        S["TokenService (JWT)<br/>PasswordHasher (BCrypt)<br/>BlobImageStorage (Azure Blob)"]
         Ctx["AppDbContext + Migrations"]
     end
     T["Donatin.Tests<br/>xUnit + Moq"]

@@ -4,15 +4,15 @@
 
 | | Back-end (.NET) | Front-end (React) | Meta do Playbook |
 |---|---|---|---|
-| Testes | 178 | 189 | — |
-| Cobertura de linhas | **96,2%** | **98,4%** | 75% back · 25% front |
+| Testes | 193 | 193 | — |
+| Cobertura de linhas | **96,3%** | **98,3%** | 75% back · 25% front |
 | Ferramentas | xUnit, Moq, coverlet, EF Core InMemory | Vitest, Testing Library, user-event, jsdom | |
 
 *Medido em 22/11/2026 com os relatórios locais (coverlet e Vitest), separados por lado — é assim que a meta do Playbook é definida (75% back / 25% front).*
 
 > **Por que o SonarCloud mostra 94,7%?** O Sonar junta back e front num número só e calcula a partir das linhas que ele considera "cobríveis" nos dois relatórios. Os números acima são os de cada lado, separados. Os dois estão bem acima das metas.
 
-Cobertura do back por projeto: `Donatin.Api` 100% · `Donatin.Domain` 98,4% · `Donatin.Infrastructure` 84,9%.
+Cobertura do back por projeto: `Donatin.Api` 100% · `Donatin.Domain` 98,4% · `Donatin.Infrastructure` 85,6%.
 
 **O que fica fora da conta (de propósito):** migrations (código gerado pelo EF), `Program.cs` (só configuração) e `AppDbContextFactory.cs` (usado só pela ferramenta de migrations) no back; `main.tsx`, `types.ts` e os próprios arquivos de teste no front. A configuração está em [`api/coverage.runsettings`](../blob/main/api/coverage.runsettings) e [`web/vitest.config.ts`](../blob/main/web/vitest.config.ts).
 
@@ -40,7 +40,7 @@ A tabela aparece no terminal (coluna `% Lines`), e o relatório HTML fica em `we
 |---|---|---|
 | `Domain/` | Regras das entidades (`Campaign`, `Donation`, `Schedule`, `User`, `Notification`) | Cria a entidade e chama o método; não precisa de banco |
 | `Controllers/` | Cada endpoint: sucesso, 400, 401, 403, 404, notificações | Repositórios falsos com **Moq** (`Setup` diz o que devolver, `Verify` confere o que foi chamado) e usuário logado simulado com `TestData.LoginAs` |
-| `Infrastructure/` | Configuração do banco (índices únicos, enums como texto, delete behaviors) e consultas de repositório | Modelo do EF montado sem conexão; repositórios com **EF Core InMemory** |
+| `Infrastructure/` | Configuração do banco (índices únicos, enums como texto, delete behaviors), consultas de repositório e a configuração do `BlobImageStorage` | Modelo do EF montado sem conexão; repositórios com **EF Core InMemory**; o envio real ao Blob não é testado (precisa da Azure) |
 | `Validation/` | Validação de URL opcional dos DTOs | |
 | `Helpers/TestData.cs` | Fábricas de dados de teste (`Campaign()`, `Donation()`, `User()`…) e `SetPrivate` para simular estados (ex.: data no passado) | |
 
@@ -74,7 +74,7 @@ Cada pasta tem uma subpasta `__tests__` ao lado do código que testa (`pages/__t
 
 ## TDD
 
-Os ciclos de TDD aparecem no histórico de commits: primeiro um commit `test:` com o teste **falhando** (vermelho), depois um commit `fix:` com a correção que faz ele passar (verde).
+Os ciclos de TDD aparecem no histórico de commits: primeiro um commit `test:` com o teste **falhando** (vermelho), depois um commit `fix:` ou `feat:` com o código que faz ele passar (verde). Quando a funcionalidade ainda não existia (ciclos 6 e 7), o commit vermelho leva só os **esqueletos** — interface e métodos com `throw new NotImplementedException()` — para o projeto compilar e os testes falharem de verdade.
 
 | # | Comportamento | 🔴 Teste falhando | 🟢 Correção |
 |---|---|---|---|
@@ -83,6 +83,8 @@ Os ciclos de TDD aparecem no histórico de commits: primeiro um commit `test:` c
 | 3 | Doar para campanha com a meta atingida deve dar 400 (o back passa a seguir a regra do front) | [`57136f0`](../commit/57136f0) | [`e12c044`](../commit/e12c044) |
 | 4 | Campanhas de um usuário devem trazer o dono (`Include(User)` faltando) | [`d1f1e08`](../commit/d1f1e08) | [`f6d2b72`](../commit/f6d2b72) |
 | 5 | Links do rodapé devem levar a páginas que existem (front) | [`0d5b09d`](../commit/0d5b09d) | [`a66d7c8`](../commit/a66d7c8) |
+| 6 | Upload de imagem: aceita JPG/PNG/WEBP até 5 MB, recusa o resto, salva com nome aleatório (back) | [`351e3e5`](../commit/351e3e5) | [`a289f47`](../commit/a289f47) |
+| 7 | Formulário de campanha envia a imagem da capa e mostra a prévia (front) | [`be4f7fd`](../commit/be4f7fd) | [`5ddc641`](../commit/5ddc641) |
 
 Ciclo 1 em detalhe:
 1. **Vermelho:** o teste `RefuseSchedule_DepoisDaDataPrevista_LancaInvalidOperationException` esperava uma `InvalidOperationException`, mas o domínio lançava `InvalidCastException`, que o controller não tratava. O resultado era um **erro 500** em vez de uma mensagem para o usuário.
