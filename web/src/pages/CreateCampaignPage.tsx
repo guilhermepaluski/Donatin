@@ -23,7 +23,7 @@ const schema = z.object({
   product: required('Informe o que será arrecadado.').min(3, 'Use no mínimo 3 caracteres.').max(50, 'Use no máximo 50 caracteres.'),
   goalAmount: z.number({ error: 'Informe a meta.' }).positive('A meta deve ser maior que zero.'),
   receiveOption: z.enum(['Coleta', 'Entrega', 'ColetaOuEntrega']),
-  imageUrl: z.string().trim().refine(v => v === '' || /^https?:\/\/\S+$/i.test(v), 'Use um link que comece com http:// ou https://'),
+  imageUrl: z.string(), // preenchida com a URL devolvida pelo upload
   conclusionDate: z.string().min(1, 'Informe a data de encerramento.'),
   deliveryCep: z.string(),
   deliveryStreet: z.string(),
@@ -69,6 +69,8 @@ const card = 'space-y-4 rounded-3xl border-2 border-neutral-200 bg-white p-6'
 export default function CreateCampaignPage() {
   const navigate = useNavigate()
   const [formError, setFormError] = useState('')
+  const [uploading, setUploading] = useState(false)
+  const [imageError, setImageError] = useState('')
   const { register, handleSubmit, control, setValue, setError, formState: { errors, isSubmitting, isSubmitted } } =
     useForm<CampaignForm>({
       resolver: zodResolver(schema),
@@ -82,6 +84,27 @@ export default function CreateCampaignPage() {
   const receiveOption = useWatch({ control, name: 'receiveOption' })
   const imageUrl = useWatch({ control, name: 'imageUrl' })
   const needsAddress = receiveOption !== 'Coleta'
+
+  // envia a imagem escolhida para a API (Azure Blob Storage) e guarda a URL devolvida no formulário
+  async function onImageChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file)
+      return
+
+    setImageError('')
+    setUploading(true)
+    try {
+      const form = new FormData()
+      form.append('file', file)
+      const { url } = await api<{ url: string }>('/uploads/image', { method: 'POST', body: form })
+      setValue('imageUrl', url)
+    } catch (err) {
+      setValue('imageUrl', '')
+      setImageError(err instanceof ApiError ? err.message : 'Não foi possível enviar a imagem.')
+    } finally {
+      setUploading(false)
+    }
+  }
 
   const onSubmit = handleSubmit(async v => {
     setFormError('')
@@ -161,7 +184,7 @@ export default function CreateCampaignPage() {
             </div>
 
             {/* Lado direito (Área de upload customizada preenchendo 100% da altura) */}
-                        {/* Lado direito: prévia da capa + link da imagem */}
+            {/* Lado direito: prévia da capa + escolher a imagem */}
             <div className="flex w-full flex-1 flex-col gap-4">
               <div className="flex min-h-48 flex-1 items-center justify-center overflow-hidden rounded-xl border border-dashed border-neutral-300 bg-neutral-50">
                 {/^https?:\/\/\S+$/i.test(imageUrl.trim()) ? (
@@ -180,12 +203,18 @@ export default function CreateCampaignPage() {
                 )}
               </div>
               <TextField
-                label="Link da imagem (opcional)"
-                placeholder="https://..."
+                id="image"
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                label="Imagem da capa (opcional)"
                 icon={<ImageIcon size={20} />}
-                error={errors.imageUrl?.message}
-                {...register('imageUrl')}
+                error={imageError || errors.imageUrl?.message}
+                disabled={uploading}
+                onChange={onImageChange}
               />
+              <p className="text-sm text-neutral-500">
+                {uploading ? 'Enviando imagem...' : 'JPG, PNG ou WEBP, até 5 MB.'}
+              </p>
             </div>
           </div>
         </section>
@@ -288,7 +317,7 @@ export default function CreateCampaignPage() {
           <Link to="/campaigns" className="grid h-14 place-items-center rounded-full border border-red-300 px-8 bg-red-400 font-bold text-white hover:bg-red-500">
             Cancelar
           </Link>
-          <Button type="submit" loading={isSubmitting} className="cursor-pointer sm:w-auto sm:px-10">Publicar campanha</Button>
+          <Button type="submit" loading={isSubmitting} disabled={uploading} className="cursor-pointer sm:w-auto sm:px-10">Publicar campanha</Button>
         </div>
       </form>
     </div>
