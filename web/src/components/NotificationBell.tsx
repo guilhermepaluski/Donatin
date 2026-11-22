@@ -42,7 +42,7 @@ export function NotificationBell() {
     if (!n.read) await api(`/notifications/${n.id}/read`, { method: 'POST' }).catch(() => {})
     setOpen(false)
     count.reload()
-    navigate('/my-donations')
+    void navigate('/my-donations')
   }
 
   async function readAllNotifications() {

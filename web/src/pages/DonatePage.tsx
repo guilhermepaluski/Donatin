@@ -121,7 +121,7 @@ function DonationForms({ campaign }: { campaign: Campaign }) {
 
     try {
       await api<Donation>('/donations', { method: 'POST', body })
-      navigate(`/my-donations`)
+      void navigate(`/my-donations`)
     } catch (e) {
       if (!(e instanceof ApiError))
         throw e

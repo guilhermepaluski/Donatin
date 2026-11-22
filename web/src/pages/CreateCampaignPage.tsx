@@ -108,7 +108,7 @@ export default function CreateCampaignPage() {
 
     try {
       const created = await api<Campaign>('/campaigns', { method: 'POST', body })
-      navigate(`/campaigns/${created.id}`)
+      void navigate(`/campaigns/${created.id}`)
     } catch (e) {
       if (!(e instanceof ApiError))
         throw e

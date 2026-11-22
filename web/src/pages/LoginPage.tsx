@@ -30,7 +30,7 @@ export default function LoginPage() {
     setFormError('')
     try {
       await login(values)
-      navigate('/', { replace: true })
+      void navigate('/', { replace: true })
     } catch (e) {
       if (e instanceof ApiError)
         setFormError(e.message)

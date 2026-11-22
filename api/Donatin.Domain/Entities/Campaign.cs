@@ -147,7 +147,7 @@ public class Campaign
         throw new ArgumentException("Informe a rua, o bairro e o número completos.");
     }
 
-    if (cep == null || !Regex.IsMatch(cep, @"^\d{8}$"))
+    if (cep == null || !Regex.IsMatch(cep, @"^\d{8}$", RegexOptions.None, TimeSpan.FromMilliseconds(100)))
     {
       throw new ArgumentException("Informe o CEP do endereço de entrega (8 dígitos).");
     }

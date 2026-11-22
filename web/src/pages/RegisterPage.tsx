@@ -85,7 +85,7 @@ export default function RegisterPage() {
 
     try {
       await signUp(body)
-      navigate('/', { replace: true })
+      void navigate('/', { replace: true })
     } catch (e) {
       if (!(e instanceof ApiError)) throw e
       // erro de campo vindo da API -> mostra embaixo do input certo
