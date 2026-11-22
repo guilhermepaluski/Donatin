@@ -14,4 +14,8 @@ WORKDIR /app
 COPY --from=build /app/publish .
 
 EXPOSE 8080
+
+# roda com o usuário sem privilégios que já vem na imagem do .NET (não como root)
+USER $APP_UID
+
 ENTRYPOINT ["dotnet", "Donatin.Api.dll"]

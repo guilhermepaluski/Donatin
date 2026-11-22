@@ -89,7 +89,7 @@ public class Donation
         throw new ArgumentException("Informe a rua, o bairro e o número do endereço de retirada.");
     }
 
-    if (donorCep == null || !Regex.IsMatch(donorCep, @"^\d{8}$"))
+    if (donorCep == null || !Regex.IsMatch(donorCep, @"^\d{8}$", RegexOptions.None, TimeSpan.FromMilliseconds(100)))
     {
       throw new ArgumentException("Informe o CEP do endereço de retirada (8 dígitos).");
     }
