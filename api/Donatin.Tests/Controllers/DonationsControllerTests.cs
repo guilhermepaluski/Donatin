@@ -70,6 +70,21 @@ public class DonationsControllerTests
   }
 
   [Fact]
+  public async Task Create_CampanhaQueJaAtingiuAMeta_RetornaBadRequest() // mesma regra do front (donationRules.ts)
+  {
+    var campaign = TestData.Campaign(_ownerId, ReceiveOption.Entrega, goal: 5);
+    campaign.AddDonation(5); // meta batida
+    _campaigns.Setup(r => r.GetCampaignByIdAsync(campaign.Id)).ReturnsAsync(campaign);
+
+    var result = await ControllerLoggedAs(_donorId).Create(Dto(campaign.Id));
+
+    var badRequest = Assert.IsType<BadRequestObjectResult>(result.Result);
+    Assert.Contains("Esta campanha já atingiu a meta.", badRequest.Value!.ToString());
+    _donations.Verify(r => r.AddWithScheduleAsync(It.IsAny<Donation>(), It.IsAny<Schedule>()), Times.Never);
+    _notifications.Verify(r => r.AddAsync(It.IsAny<Notification>()), Times.Never);
+  }
+
+  [Fact]
   public async Task Create_CampanhaEncerrada_RetornaBadRequest()
   {
     var campaign = TestData.Campaign(_ownerId);
