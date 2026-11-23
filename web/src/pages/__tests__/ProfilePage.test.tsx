@@ -74,12 +74,62 @@ describe('ProfilePage', () => {
 
       await userEvent.click(screen.getByRole('button', { name: /editar perfil/i }))
       await userEvent.clear(screen.getByLabelText('Nome'))
-      await userEvent.type(screen.getByLabelText('Foto de perfil (link)'), 'foto.png')
       await userEvent.click(screen.getByRole('button', { name: 'Salvar' }))
 
       expect(await screen.findByText('Informe o nome.')).toBeInTheDocument()
-      expect(screen.getByText('Use um link que comece com http:// ou https://')).toBeInTheDocument()
       expect(apiMock).not.toHaveBeenCalledWith('/users/me', expect.anything())
+    })
+
+    // ---------- foto de perfil: upload para o Azure Blob Storage ----------
+
+    const foto = () => new File(['conteudo'], 'eu.png', { type: 'image/png' })
+    const photoInput = () => screen.getByLabelText('Foto de perfil')
+    const uploadedUrl = 'https://donatinimagens.blob.core.windows.net/images/eu.png'
+    const openEditForm = () => userEvent.click(screen.getByRole('button', { name: /editar perfil/i }))
+
+    it('o campo de link da foto não existe mais; o círculo da foto é o botão de escolher a imagem', async () => {
+      renderAt('/profile', { 'GET /campaigns/user/user-1': [] })
+      await openEditForm()
+
+      expect(screen.queryByLabelText('Foto de perfil (link)')).toBeNull()
+      const circle = screen.getByText('Trocar foto').closest('label')
+      expect(circle).toHaveAttribute('for', photoInput().id)
+    })
+
+    it('escolher a foto envia a imagem e mostra a nova foto no círculo', async () => {
+      const upload = vi.fn().mockReturnValue({ url: uploadedUrl })
+      renderAt('/profile', { 'GET /campaigns/user/user-1': [], 'POST /uploads/image': upload })
+      await openEditForm()
+      const file = foto()
+
+      await userEvent.upload(photoInput(), file)
+
+      const sent = upload.mock.calls[0][0] as FormData
+      expect(sent).toBeInstanceOf(FormData)
+      expect(sent.get('file')).toBe(file)
+      expect(await screen.findByAltText('Prévia da foto de perfil')).toHaveAttribute('src', uploadedUrl)
+    })
+
+    it('ao salvar, envia a URL da foto que foi enviada', async () => {
+      const save = vi.fn().mockReturnValue(makeUser({ profilePhotoUrl: uploadedUrl }))
+      renderAt('/profile', { 'GET /campaigns/user/user-1': [], 'POST /uploads/image': { url: uploadedUrl }, 'PUT /users/me': save })
+      await openEditForm()
+
+      await userEvent.upload(photoInput(), foto())
+      await screen.findByAltText('Prévia da foto de perfil')
+      await userEvent.click(screen.getByRole('button', { name: 'Salvar' }))
+
+      expect(save).toHaveBeenCalledWith(expect.objectContaining({ profilePhotoUrl: uploadedUrl }))
+    })
+
+    it('erro no envio da foto aparece embaixo do círculo', async () => {
+      renderAt('/profile', { 'GET /campaigns/user/user-1': [], 'POST /uploads/image': new ApiError(400, 'A imagem deve ter no máximo 5 MB.') })
+      await openEditForm()
+
+      await userEvent.upload(photoInput(), foto())
+
+      expect(await screen.findByText('A imagem deve ter no máximo 5 MB.')).toBeInTheDocument()
+      expect(screen.queryByAltText('Prévia da foto de perfil')).toBeNull()
     })
 
     it('erro da API aparece no formulário', async () => {
