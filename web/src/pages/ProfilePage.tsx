@@ -1,9 +1,9 @@
 import { useState, type ReactNode } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Link, useParams } from 'react-router-dom'
-import { Building2, CalendarDays, FileText, Hash, ImageIcon, Mail, MapPin, Pencil, Phone, User, type LucideIcon } from 'lucide-react'
+import { Building2, CalendarDays, Camera, FileText, Hash, Mail, MapPin, Pencil, Phone, User, type LucideIcon } from 'lucide-react'
 import { useAuth } from '../auth/AuthContext'
 import { api, ApiError } from '../lib/api'
 import { useFetch } from '../lib/useFetch'
@@ -29,7 +29,7 @@ const schema = z.object({
   city: required('Informe a cidade.'),
   uf: z.string().length(2, 'Use 2 letras (ex.: SC).'),
   aboutMe: z.string().max(2000, 'Use no máximo 2000 caracteres.'),
-  profilePhotoUrl: z.string().trim().refine(v => v === '' || /^https?:\/\/\S+$/i.test(v), 'Use um link que comece com http:// ou https://'),
+  profilePhotoUrl: z.string(), // preenchida com a URL devolvida pelo upload
 })
 type ProfileForm = z.infer<typeof schema>
 
@@ -201,8 +201,10 @@ function CampaignSection({ title, campaigns, loading, error, empty }: {
 function ProfileEditForm({ user, onCancel, onSaved }: { user: UserProfile; onCancel: () => void; onSaved: (u: UserProfile) => void }) {
   const isInstitution = !!user.cpfCnpj
   const [formError, setFormError] = useState('')
+  const [uploading, setUploading] = useState(false)
+  const [photoError, setPhotoError] = useState('')
 
-  const { register, handleSubmit, setValue, setError, formState: { errors, isSubmitting, isSubmitted } } =
+  const { register, handleSubmit, control, setValue, setError, formState: { errors, isSubmitting, isSubmitted } } =
     useForm<ProfileForm>({
       resolver: zodResolver(schema),
       defaultValues: {
@@ -219,6 +221,28 @@ function ProfileEditForm({ user, onCancel, onSaved }: { user: UserProfile; onCan
         profilePhotoUrl: user.profilePhotoUrl ?? '',
       },
     })
+
+  const photoUrl = useWatch({ control, name: 'profilePhotoUrl' })
+
+  // envia a foto escolhida para a API (Azure Blob Storage) e guarda a URL devolvida no formulário
+  async function onPhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file)
+      return
+
+    setPhotoError('')
+    setUploading(true)
+    try {
+      const form = new FormData()
+      form.append('file', file)
+      const { url } = await api<{ url: string }>('/uploads/image', { method: 'POST', body: form })
+      setValue('profilePhotoUrl', url)
+    } catch (err) {
+      setPhotoError(err instanceof ApiError ? err.message : 'Não foi possível enviar a foto.') // mantém a foto anterior
+    } finally {
+      setUploading(false)
+    }
+  }
 
   // campo com máscara: formata o que a pessoa digita
   const masked = (name: 'phone' | 'cep' | 'uf', fn: (v: string) => string) =>
@@ -263,6 +287,42 @@ function ProfileEditForm({ user, onCancel, onSaved }: { user: UserProfile; onCan
     <form noValidate onSubmit={onSubmit} className="space-y-6 rounded-3xl border border-neutral-200 bg-white p-6">
       <h2 className="text-lg font-bold text-dark">Editar perfil</h2>
 
+      {/* foto de perfil: o próprio círculo é o botão de escolher a imagem (<label> ligado ao input escondido) */}
+      <section className="flex flex-col items-center gap-2">
+        <label
+          htmlFor="profilePhoto"
+          className={`group relative size-24 overflow-hidden rounded-full focus-within:ring-2 focus-within:ring-primary ${
+            photoError ? 'ring-2 ring-red-500' : ''
+          } ${uploading ? 'cursor-wait' : 'cursor-pointer'}`}
+        >
+          {photoUrl ? (
+            <img src={photoUrl} alt="Prévia da foto de perfil" className="size-full object-cover" />
+          ) : (
+            <Avatar name={user.name} className="size-24 text-3xl" />
+          )}
+
+          <span className="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-black/50 text-xs font-medium text-white opacity-0 transition group-hover:opacity-100">
+            <Camera size={20} aria-hidden />
+            Trocar foto
+          </span>
+
+          {/* input de arquivo escondido visualmente (sr-only), mas acessível por teclado e leitor de tela */}
+          <input
+            id="profilePhoto"
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            aria-label="Foto de perfil"
+            className="sr-only"
+            disabled={uploading}
+            onChange={onPhotoChange}
+          />
+        </label>
+
+        {photoError
+          ? <p role="alert" className="text-sm text-red-600">{photoError}</p>
+          : <p className="text-sm text-neutral-500">{uploading ? 'Enviando foto...' : 'Clique na foto para trocar (JPG, PNG ou WEBP, até 5 MB).'}</p>}
+      </section>
+
       <section className="grid gap-4 md:grid-cols-2">
         <div className="md:col-span-2">
           <TextField
@@ -305,14 +365,6 @@ function ProfileEditForm({ user, onCancel, onSaved }: { user: UserProfile; onCan
       )}
 
       <section className="grid gap-4">
-        <TextField
-          label="Foto de perfil (link)"
-          type="url"
-          placeholder="https://..."
-          icon={<ImageIcon size={20} />}
-          error={errors.profilePhotoUrl?.message}
-          {...register('profilePhotoUrl')}
-        />
         <Field label="Sobre mim" htmlFor="aboutMe" error={errors.aboutMe?.message}>
           <textarea
             id="aboutMe"
@@ -337,7 +389,7 @@ function ProfileEditForm({ user, onCancel, onSaved }: { user: UserProfile; onCan
         >
           Cancelar
         </button>
-        <Button type="submit" loading={isSubmitting} className="cursor-pointer sm:w-56">Salvar</Button>
+        <Button type="submit" loading={isSubmitting} disabled={uploading} className="cursor-pointer sm:w-56">Salvar</Button>
       </div>
     </form>
   )
