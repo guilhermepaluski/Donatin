@@ -1,14 +1,17 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import CreateCampaignPage from '../CreateCampaignPage'
 import { api, ApiError } from '../../lib/api'
 import { routeApi } from '../../test/apiMock'
-import { makeCampaign } from '../../test/factories'
+import { makeCampaign, makeUser } from '../../test/factories'
+import type { UserProfile } from '../../types'
 
 vi.mock('../../lib/api', async orig => ({ ...(await orig<typeof import('../../lib/api')>()), api: vi.fn() }))
 const apiMock = vi.mocked(api)
+const auth = vi.hoisted(() => ({ user: null as UserProfile | null }))
+vi.mock('../../auth/AuthContext', () => ({ useAuth: () => auth }))
 
 const renderPage = () =>
   render(
@@ -173,3 +176,79 @@ describe('CreateCampaignPage', () => {
     expect(await screen.findByText('Servidor fora do ar.')).toBeInTheDocument()
   })
 })
+
+describe('CreateCampaignPage — editar campanha (/campaigns/:id/edit)', () => {
+  beforeEach(() => {
+    apiMock.mockReset()
+    auth.user = makeUser({ id: 'owner-1' })
+  })
+
+  const renderEdit = () =>
+    render(
+      <MemoryRouter initialEntries={['/campaigns/camp-1/edit']}>
+        <Routes>
+          <Route path="/campaigns/:id/edit" element={<CreateCampaignPage />} />
+          <Route path="/campaigns/:id" element={<p>Página da campanha</p>} />
+        </Routes>
+      </MemoryRouter>,
+    )
+
+  const existing = () => makeCampaign({
+    title: 'Agasalhos para o inverno', description: 'Arrecadação de agasalhos', category: 'Roupas', product: 'agasalhos',
+    goalAmount: 10, receiveOption: 'Entrega', imageUrl: 'https://donatinimagens.blob.core.windows.net/images/capa.png',
+  })
+
+  it('carrega os dados da campanha no formulário', async () => {
+    routeApi(apiMock, { 'GET /campaigns/camp-1': existing() })
+    renderEdit()
+
+    expect(await screen.findByRole('heading', { name: 'Editar campanha' })).toBeInTheDocument()
+    expect(screen.getByLabelText('Título')).toHaveValue('Agasalhos para o inverno')
+    expect(screen.getByLabelText('Descrição')).toHaveValue('Arrecadação de agasalhos')
+    expect(screen.getByLabelText('Categoria')).toHaveValue('Roupas')
+    expect(screen.getByLabelText('O que será arrecadado')).toHaveValue('agasalhos')
+    expect(screen.getByLabelText('Meta (quantidade)')).toHaveValue(10)
+    expect(screen.getByLabelText('CEP')).toHaveValue('89201-000')
+    expect(screen.getByLabelText('Rua')).toHaveValue('Rua XV')
+    expect(screen.getByLabelText('UF')).toHaveValue('SC')
+    expect(screen.getByAltText('Prévia da capa')).toHaveAttribute('src', 'https://donatinimagens.blob.core.windows.net/images/capa.png')
+    expect(screen.getByRole('button', { name: 'Salvar alterações' })).toBeInTheDocument()
+  })
+
+  it('salvar envia o PUT com os dados alterados e volta para a campanha', async () => {
+    const update = vi.fn().mockReturnValue(existing())
+    routeApi(apiMock, { 'GET /campaigns/camp-1': existing(), 'PUT /campaigns/camp-1': update })
+    renderEdit()
+
+    const title = await screen.findByLabelText('Título')
+    await waitFor(() => expect(title).toHaveValue('Agasalhos para o inverno'))
+    await userEvent.clear(title)
+    await userEvent.type(title, 'Cobertores para o inverno')
+    await userEvent.click(screen.getByRole('button', { name: 'Salvar alterações' }))
+
+    expect(update).toHaveBeenCalledWith(expect.objectContaining({
+      title: 'Cobertores para o inverno', goalAmount: 10, receiveOption: 'Entrega',
+      deliveryCep: '89201000', deliveryStreet: 'Rua XV', deliveryUf: 'SC',
+      imageUrl: 'https://donatinimagens.blob.core.windows.net/images/capa.png',
+    }))
+    expect(await screen.findByText('Página da campanha')).toBeInTheDocument()
+  })
+
+  it('quem não é o dono vê um aviso e não vê o formulário', async () => {
+    auth.user = makeUser({ id: 'outra-pessoa' })
+    routeApi(apiMock, { 'GET /campaigns/camp-1': existing() })
+    renderEdit()
+
+    expect(await screen.findByText('Só quem criou a campanha pode editá-la.')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Salvar alterações' })).toBeNull()
+  })
+
+  it('campanha encerrada não pode ser editada', async () => {
+    routeApi(apiMock, { 'GET /campaigns/camp-1': makeCampaign({ isActive: false }) })
+    renderEdit()
+
+    expect(await screen.findByText('Esta campanha foi encerrada e não pode mais ser editada.')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Salvar alterações' })).toBeNull()
+  })
+})
+

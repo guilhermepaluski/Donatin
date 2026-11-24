@@ -25,6 +25,15 @@ public class CampaignResponseDTO
   public string? OwnerCampaignUf { get; set; }
   public string? CampaignDeliveryAddress { get; set; }
 
+  // all below is for the campaign editing
+  public string? DeliveryCep { get; set; }
+  public string? DeliveryStreet { get; set; }
+  public string? DeliveryNeighborhood { get; set; }
+  public string? DeliveryNumber { get; set; }
+  public string? DeliveryComplement { get; set; }
+  public string? DeliveryCity { get; set; }
+  public string? DeliveryUf { get; set; }
+
   private static string? BuildDeliveryAddress(Campaign? c)
   {
     if (c is null || string.IsNullOrWhiteSpace(c.DeliveryStreet)) return null;
