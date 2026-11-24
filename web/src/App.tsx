@@ -6,7 +6,7 @@ import LoginPage from './pages/LoginPage'
 import HomePage from './pages/HomePage'
 import CampaignsPage from './pages/CampaignsPage'
 import CampaignDetailsPage from './pages/CampaignDetailsPage'
-import CreateCampaignPage from './pages/CreateCampaignPage'
+import CreateCampaignPage, { EditCampaignPage } from './pages/CreateCampaignPage'
 import DonatePage from './pages/DonatePage'
 import MyCampaignsAndDonationsPage from './pages/MyCampaignsAndDonationsPage'
 import ProfilePage from './pages/ProfilePage'
@@ -36,6 +36,7 @@ export default function App() {
 
             <Route element={<ProtectedRoute />}>
               <Route path="/create-campaign" element={<CreateCampaignPage />} />
+              <Route path="/campaigns/:id/edit" element={<EditCampaignPage />} />
               <Route path="/campaigns/:id/donate" element={<DonatePage />} />
               <Route path="/my-donations" element={<MyCampaignsAndDonationsPage />} />
               <Route path="/profile" element={<ProfilePage />} />

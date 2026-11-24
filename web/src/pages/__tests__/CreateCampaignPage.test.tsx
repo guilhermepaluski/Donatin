@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
-import CreateCampaignPage from '../CreateCampaignPage'
+import CreateCampaignPage, { EditCampaignPage } from '../CreateCampaignPage'
 import { api, ApiError } from '../../lib/api'
 import { routeApi } from '../../test/apiMock'
 import { makeCampaign, makeUser } from '../../test/factories'
@@ -177,7 +177,7 @@ describe('CreateCampaignPage', () => {
   })
 })
 
-describe('CreateCampaignPage — editar campanha (/campaigns/:id/edit)', () => {
+describe('EditCampaignPage (/campaigns/:id/edit)', () => {
   beforeEach(() => {
     apiMock.mockReset()
     auth.user = makeUser({ id: 'owner-1' })
@@ -187,7 +187,7 @@ describe('CreateCampaignPage — editar campanha (/campaigns/:id/edit)', () => {
     render(
       <MemoryRouter initialEntries={['/campaigns/camp-1/edit']}>
         <Routes>
-          <Route path="/campaigns/:id/edit" element={<CreateCampaignPage />} />
+          <Route path="/campaigns/:id/edit" element={<EditCampaignPage />} />
           <Route path="/campaigns/:id" element={<p>Página da campanha</p>} />
         </Routes>
       </MemoryRouter>,

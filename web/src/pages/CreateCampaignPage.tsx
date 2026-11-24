@@ -2,12 +2,14 @@ import { useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { CalendarDays, Hash, ImageIcon, MapPin, Package, Target, Type } from 'lucide-react'
 import { Button } from '../components/PillButton'
 import { TextField } from '../components/TextField'
 import { CATEGORIES, RECEIVE_LABELS } from '../lib/campaignsEnums'
 import { api, ApiError } from '../lib/api'
+import { useFetch } from '../lib/useFetch'
+import { useAuth } from '../auth/AuthContext'
 import { digits, maskCep, maskUf } from '../lib/masks'
 import type { Campaign, CampaignRequest, ReceiveOption } from '../types'
 import { Field, box } from '../components/FieldBox'
@@ -66,8 +68,29 @@ const OPTIONS: { value: ReceiveOption; hint: string }[] = [
 
 const card = 'space-y-4 rounded-3xl border-2 border-neutral-200 bg-white p-6'
 
-export default function CreateCampaignPage() {
+// inputs for editing
+const toForm = (c: Campaign): CampaignForm => ({
+  title: c.title,
+  description: c.description,
+  category: c.category,
+  product: c.product,
+  goalAmount: c.goalAmount,
+  receiveOption: c.receiveOption,
+  imageUrl: c.imageUrl ?? '',
+  conclusionDate: new Date(c.conclusionDate).toLocaleDateString('sv-SE'), // formato do <input type="date">
+  deliveryCep: c.deliveryCep ? maskCep(c.deliveryCep) : '',
+  deliveryStreet: c.deliveryStreet ?? '',
+  deliveryNeighborhood: c.deliveryNeighborhood ?? '',
+  deliveryNumber: c.deliveryNumber ?? '',
+  deliveryComplement: c.deliveryComplement ?? '',
+  deliveryCity: c.deliveryCity ?? '',
+  deliveryUf: c.deliveryUf ?? '',
+})
+
+export default function CreateCampaignPage({ campaign }: { campaign?: Campaign }) {
   const navigate = useNavigate()
+  const isEdit = !!campaign
+  const id = campaign?.id
   const [formError, setFormError] = useState('')
   const [uploading, setUploading] = useState(false)
   const [imageError, setImageError] = useState('')
@@ -75,7 +98,7 @@ export default function CreateCampaignPage() {
     useForm<CampaignForm>({
       resolver: zodResolver(schema),
 
-      defaultValues: {
+      defaultValues: campaign ? toForm(campaign) : {
         title: '', description: '', product: '', receiveOption: 'Entrega', imageUrl: '', conclusionDate: '',
         deliveryCep: '', deliveryStreet: '', deliveryNeighborhood: '', deliveryNumber: '', deliveryComplement: '', deliveryCity: '', deliveryUf: ''
       },
@@ -130,8 +153,13 @@ export default function CreateCampaignPage() {
     }
 
     try {
-      const created = await api<Campaign>('/campaigns', { method: 'POST', body })
-      void navigate(`/campaigns/${created.id}`)
+      if (isEdit) {
+        await api<Campaign>(`/campaigns/${id}`, { method: 'PUT', body })
+        void navigate(`/campaigns/${id}`)
+      } else {
+        const created = await api<Campaign>('/campaigns', { method: 'POST', body })
+        void navigate(`/campaigns/${created.id}`)
+      }
     } catch (e) {
       if (!(e instanceof ApiError))
         throw e
@@ -151,8 +179,10 @@ export default function CreateCampaignPage() {
     <div className="mx-auto max-w-6xl space-y-6">
 
       <header>
-        <h1 className="text-3xl font-extrabold tracking-tight text-dark">Criar campanha</h1>
-        <p className="mt-1 text-neutral-600">Conte o que você precisa e como as pessoas podem ajudar.</p>
+        <h1 className="text-3xl font-extrabold tracking-tight text-dark">{isEdit ? 'Editar campanha' : 'Criar campanha'}</h1>
+        <p className="mt-1 text-neutral-600">
+          {isEdit ? 'Atualize as informações da sua campanha.' : 'Conte o que você precisa e como as pessoas podem ajudar.'}
+        </p>
       </header>
 
       <form noValidate onSubmit={onSubmit} className="space-y-6">
@@ -328,12 +358,37 @@ export default function CreateCampaignPage() {
         )}
 
         <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-          <Link to="/campaigns" className="grid h-14 place-items-center rounded-full border border-red-300 px-8 bg-red-400 font-bold text-white hover:bg-red-500">
+          <Link to={isEdit ? `/campaigns/${id}` : '/campaigns'} className="grid h-14 place-items-center rounded-full border border-red-300 px-8 bg-red-400 font-bold text-white hover:bg-red-500">
             Cancelar
           </Link>
-          <Button type="submit" loading={isSubmitting} disabled={uploading} className="cursor-pointer sm:w-auto sm:px-10">Publicar campanha</Button>
+          <Button type="submit" loading={isSubmitting} disabled={uploading} className="cursor-pointer sm:w-auto sm:px-10">{isEdit ? 'Salvar alterações' : 'Publicar campanha'}</Button>
         </div>
       </form>
     </div>
   )
+}
+
+// /campaigns/:id/edit: confere a campanha e reaproveita o formulário acima, já preenchido
+export function EditCampaignPage() {
+  const { id } = useParams()
+  const { user } = useAuth()
+  const existing = useFetch<Campaign>(`/campaigns/${id}`)
+
+  const cantEdit = (text: string) => (
+    <div role="alert" className="mx-auto max-w-xl rounded-2xl border border-red-200 bg-red-50 p-8 text-center text-red-700">
+      <p>{text}</p>
+      <Link to={`/campaigns/${id}`} className="mt-4 inline-block font-bold underline">Voltar para a campanha</Link>
+    </div>
+  )
+
+  if (existing.loading)
+    return <div role="status" aria-label="Carregando campanha..." className="h-96 animate-pulse rounded-3xl bg-neutral-200" />
+  if (existing.error || !existing.data)
+    return cantEdit(existing.error ?? 'Campanha não encontrada.')
+  if (existing.data.userId !== user?.id)
+    return cantEdit('Só quem criou a campanha pode editá-la.')
+  if (!existing.data.isActive)
+    return cantEdit('Esta campanha foi encerrada e não pode mais ser editada.')
+
+  return <CreateCampaignPage campaign={existing.data} />
 }

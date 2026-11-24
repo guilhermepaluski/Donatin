@@ -71,7 +71,16 @@ public class CampaignResponseDTO
       OwnerCampaignName = campaign.User?.Name,
       OwnerCampaignCity = campaign.User?.City,
       OwnerCampaignUf = campaign.User?.Uf,
-      CampaignDeliveryAddress = deliveryOption ? BuildDeliveryAddress(campaign) : null
+      CampaignDeliveryAddress = deliveryOption ? BuildDeliveryAddress(campaign) : null,
+
+      // about campaign editing
+      DeliveryCep = campaign.DeliveryCep,
+      DeliveryStreet = campaign.DeliveryStreet,
+      DeliveryNeighborhood = campaign.DeliveryNeighborhood,
+      DeliveryNumber = campaign.DeliveryNumber,
+      DeliveryComplement = campaign.DeliveryComplement,
+      DeliveryCity = campaign.DeliveryCity,
+      DeliveryUf = campaign.DeliveryUf
     };
   }
 }
