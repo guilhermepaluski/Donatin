@@ -43,6 +43,13 @@ export const makeCampaign = (over: Partial<Campaign> = {}): Campaign => ({
   ownerCampaignCity: 'Joinville',
   ownerCampaignUf: 'SC',
   campaignDeliveryAddress: 'Rua XV, 100 - Centro, Joinville/SC',
+  deliveryCep: '89201000',
+  deliveryStreet: 'Rua XV',
+  deliveryNeighborhood: 'Centro',
+  deliveryNumber: '100',
+  deliveryComplement: null,
+  deliveryCity: 'Joinville',
+  deliveryUf: 'SC',
   ...over,
 })
 

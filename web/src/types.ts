@@ -100,6 +100,14 @@ export interface Campaign {
   ownerCampaignCity: string | null
   ownerCampaignUf: string | null
   campaignDeliveryAddress: string | null
+  // endereço de entrega separado (usado no formulário de edição)
+  deliveryCep: string | null
+  deliveryStreet: string | null
+  deliveryNeighborhood: string | null
+  deliveryNumber: string | null
+  deliveryComplement: string | null
+  deliveryCity: string | null
+  deliveryUf: string | null
 }
 
 export interface CampaignRequest {

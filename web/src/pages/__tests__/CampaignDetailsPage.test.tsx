@@ -45,12 +45,73 @@ describe('CampaignDetailsPage', () => {
     expect(await screen.findByRole('link', { name: 'Doar para esta campanha' })).toHaveAttribute('href', '/campaigns/camp-1/donate')
   })
 
-  it('a própria campanha: botão desativado com o motivo', async () => {
+  // ---------- ações do dono (RF15 / RN13) ----------
+
+  it('dono de campanha ativa: vê "Editar campanha" e "Encerrar campanha" no lugar do botão de doar', async () => {
     auth.user = makeUser({ id: 'owner-1' })
     renderPage({ 'GET /campaigns/camp-1': makeCampaign() })
 
-    expect(await screen.findByRole('button', { name: 'Doar para esta campanha' })).toBeDisabled()
-    expect(screen.getByText('Você não pode doar para a sua própria campanha.')).toBeInTheDocument()
+    expect(await screen.findByRole('link', { name: 'Editar campanha' })).toHaveAttribute('href', '/campaigns/camp-1/edit')
+    expect(screen.getByRole('button', { name: 'Encerrar campanha' })).toBeInTheDocument()
+    expect(screen.queryByText('Doar para esta campanha')).toBeNull()
+  })
+
+  it('outro usuário não vê as ações do dono', async () => {
+    renderPage({ 'GET /campaigns/camp-1': makeCampaign() })
+
+    await screen.findByRole('link', { name: 'Doar para esta campanha' })
+    expect(screen.queryByRole('link', { name: 'Editar campanha' })).toBeNull()
+    expect(screen.queryByRole('button', { name: 'Encerrar campanha' })).toBeNull()
+  })
+
+  it('dono de campanha encerrada: não pode editar nem encerrar de novo', async () => {
+    auth.user = makeUser({ id: 'owner-1' })
+    renderPage({ 'GET /campaigns/camp-1': makeCampaign({ isActive: false }) })
+
+    expect(await screen.findByText('Esta campanha foi encerrada.')).toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: 'Editar campanha' })).toBeNull()
+    expect(screen.queryByRole('button', { name: 'Encerrar campanha' })).toBeNull()
+  })
+
+  it('encerrar: pede confirmação, chama o DELETE e mostra a campanha encerrada', async () => {
+    auth.user = makeUser({ id: 'owner-1' })
+    const confirm = vi.spyOn(window, 'confirm').mockReturnValue(true)
+    let closed = false
+    const close = vi.fn(() => { closed = true })
+    renderPage({
+      'GET /campaigns/camp-1': () => makeCampaign({ isActive: !closed }),
+      'DELETE /campaigns/camp-1': close,
+    })
+
+    await userEvent.click(await screen.findByRole('button', { name: 'Encerrar campanha' }))
+
+    expect(confirm).toHaveBeenCalled()
+    expect(close).toHaveBeenCalledTimes(1)
+    expect(await screen.findByText('Esta campanha foi encerrada.')).toBeInTheDocument()
+    confirm.mockRestore()
+  })
+
+  it('encerrar: se cancelar a confirmação, não chama a API', async () => {
+    auth.user = makeUser({ id: 'owner-1' })
+    const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false)
+    const close = vi.fn()
+    renderPage({ 'GET /campaigns/camp-1': makeCampaign(), 'DELETE /campaigns/camp-1': close })
+
+    await userEvent.click(await screen.findByRole('button', { name: 'Encerrar campanha' }))
+
+    expect(close).not.toHaveBeenCalled()
+    confirm.mockRestore()
+  })
+
+  it('erro ao encerrar aparece na tela', async () => {
+    auth.user = makeUser({ id: 'owner-1' })
+    const confirm = vi.spyOn(window, 'confirm').mockReturnValue(true)
+    renderPage({ 'GET /campaigns/camp-1': makeCampaign(), 'DELETE /campaigns/camp-1': new ApiError(500, 'Servidor fora do ar.') })
+
+    await userEvent.click(await screen.findByRole('button', { name: 'Encerrar campanha' }))
+
+    expect(await screen.findByText('Servidor fora do ar.')).toBeInTheDocument()
+    confirm.mockRestore()
   })
 
   it('campanha só com coleta não mostra local de entrega', async () => {

@@ -1,14 +1,34 @@
+import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { CalendarDays, HandHeart, MapPin, Package, Truck, User2 } from 'lucide-react'
+import { CalendarDays, HandHeart, MapPin, Package, Pencil, Truck, User2, XCircle } from 'lucide-react'
 import { categoryLabel, RECEIVE_LABELS } from '../lib/campaignsEnums'
 import { useCampaignDetails } from '../lib/useCampaigns'
 import { donationBlockedReason } from '../lib/donationRules'
 import { useAuth } from '../auth/AuthContext'
+import { api, ApiError } from '../lib/api'
 
 export default function CampaignDetailPage() {
   const { id = '' } = useParams()
   const { campaign, loading, error, reload } = useCampaignDetails(id)
   const { user } = useAuth()
+  const [closing, setClosing] = useState(false)
+  const [closeError, setCloseError] = useState('')
+
+  async function closeCampaign() {
+    if (!window.confirm('Encerrar esta campanha? Ela deixa de receber doações e não pode ser reaberta.'))
+      return
+
+    setCloseError('')
+    setClosing(true)
+    try {
+      await api(`/campaigns/${id}`, { method: 'DELETE' })
+      reload()
+    } catch (e) {
+      setCloseError(e instanceof ApiError ? e.message : 'Não foi possível encerrar a campanha.')
+    } finally {
+      setClosing(false)
+    }
+  }
 
   if (loading)
     return <div role="status" aria-label="Carregando campanha..." className="h-96 animate-pulse rounded-3xl bg-neutral-200" />
@@ -31,6 +51,9 @@ export default function CampaignDetailPage() {
   const c = campaign
   const percent = Math.min(100, Math.round((c.currentAmount / c.goalAmount) * 100))
   const closedReason = donationBlockedReason(c, user?.id)
+  const isOwner = !!user && user.id === c.userId
+  // o dono não vê "não pode doar para a própria campanha", só os avisos da campanha (encerrada, prazo, meta)
+  const notice = isOwner ? donationBlockedReason(c) : closedReason
 
   const facts = [
     { icon: Package, label: 'Estamos arrecadando:', value: c.product },
@@ -111,9 +134,31 @@ export default function CampaignDetailPage() {
             ))}
           </dl>
 
-          {/* ação */}
+          {/* ação: o dono gerencia a campanha; os outros doam */}
           <div className="flex flex-col justify-center items-center mt-12">
-            {closedReason ? (
+            {isOwner && c.isActive ? (
+              <>
+                <div className="flex w-full flex-col gap-3 sm:flex-row sm:justify-center">
+                  <Link
+                    to={`/campaigns/${id}/edit`}
+                    className="flex h-14 items-center justify-center gap-2 rounded-full bg-primary px-8 text-lg font-bold text-white transition hover:brightness-95"
+                  >
+                    <Pencil size={20} aria-hidden /> Editar campanha
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={closeCampaign}
+                    disabled={closing}
+                    className="flex h-14 cursor-pointer items-center justify-center gap-2 rounded-full border-2 border-red-300 px-8 text-lg font-bold text-red-600 transition hover:bg-red-50 disabled:cursor-wait disabled:opacity-60"
+                  >
+                    <XCircle size={20} aria-hidden /> {closing ? 'Encerrando...' : 'Encerrar campanha'}
+                  </button>
+                </div>
+                {closeError && (
+                  <p role="alert" className="mt-4 rounded-xl bg-red-50 px-4 py-3 text-red-700">{closeError}</p>
+                )}
+              </>
+            ) : isOwner ? null : closedReason ? (
               <button
                 type="button"
                 disabled
@@ -129,9 +174,9 @@ export default function CampaignDetailPage() {
                 Doar para esta campanha
               </Link>
             )}
-            {closedReason && (
+            {notice && (
               <p role="status" className="mb-3 rounded-xl px-4 py-3 text-red-700 mt-6">
-                {closedReason}
+                {notice}
               </p>
             )}
           </div>
